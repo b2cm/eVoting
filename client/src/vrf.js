@@ -463,21 +463,6 @@ function _inverse(number) {
           
 
 
-let alpha_string = ''
-let SK = '9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60'
-let H = '5b2c80db3ce2d79cc85b1bfb269f02f915c5f0e222036dc82123f640205d0d24'
-let scalar = _get_secret_scalar(SK)
-//const pk = ed25519.keyFromSecret(SK).getPublic()
-let pk = BASE.mul(new BigInteger(scalar))
-
-
-let pi_string = (ecvrf_prove(SK, alpha_string))
-console.log('proof:', pi_string)
-
-let beta_string = ecvrf_proof_to_hash(pi_string)
-console.log('beta:', beta_string)
-
-console.log(ecvrf_verify(pk, pi_string, alpha_string))
 
 
 

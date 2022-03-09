@@ -47,11 +47,13 @@ describe('Proof computation and verification', () => {
         const beta_string = test.beta_string
         it(`should compute the vrf proof (${index + 1})`, async () => {
             const pi = VRF.ecvrf_prove(SK, alpha_string)
+            console.log(`pi(${index + 1}):`, pi)
             assert(pi_string === pi)
         })
 
         it(`should compute beta string (${index + 1})`, () => {
             const beta = VRF.ecvrf_proof_to_hash(pi_string)
+            console.log(`beta (${index + 1}):`, beta)
             assert(beta_string === beta)
         })
 
