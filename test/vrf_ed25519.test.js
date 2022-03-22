@@ -1,9 +1,8 @@
-//import {_get_secret_scalar} from "./vrf"
-const ECDSA = require('../client/node_modules/elliptic').eddsa
+const ECDSA = require('../client/node_modules/elliptic/lib/elliptic').eddsa
 const BigInteger = require('bn.js')
 const assert = require('assert')
-const VRF = require('../client/src/vrf')
-const DATA = require('./data.json')
+const VRF = require('../client/src/vrf_ed25519')
+const DATA = require('./data_ed25519.json')
 
 
 
