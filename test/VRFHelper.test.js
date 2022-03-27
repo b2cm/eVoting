@@ -19,7 +19,7 @@ contract("VRFTestHelper", () => {
         
         for (const [index, test] of DATA.secp256r1.entries()) {
             it(`Should decode the VRF proof (${index+1}`, async () => {
-                const decodedProof = await vrf_r1.decodeProof.call(test.pi_string )        
+                const decodedProof = await vrf_r1.decodeProof.call(test.pi_string )       
                 assert(decodedProof[0].eq(web3.utils.toBN(test.gamma.x)))
                 assert(decodedProof[1].eq(web3.utils.toBN(test.gamma.y)))
                 assert(decodedProof[2].eq(web3.utils.toBN(test.c)))
@@ -145,7 +145,6 @@ contract("VRFTestHelper", () => {
                 const pk = [web3.utils.hexToBytes(test.pk.x), web3.utils.hexToBytes(test.pk.y)]
                 const message = web3.utils.hexToBytes(test.alpha_string)
                 const proof = await vrf_r1.decodeProof.call(test.pi_string)
-                //const parameters = await vrf_k1.computeFastVerifyParams.call(pk, proof, message)
                 const result = await vrf_r1.fastVerify.call(pk, proof, message, uPoint, vComponents)
                 assert.equal(result, true)
                 

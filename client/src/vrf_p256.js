@@ -423,14 +423,6 @@ class VRF {
         return this.#int2octets(z2, q.bitLength())
     }
 
-    #string_to_octets(a_string) {
-        a_string = a_string.toString(16)
-        let octect = []
-        for (let i = 0; i < a_string.length; i = i + 2) {
-            octect.push(a_string.substr(i, 2))
-        }
-        return octect
-    }
 
     #bits2int(bits, qLen) {
         const bLen = bits.length * 8

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.3 <0.7.0;
+pragma solidity ^0.6.0;
 
-import "elliptic-curve-solidity/contracts/EllipticCurve.sol";
+import "../client/node_modules/elliptic-curve-solidity/contracts/EllipticCurve.sol";
 
 
 /**
