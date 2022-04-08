@@ -345,6 +345,47 @@ class VRF {
         return [gamma, c, s]
     }
 
+    computeFastVerifyParams(pk, pi_string, alpha_string) {
+        // 1. D = ECVRF_decode_proof(pi_string)
+        // 2. If D is "INVALID", output "INVALID" and stop
+        pk = this.string_to_point(pk)
+        const d = this.decode_proof(pi_string)
+        if (d == 'INVALID') {
+            return 'INVALID'
+        }
+    
+        // 3. (Gamma, c, s) = D
+        const gamma = d[0]
+        const c = d[1]
+        const s = d[2]
+    
+        // 4. H = ECVRF_hash_to_curve(suite_string, pk, alpha_string)
+        const h = this.hash_to_curve_try_and_increment(this.SUITE_STRING, pk, alpha_string)
+        if (h == 'INVALID') {
+            return 'INVALID'
+        }
+    
+        // 5. U = s*B - c*pk
+        const s_b = this.BASE.mul(new BigInteger(s))
+        const c_y = pk.mul(new BigInteger(c))
+        const u = s_b.add(c_y.neg())
+    
+        // 6. V = s*H - c*Gamma
+        const s_h = h.mul(new BigInteger(s))
+        const c_g = gamma.mul(new BigInteger(c))
+        //const v = s_h.add(c_g.neg())
+        const uX = u.getX()
+        const uY = u.getY()
+        const shX = s_h.getX()
+        const shY = s_h.getY()
+        const gammaX = c_g.getX()
+        const gammaY = c_g.getY()
+        const uPoint = [uX, uY]
+        const vComponents = [shX, shY, gammaX, gammaY]
+    
+        return [uPoint, vComponents]
+    }
+
     /**
      * Hash function
      * @param message - An array of number
@@ -454,8 +495,13 @@ class VRF {
         return octets
     }
 
-  
+  sortation(hash) {
+      const hashLength = BigInt(hash.length * 4)
+      const ratio = (BigInt('0x' + hash)*100000n) / 2n ** hashLength
+      return Number(ratio) / 100000
+  }
 }
+
 
 
 
