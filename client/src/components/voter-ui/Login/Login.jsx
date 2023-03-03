@@ -28,6 +28,7 @@ import {
     INPUT_BACKGROUND_COLOR
 } from '../../../utils/colors';
 import { setSource, switchNetwork } from '../../../utils/utils';
+import * as ethers from 'ethers';
 
 
 export default function Login() {
@@ -37,7 +38,7 @@ export default function Login() {
     
     
     useEffect(()=> {
-        if (chainId !== '0x5' ) switchNetwork('goerli');
+       // if (chainId !== '0x5' ) switchNetwork('goerli');
     }, [chainId]);
 
     const getVoterIDs = async() => {
@@ -49,12 +50,9 @@ export default function Login() {
         return voterIDs;
     }
     
-
     const handleChangeVoterID = event => {
         setVoterID(event.target.value);
     }
-
-   
 
     const handleClickLoginButton = async() => {
         const verifier = l1Contracts.Verifier;
@@ -86,10 +84,10 @@ export default function Login() {
             console.log('proof:', proof);
             const verify = zokratesProvider.verify(keypair.vk, proof);
             //console.log('verify', verify);
-            const gas = await verifier.estimateGas.verifyTx(proof.proof, proof.inputs);
-            //console.log('gas', gas);
+            const gasLimit = await verifier.estimateGas.verifyTx(proof.proof, proof.inputs);
+            console.log('gasLimit', ethers.utils.formatEther(gasLimit));
             try {
-                const txHandle = await verifier.connect(signer).verifyTx(proof.proof, proof.inputs, { gasLimit: gas});
+                const txHandle = await verifier.connect(signer).verifyTx(proof.proof, proof.inputs, { gasLimit});
                 console.log('tx', txHandle);
                 const receipt = await txHandle.wait();
                 const events = receipt.events;

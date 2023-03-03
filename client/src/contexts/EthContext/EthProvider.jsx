@@ -15,7 +15,7 @@ function EthProvider({ children }) {
       const initGoerliChain = async () => {
         console.log('Goerli chain');
         let l1Contracts = {};
-            const paymasterAddress = '0x7C10d29cfc9951958d8ffF6d9D9c9697A146bf70'//'0x7e4123407707516bD7a3aFa4E3ebCeacfcbBb107'
+            const paymasterAddress = '0x7C10d29cfc9951958d8ffF6d9D9c9697A146bf70';//'0x7e4123407707516bD7a3aFa4E3ebCeacfcbBb107';
             const config = {
               paymasterAddress,
               loggerConfiguration: {

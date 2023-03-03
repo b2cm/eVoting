@@ -71,7 +71,7 @@ export default function NewVote(props) {
         setProgress(40);
         setBuffer(60);
         try {
-            const factory = l2Contracts.FactoryEvoting2;
+            const factory = l2Contracts.FactoryEvoting;
             const start = voteStart.unix();
             const end = voteEnd.unix()
             const _voteID = `0x${voteID}`;
@@ -139,7 +139,9 @@ export default function NewVote(props) {
               });
         } catch (error) {
             let message = '';
+            message = error.message;
             if (error.code === 'ACTION_REJECTED') message = 'User denied message signature.';
+
             setWaitingMessage(message);
             console.log(error);
         }
