@@ -1,0 +1,18 @@
+{
+  "name": "goerli",
+  "packageManager": "yarn@3.4.1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.0",
+    "ethereum-waffle": "^3.2.0",
+    "@chainlink/contracts": "^0.6.1",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@opengsn/cli": "^3.0.0-beta.1",
+    "@opengsn/contracts": "^3.0.0-beta.1",
+    "dotenv": "^16.0.3",
+    "hardhat": "^2.12.6"
+  }
+}
