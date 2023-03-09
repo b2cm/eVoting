@@ -15,13 +15,12 @@ import {
     Divider,
  } from '@mui/material';
 
-import { teal } from '@mui/material/colors';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import BallotIcon from '@mui/icons-material/Ballot';
 import Toolbar from '@mui/material/Toolbar';
-import { TEXT_COLOR } from '../../utils/colors';
+import { SUCCESS_COLOR, TEXT_COLOR, SUCCESS_COLOR_HOVER } from '../../utils/colors';
 
 export default function Sidebar() {
     const { state: { isDrawerOpen, }, dispatch} = useEth();
@@ -63,9 +62,9 @@ export default function Sidebar() {
                     marginRight:0,
                     marginBottom:2,
                     fontSize:12,
-                    backgroundColor: teal[500],
+                    backgroundColor: SUCCESS_COLOR,
                     ":hover": {
-                        backgroundColor: teal[700]
+                        backgroundColor: SUCCESS_COLOR_HOVER,
                     }
                 }}
             >

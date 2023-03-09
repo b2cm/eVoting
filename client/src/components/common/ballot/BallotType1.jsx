@@ -8,10 +8,12 @@ import BallotType1Form from './BallotType1Form';
 export default function BallotType1(props) {
     
     const { 
+        handleEditAnswer,
         answersPerBallot,
         handleCheckboxChangeBallotType1,
-        restructure,
-        isEditable, 
+        restructure, // This is used to display checkboxes within the voter UI.
+        isEditable, // This is used to determine if the ballot is editable or not. Ballots are editable if the vote is in preparation.
+        disabled, // This property is used to disable the checkboxes when rendering the control overview component.
         ballots,
         ballots_to_add,
         whichBallots,
@@ -39,6 +41,8 @@ export default function BallotType1(props) {
 
   return (
     <BallotType1Form
+        handleEditAnswer={handleEditAnswer}
+        disabled={disabled}
         answersPerBallot={answersPerBallot}
         handleCheckboxChangeBallotType1={handleCheckboxChangeBallotType1}
         restructure={restructure}

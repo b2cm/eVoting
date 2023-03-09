@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom';
 export default function Header() {
     const { state: {isDrawerOpen, }, dispatch } = useEth();
     const location  = useLocation();
-    const showMenuButton = location.pathname === '/registration' || location.pathname.startsWith('/login/vote/') ? false : true;
+    const showMenuButton = location.pathname === '/registration' || location.pathname.startsWith('/vote/login/') || location.pathname.startsWith('/vote/voting-cockpit/') ? false : true;
 
     const setDrawer = (val) => {
       dispatch({

@@ -32,7 +32,8 @@ import {
  * @returns 
  */
 export default function BallotType2Form(props) {
-    const { 
+    const {
+        disabled, 
         answersPerBallot,
         handleCheckboxChangeBallotType2,
         restructure,
@@ -119,7 +120,7 @@ export default function BallotType2Form(props) {
                         <>
                             <TableCell sx={{
                                 width: 12,
-                                borderRigth: 'solid',
+                                borderRight: 'solid',
                                 borderWidth: '1px', 
                                 borderColor: INPUT_LABEL_BACKGROUND_COLOR,
                                 }}>
@@ -186,7 +187,7 @@ export default function BallotType2Form(props) {
                                     <Box sx={{ display: 'flex', alignItems: 'center'}}>
                                             {BALLOT_TYPE1_ANSWERS.map((option, index2) => (
                                                 <FormGroup key={index2}>
-                                                    <FormControlLabel control={<Checkbox onChange={() => handleCheckboxChangeBallotType2(candidate, option)} checked={answersPerBallot[index].answers[option]} />} label={option} />
+                                                    <FormControlLabel control={<Checkbox onChange={() => handleCheckboxChangeBallotType2(candidate, option)} checked={answersPerBallot[index].answers[option]} disabled={disabled? disabled: false}/>} label={option} />
                                                 </FormGroup>
                                             ))}
                                     </Box>

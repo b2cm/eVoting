@@ -7,7 +7,10 @@ import {
     TableBody,
     Input,
     Checkbox,
+    Tooltip,
+    IconButton
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import { BALLOT_TYPE1_ANSWERS } from '../../../utils/constantes';
 import { 
     TEXT_COLOR,
@@ -21,6 +24,8 @@ import {
  */
 export default function BallotType1Form(props) {
     const {
+        handleEditAnswer,
+        disabled,
         answersPerBallot,
         handleCheckboxChangeBallotType1,
         restructure, 
@@ -36,7 +41,15 @@ export default function BallotType1Form(props) {
         <Table>
             <TableHead>
                 <TableRow sx={{ borderBottom: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR}} >
-                    <TableCell width={10} sx={{ borderRight: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR }} />
+                    <TableCell width={10} sx={{ borderRight: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR }}> 
+                        {disabled &&
+                            <Tooltip title='Antwort bearbeiten' style={{color: 'blue',}} >
+                                <IconButton size='large' onClick={handleEditAnswer}>
+                                    <EditIcon sx={{fontSize: 20}}/>
+                                </IconButton>
+                            </Tooltip>
+                        }
+                    </TableCell>
                     <TableCell align='left' >
                     <Input 
                         placeholder='Titel eintragen' 
@@ -62,7 +75,7 @@ export default function BallotType1Form(props) {
                     <TableRow key={option} sx={{ borderBottom: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR}}>
                         <TableCell sx={{borderRight: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR}}>
                             {restructure &&
-                                <Checkbox onChange={() => handleCheckboxChangeBallotType1(option)} checked={answersPerBallot[option]} />
+                                <Checkbox onChange={() => handleCheckboxChangeBallotType1(option)} checked={answersPerBallot[option]} disabled={disabled? disabled: false} />
                             }
                             
                         </TableCell>
