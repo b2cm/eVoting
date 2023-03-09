@@ -1060,8 +1060,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/projects/forschungsmodul/zksync/contracts/Register.sol": {
-      "lastModificationDate": 1677668910562,
-      "contentHash": "21e1ea789247551dede58eb5e5b87bbb",
+      "lastModificationDate": 1678107025744,
+      "contentHash": "abd739d9e84c626156c2137463f3b8bd",
       "sourceName": "contracts/Register.sol",
       "solcConfig": {
         "version": "0.8.17",

@@ -31,6 +31,7 @@ import {
     INPUT_LABEL_BACKGROUND_COLOR,
     INPUT_BACKGROUND_COLOR
 } from '../../../utils/colors';
+import { generatePair } from '../../../cryptography/lrs';
 
 
 
@@ -45,6 +46,7 @@ export default function RegistrationPage() {
     const { state, dispatch } = useEth();
     const { contracts, l2Contracts, signer, l2Provider, chainId, paymaster } = state;
     const [voterID, setVoterID] = useState(null);
+    const [keyPair, setKeyPair] = useState(null);
     const [openPopup, setOpenPopup] = useState(false);
     const items = ['Email', 'Passwort'];
 
@@ -77,18 +79,24 @@ export default function RegistrationPage() {
         const register = l2Contracts.Register;
         const sha512 = createHash('sha512');
         const voterID = sha512.update(email + password).digest('hex');
-        const hashedVoterID = (poseidon(['0x' + voterID])).toString();
-        console.log('hashed voter id', hashedVoterID);
-        console.log('voter id', voterID);
+        let hashedID = '0x' + (poseidon(['0x' + voterID])).toString();
+        console.log('hashed voter', hashedID);
+        console.log('voter id',voterID);
+        const lrsKeypair = generatePair();
+        console.log('lrs keypair',lrsKeypair);
+        const publicKey = '0x' + lrsKeypair.publicKey.toString();
+        console.log('pk', publicKey);
+
         const gasPrice = await l2Provider.getGasPrice();
          // Encoding the ApprovalBased paymaster flow's input
         const paymasterParams = utils.getPaymasterParams(paymaster, {
             type: 'General',
             innerInput: new Uint8Array(),
         });
-        const gasLimit = await register.connect(signer).estimateGas.storeHashedID(
-            hashedVoterID,
-            
+        const gasLimit = await register.connect(signer).estimateGas.storeHashedIDAndPK(
+            hashedID,
+            publicKey,
+
             {
                 customData: {
                     gasPerPubData: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
@@ -103,8 +111,9 @@ export default function RegistrationPage() {
         setProgress(60);
         setBuffer(100);
 
-        const txHandle = await register.connect(signer).storeHashedID(
-            hashedVoterID,
+        const txHandle = await register.connect(signer).storeHashedIDAndPK(
+            hashedID,
+            publicKey,
             
             {
                 // Provide gas params manually
@@ -127,16 +136,17 @@ export default function RegistrationPage() {
         events.forEach(e => {
             if (e.event === 'HashedIDStored') {
                 console.log('event', e);
-                setWaitingMessage(`voter-ID: ${voterID} \n ` );
+               // setWaitingMessage(`voter-ID: ${voterID} \n ` );
                 setProgress(100);
                 setVoterID(voterID);
+                setKeyPair({publicKey: lrsKeypair.publicKey.toString(), privateKey: lrsKeypair.privateKey.toString()});
                 setOpenPopup(true);
+                setOpenDialog(false);
                 setEmail('');
                 setPassword('');
             }
         })
-        
-
+    
     }
             
 
@@ -232,7 +242,7 @@ export default function RegistrationPage() {
             width: '100%',
         }}
         >
-            {openPopup && <Popup value={voterID} setOpen={handleClosePopup} /> }
+            {openPopup && <Popup value={{voterID, keyPair}} setOpen={handleClosePopup} />}
             {!chainId &&
                 <Typography variant='h4' textAlign='center'>
                     Please wait.

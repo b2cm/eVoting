@@ -29,6 +29,7 @@ import {
 } from '../../../utils/colors';
 import { setSource, switchNetwork } from '../../../utils/utils';
 import * as ethers from 'ethers';
+import { generatePair } from '../../../cryptography/lrs';
 
 
 export default function Login() {
@@ -55,20 +56,25 @@ export default function Login() {
     }
 
     const handleClickLoginButton = async() => {
+        const REGISTER_ADDRESS = '0x8b3C5Af9f90734AF6625D7266BDD03E2BD7B659c';
+        const l2Provider = new Provider('https://zksync2-testnet.zksync.dev');
+        const REGISTER_ABI = (artifacts[3]).abi;
+        const register = new Contract(REGISTER_ADDRESS, REGISTER_ABI, l2Provider);
         const verifier = l1Contracts.Verifier;
         //console.log('ver', verifier);
-        let voterIDs = await getVoterIDs();
-        voterIDs = voterIDs.filter(id => {
-            return id !== '';
-        });
-        console.log('hashed voter IDs', voterIDs);
-        console.log('voter ID:', voterID);
-        const merkleTree = new MerkleTree(voterIDs, { isHashed: true });
+        const voterIDs = await register.getVoterIDs();
+        let ids = [];
+        for (let i = 0; i < voterIDs.length; i++) {
+            ids[i] = BigInt(voterIDs[i].slice(2));
+        }
+        console.log('hashed voter ids', ids);
+        const merkleTree = new MerkleTree(ids, { isHashed: true });
         console.log('merkle', merkleTree);
+        const hashedID = poseidon(['0x' + voterID]);
         const depth = merkleTree.getDepth();
-        const proofOfMembership = merkleTree.getProof(poseidon(['0x' + voterID]).toString());
+        const proofOfMembership = merkleTree.getProof(hashedID);
         console.log('proof of membership', proofOfMembership);
-
+        
         initialize().then( async zokratesProvider => {
             console.log('Compiling the program...');
             const artifacts = zokratesProvider.compile(setSource(depth));
@@ -104,6 +110,7 @@ export default function Login() {
                 console.log('error', error);
             }
         })
+        
     }
 
 

@@ -60,6 +60,7 @@ const BackdropUnstyled = React.forwardRef((props, ref) => {
 
 export default function Popup(props) {
     const { value, setOpen} = props;
+    const { voterID, keyPair, } = value;
 
   return (
     <div>
@@ -83,7 +84,13 @@ export default function Popup(props) {
                     </IconButton>
                 </Box>
                 <Typography component='p' variant='h6' >
-                    Wähler-ID: {value}
+                    Wähler-ID: {voterID}
+                </Typography>
+                <Typography component='p' variant='h6' >
+                    PubKey: {keyPair.publicKey}
+                </Typography>
+                <Typography component='p' variant='h6' >
+                    PrivKey: {keyPair.privateKey}
                 </Typography>
                 <Box sx={{
                     display: 'flex',

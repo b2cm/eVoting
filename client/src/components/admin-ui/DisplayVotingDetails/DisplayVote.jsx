@@ -7,7 +7,6 @@ import {
 import { 
     Container,
  } from '@mui/material';
-import { actions } from '../../../contexts/VotingDetailsContext';
 import { utils } from "zksync-web3";
 import * as ethers from 'ethers';
 import VotingTabs from '../../common/VotingTabs';

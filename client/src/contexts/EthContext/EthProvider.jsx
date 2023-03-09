@@ -58,7 +58,7 @@ function EthProvider({ children }) {
         console.log('ZkSync chain');
         let l2Contracts;
             const FACTORY_ADDRESS = '0xb34B2a89887CdF591Af55A1110a766F222B838d8';
-            const REGISTER_ADDRESS = '0xBb3185076500033a92b61Dd6Cee2F75a77679514';
+            const REGISTER_ADDRESS = '0x8b3C5Af9f90734AF6625D7266BDD03E2BD7B659c';
             const PAYMASTER_ADDRESS = '0xEB7B801A52e9110329229d9785523c3Af7C0e896';
             const l2Provider = new Provider('https://zksync2-testnet.zksync.dev');
             

@@ -8,6 +8,9 @@ import BallotType1Form from './BallotType1Form';
 export default function BallotType1(props) {
     
     const { 
+        answersPerBallot,
+        handleCheckboxChangeBallotType1,
+        restructure,
         isEditable, 
         ballots,
         ballots_to_add,
@@ -36,6 +39,9 @@ export default function BallotType1(props) {
 
   return (
     <BallotType1Form
+        answersPerBallot={answersPerBallot}
+        handleCheckboxChangeBallotType1={handleCheckboxChangeBallotType1}
+        restructure={restructure}
         title={title}
         isEditable={isEditable}
         handleChangeTitle={handleChangeTitle}

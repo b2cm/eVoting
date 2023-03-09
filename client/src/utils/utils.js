@@ -1,4 +1,10 @@
-import { VOTING_STATES } from "./constantes";
+import { Contract } from 'zksync-web3';
+import dayjs from 'dayjs';
+import { 
+    VOTING_STATES, 
+    ZERO_ADDRESS,
+ } from "./constantes";
+
 import { ELECTION_CANCELED_COLOR,
     ELECTION_IN_PREPARATION_COLOR,
     ELECTION_IN_PROGRESS_COLOR,
@@ -111,3 +117,43 @@ export const switchNetwork = async (chain) => {
        alert('MetaMask is not installed. Please consider installing it: https://metamask.io/download.html');
    } 
 }
+
+
+export  const getVoteDetails = async (voteContractAddr, voteID, evotingABI, l2Provider) => {
+    try {
+        const contract = new Contract(voteContractAddr, evotingABI, l2Provider);
+        const voteName = await contract.name();
+        const voteDescription = await contract.description();
+        const voteState = VOTING_STATES[(await contract.get_state())];
+        const voteStartTime = (await contract.start_time()).toNumber();
+        const voteEndTime = (await contract.end_time()).toNumber();
+        const admin = await contract.admin();
+        const _ballots = [];
+        const ballots = await contract.get_ballot_papers();
+        
+        for (let i = 0; i < ballots.length; i++) {
+            const ballot = {
+                ballotType: ballots[i].ballotType,
+                name: ballots[i].name,
+                information: ballots[i].information,
+                title: ballots[i].title,
+                candidates: ballots[i].candidates
+            }
+            _ballots.push(ballot);
+        }
+        const data = {
+            voteName: voteName,
+            voteDescription: voteDescription,
+            voteStart: dayjs(voteStartTime * 1000),
+            voteEnd: dayjs(voteEndTime * 1000),
+            voteID: voteID,
+            voteState: voteState,
+            admin: admin,
+            ballots: _ballots,
+        }
+
+        return data; 
+    } catch (error) {
+        console.error(error);
+    }
+} 

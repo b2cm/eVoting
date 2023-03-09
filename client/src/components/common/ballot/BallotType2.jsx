@@ -12,8 +12,10 @@ export default function BallotType2(props) {
     
     const [selectedCandidate, setSelectedCandidate] = useState(0);
     const {
+        answersPerBallot,
+        handleCheckboxChangeBallotType2,
+        restructure,
         isEditable, 
-        selectedIndex, 
         ballots, 
         ballots_to_add,
         whichBallots,
@@ -73,15 +75,18 @@ export default function BallotType2(props) {
 
   return (
    <BallotType2Form
-    isEditable={isEditable}
-    title={title}
-    selectedCandidate={selectedCandidate}
-    setSelectedCandidate={setSelectedCandidate}
-    candidates={candidates}
-    handleChangeTitle={handleChangeTitle}
-    handleAddCandidate={handleAddCandidate}
-    handleRenameCandidate={handleRenameCandidate}
-    handleDeleteCandidate={handleDeleteCandidate}
+        answersPerBallot={answersPerBallot}
+        handleCheckboxChangeBallotType2={handleCheckboxChangeBallotType2}
+        restructure={restructure}
+        isEditable={isEditable}
+        title={title}
+        selectedCandidate={selectedCandidate}
+        setSelectedCandidate={setSelectedCandidate}
+        candidates={candidates}
+        handleChangeTitle={handleChangeTitle}
+        handleAddCandidate={handleAddCandidate}
+        handleRenameCandidate={handleRenameCandidate}
+        handleDeleteCandidate={handleDeleteCandidate}
     />
   )
 }
