@@ -22,6 +22,8 @@ coverage
 
 # Editor
 .vscode
+.editorconfig.
+.gitattributes
 
 # Misc.
 .DS_Store

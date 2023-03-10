@@ -10,8 +10,7 @@ import {
 import { VOTING_STATES,
     DATE_FORMAT_OPTIONS
  } from '../../../utils/constantes';
-
- import { getElectionStateColor } from '../../../utils/utils';
+import { getElectionStateColor } from '../../../utils/utils';
 
 export default function MyCard(props) {
     const { voteName, voteDescription, state, createAt, voteStartTime, voteEndTime } = props;

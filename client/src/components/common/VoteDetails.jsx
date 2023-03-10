@@ -25,6 +25,7 @@ export default function VoteDetails(props) {
         const description = event.target.value;
         setVoteDescription(description);
     }
+    
    
   return (
     <Box sx={{ 

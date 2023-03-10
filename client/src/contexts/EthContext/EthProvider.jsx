@@ -84,7 +84,9 @@ function EthProvider({ children }) {
 
 
       window.onload = (event) => {
+        console.log('loading!!!');
         const chainId = window.ethereum.chainId;
+        console.log('chainId', chainId);
       
         if (artifacts) {
           try {
@@ -100,6 +102,7 @@ function EthProvider({ children }) {
       }
 
       if (chainId) {
+        console.log('chainId inside', chainId);
         try {
           if (chainId === '0x118') { // zksync network
             initZKSyncChain()
@@ -122,8 +125,9 @@ function EthProvider({ children }) {
         const artifact3 = require('../../contracts/zksync/artifacts-zk/contracts/Evoting.sol/Evoting.json');
         const artifact4 = require('../../contracts/zksync/artifacts-zk/contracts/Register.sol/Register.json');
         const artifacts = [ artifact1, artifact2, artifact3, artifact4 ];
-      
-        init(artifacts);
+
+        const chainId = window.ethereum.chainId;
+        init(artifacts, chainId);
       } catch (err) {
         console.error(err);
       }

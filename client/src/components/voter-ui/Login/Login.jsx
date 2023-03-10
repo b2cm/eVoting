@@ -34,6 +34,7 @@ import { generatePair } from '../../../cryptography/lrs';
 
 export default function Login() {
     const [voterID, setVoterID] = useState('');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const { state, dispatch } = useEth();
     const { chainId, l1Contracts, accounts, web3, signer, artifacts,  } = state;
     
@@ -102,6 +103,8 @@ export default function Login() {
                         console.log('argument', event.args[0]);
                         if (event.args[0]) {
                             alert('Authentication successful.');
+                            setIsAuthenticated(true);
+                            // TODO: store voter address to the register contract on zksync
                         }
                     }
                 })
