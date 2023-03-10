@@ -22,7 +22,7 @@ coverage
 
 # Editor
 .vscode
-.editorconfig.
+.editorconfig
 .gitattributes
 
 # Misc.
