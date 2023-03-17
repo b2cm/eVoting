@@ -5,11 +5,11 @@ import { Deployer } from '@matterlabs/hardhat-zksync-deploy';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const MNEMONIC_DEPLOYER = process.env.MNEMONIC_DEPLOYER;
+const MNEMONIC_GOERLI = process.env.MNEMONIC_GOERLI;
 
 export default async (hre: HardhatRuntimeEnvironment) => {
     console.log(`Running deploy script for the register contract`);
-    const wallet = new Wallet(MNEMONIC_DEPLOYER!);
+    const wallet = new Wallet(MNEMONIC_GOERLI!);
     const deployer = new Deployer(hre, wallet);
     const artifact = await deployer.loadArtifact('Register');
     const register = await deployer.deploy(artifact, []);

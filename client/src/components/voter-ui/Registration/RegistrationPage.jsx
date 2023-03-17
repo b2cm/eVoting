@@ -84,8 +84,14 @@ export default function RegistrationPage() {
         console.log('voter id',voterID);
         const lrsKeypair = generatePair();
         console.log('lrs keypair',lrsKeypair);
+        /*
         const publicKey = '0x' + lrsKeypair.publicKey.toString();
         console.log('pk', publicKey);
+        console.log('pk big number', ethers.BigNumber.from(publicKey));
+        */
+        const publicKey =  lrsKeypair.publicKey.toString();
+        console.log('pk', publicKey);
+        console.log('pk big number', ethers.BigNumber.from('0x' + publicKey));
 
         const gasPrice = await l2Provider.getGasPrice();
          // Encoding the ApprovalBased paymaster flow's input

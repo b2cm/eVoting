@@ -11,9 +11,12 @@ const GOERLI_URL = `https://goerli.infura.io/v3/${API_KEY}`;
 
 module.exports = {
   zksolc: {
-    version: "1.3.1",
+    version: "1.3.5",
     compilerSource: "binary",
-    settings: {},
+    settings: {
+      forceEvmla: false,
+      isSystem: true
+    },
   },
   defaultNetwork: "zkSyncTestnet",
   
@@ -27,6 +30,9 @@ module.exports = {
       url: GOERLI_URL,
       accounts: [MNEMONIC_GOERLI]
     },
+    hardhat: {
+      zksync: true
+    }
   },
   
   paths: {

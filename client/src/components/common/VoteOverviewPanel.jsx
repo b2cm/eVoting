@@ -53,7 +53,7 @@ export default function VoteOverviewPanel(props) {
         }
     }, [voteName, ballots, voteStart, voteEnd, adminAdr, location.pathname, setVoteID ]);
     
-    const link = `localhost:3000/vote/${!voteID ? computeVoteID : voteID}`;
+    const link = `localhost:3000/vote/voting-cockpit/${!voteID ? computeVoteID : voteID}`;
    
 
     const handleChangeVoteName = event => {

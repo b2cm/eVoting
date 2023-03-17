@@ -67,19 +67,22 @@ function Home() {
     useEffect(() => {
         const getContractData = async (contractAddr) => {
             try {
+                
                 const EVOTING_ABI = (artifacts[2]).abi;
                 const contract = new Contract(contractAddr, EVOTING_ABI, l2Provider);
                 //console.log('evoting', contract);
-                const voteName = await contract.name();
-                const voteDescription = await contract.description();
-                const state = VOTING_STATES[(await contract.get_state())];
-                const voteStartTime = (await contract.start_time()).toNumber();
-                const voteEndTime = (await contract.end_time()).toNumber();
-                const createAt = (await contract.createAt()).toNumber();
-                const voteID = await contract.voteID();
-                //const ballotPapers = await contract.ballot_papers(0, );
+                let data = await contract.get_details();
+                console.log('data', data);
+                const voteName = data._name;
+                const voteDescription = data._description;
+                const state = VOTING_STATES[(data._state)];
+                const voteStartTime = (data._start_time).toNumber();
+                const voteEndTime = (data._end_time).toNumber();
+                const createAt = (data._createdAt).toNumber();
+                const voteID = data._voteID;
+                const ballotPapers = data._ballot_papers;
                 //const admin = await contract.admin();
-                const data = {
+                data = {
                     //admin,
                     voteID,
                     voteName, 
@@ -88,7 +91,8 @@ function Home() {
                     createAt, 
                     voteStartTime, 
                     voteEndTime,
-                    //ballotPapers,
+                    ballotPapers,
+                    contract
                 };
                 //console.log('vote data', data);
                 return {contract, data};
@@ -100,7 +104,7 @@ function Home() {
 
 
         const getDataFromAllContracts = async (factory) => {
-            const addresses = await factory.get_votings({type: 0});
+            const addresses = await factory.get_votings();
             if (addresses.length === 0 ) {
                 setWaitingMessage('Keine Daten gefunden')
             } else {
@@ -278,9 +282,8 @@ function Home() {
                         
                         <Grid key={index} item xs={6} sm={4} md={4} lg={4} > 
                             <Link to={`/vote/cockpit/${data.voteID.slice(2)}`} 
-                                state={{
-                                    prevRoute
-                                }}
+                                state={{data: data}}
+                                
                                 style={{textDecoration: 'none',}}>
                                 <MyCard 
                                     index={index}

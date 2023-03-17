@@ -31,6 +31,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchField from '../../common/SearchField';
 import Footer from '../../common/Footer';
 import ControlOverview from './ControlOverview';
+import { checkEvery, computeZKPInputs, verifyMembershipZkp } from '../../../cryptography/pallier';
+import bigInt from 'big-integer';
 
 export default function Vote(props) {
     const [voteDetails, setVoteDetails] = useState(null);
@@ -58,11 +60,11 @@ export default function Vote(props) {
     const handleCheckboxChangeBallotType1 = (key) => {
         setAnswersPerBallot(prevState => {
             const ballotObj = prevState.find(ballot => ballot.ballotID === selectedIndex);
-            for (const [_key, value] of Object.entries(ballotObj.option)) {
+            for (const [_key, value] of Object.entries(ballotObj.options)) {
                 if (_key === key) {
-                    ballotObj.option[_key] = !value;
+                    ballotObj.options[_key] = !value;
                 } else {
-                    ballotObj.option[_key] = false;
+                    ballotObj.options[_key] = false;
                 }
             }
 
@@ -97,7 +99,7 @@ export default function Vote(props) {
                 if (ballots[i].ballotType === 1) {
                     answersPerBallotIndex.push({
                         ballotID: i,
-                        option: Object.assign({}, answers)
+                        options: Object.assign({}, answers)
                     });
                 } else if (ballots[i].ballotType === 2) {
                     const options = []
@@ -116,6 +118,8 @@ export default function Vote(props) {
             setAnswersPerBallot(answersPerBallotIndex);
         }
     }, [voteDetails]);
+
+
 
     useEffect(() => {
         console.log('answersPerBallot', answersPerBallot);
@@ -158,8 +162,6 @@ export default function Vote(props) {
                 }
                 setVoteDetails(data);
                 console.log('data', data);
-                const color = getElectionStateColor(data.voteState);
-                console.log('color', color);
                 console.log('ballots', data.ballots);
             } catch (error) {
                 console.error(error);
@@ -168,6 +170,7 @@ export default function Vote(props) {
         if (l2Contracts) {
             const factory = l2Contracts.FactoryEvoting;
             getVoteDetails(factory);
+            console.log('artifact', artifacts);
         }
     }, [l2Contracts, artifacts, l2Provider, voteID]);
 
@@ -308,7 +311,7 @@ export default function Vote(props) {
                                                     <Typography variant='h5' gutterBottom marginBottom={1} >{voteDetails.ballots[selectedIndex].name}</Typography>
                                                     <Typography variant='h6' gutterBottom marginBottom={2} >{voteDetails.ballots[selectedIndex].information}</Typography>
                                                     {voteDetails.ballots[selectedIndex].ballotType === 1 &&
-                                                        <BallotType1 answersPerBallot={answersPerBallot[selectedIndex].option} handleCheckboxChangeBallotType1={handleCheckboxChangeBallotType1} restructure={true} selectedBallot={voteDetails.ballots[selectedIndex]} />
+                                                        <BallotType1 answersPerBallot={answersPerBallot[selectedIndex].options} handleCheckboxChangeBallotType1={handleCheckboxChangeBallotType1} restructure={true} selectedBallot={voteDetails.ballots[selectedIndex]} />
                                                     }
                                                     {voteDetails.ballots[selectedIndex].ballotType === 2 &&
                                                         <BallotType2 answersPerBallot={answersPerBallot[selectedIndex].options} handleCheckboxChangeBallotType2={handleCheckboxChangeBallotType2} restructure={true} selectedBallot={voteDetails.ballots[selectedIndex]} />
@@ -334,7 +337,7 @@ export default function Vote(props) {
                                                 }
                                             </Box>
 
-                                            <Box width={1.9 / 2} marginTop={5} border='solid 1px' >
+                                            <Box width={1.9 / 2} marginTop={5} >
                                                 <Button variant='contained' size='large' fullWidth onClick={() => setOverview(true)}
                                                     sx={{
                                                         fontSize: 10,

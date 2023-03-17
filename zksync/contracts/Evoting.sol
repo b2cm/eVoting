@@ -12,7 +12,7 @@ contract Evoting {
     address public admin;
     uint256 public start_time;
     uint256 public end_time;
-    uint256 public createAt;
+    uint256 public createdAt;
     bool public canceled;
     Utils.BallotPaper[] public ballot_papers;
 
@@ -65,7 +65,7 @@ contract Evoting {
         admin = _admin;
         start_time = _start_time;
         end_time = _end_time;
-        createAt = block.timestamp;
+        createdAt = block.timestamp;
         add_ballots(_ballot_papers);
     }
 
@@ -153,7 +153,7 @@ contract Evoting {
          return counts;
     }
 
-    function get_ballot_papers() external view returns(Utils.BallotPaper[] memory) {
+    function get_ballot_papers() public view returns(Utils.BallotPaper[] memory) {
         uint256 length = ballot_papers.length;
         Utils.BallotPaper[] memory _ballotPapers = new Utils.BallotPaper[](length);
         for (uint256 i = 0; i < length; i++) {
@@ -187,5 +187,20 @@ contract Evoting {
 
     function get_ballots_length() external view returns(uint256 _length) {
         _length = ballot_papers.length;
+    }
+
+    function get_details() external view 
+    returns(string memory _name, string memory _description, VotingState _state, 
+    uint256 _start_time, uint256 _end_time, uint256 _createdAt, bytes32 _voteID, Utils.BallotPaper[] memory _ballot_papers) 
+    {
+        _name = name;
+        _description = description;
+        _state = get_state();
+        _start_time = start_time;
+        _end_time = end_time;
+        _createdAt = createdAt;
+        _voteID = voteID;
+        _ballot_papers = get_ballot_papers();
+
     }
 }

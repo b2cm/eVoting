@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 contract Register {
     address[] private eligibleVoters;
     bytes[] private hashedVoterIDs;
-    mapping(bytes => bytes) private lrsPublicKeys; // hashedID => lrsPublicKey
+    string[] private lrs;
+    mapping(bytes => string) private lrsPublicKeys; // hashedID => lrsPublicKey (Linkable Ring Signature pk)
 
     struct SHA512 {
         bytes32 part1;
@@ -19,9 +20,10 @@ contract Register {
 
     }
 
-    function storeHashedIDAndPK(bytes memory _hashedID, bytes memory _publicKey) external {
+    function storeHashedIDAndPK(bytes memory _hashedID, string memory _publicKey) external {
         hashedVoterIDs.push(_hashedID);
         lrsPublicKeys[_hashedID] = _publicKey;
+        lrs.push(_publicKey);
         emit HashedIDStored();
         emit LRSPKStored();
     }
@@ -40,12 +42,19 @@ contract Register {
         return _voterIDs;
     }
 
-    function storeLRSPK (bytes memory _hashedID, bytes memory _publicKey) external {
+    function storeLRSPK (bytes memory _hashedID, string memory _publicKey) external {
         lrsPublicKeys[_hashedID] = _publicKey;
         emit LRSPKStored();
     }
 
-    function getLRSPKs(bytes memory _hashedID) external view returns(bytes memory pk) {
+    function getLRSPKs(bytes memory _hashedID) external view returns(string memory pk) {
         pk = lrsPublicKeys[_hashedID];
+    }
+
+    function getLRSGroup() external view returns(string[] memory _lrs) {
+        _lrs = new string[](lrs.length);
+        for (uint256 i = 0; i < lrs.length; i++) {
+            _lrs[i] = lrs[i];
+        }
     }
 }

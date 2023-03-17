@@ -12,10 +12,12 @@ import { useEth } from '../../../contexts/EthContext';
 import { Contract } from 'zksync-web3';
 import dayjs from 'dayjs';
 import Footer from '../../common/Footer';
-import { VOTING_STATES } from '../../../utils/constantes';
+import { VOTING_STATES, ZERO_ADDRESS } from '../../../utils/constantes';
 import DisplayVote from './DisplayVote';
+import { useLocation } from 'react-router-dom';
 
-export default function LoadVotingsDetails() {
+export default function LoadVotingsDetails(props) {
+    const location = useLocation();
     const [votingDetails, setVotingsDetails] = useState(null);
     const { state, } = useEth();
     //const { votingDetails, dispatchVotingDetails } = useVotingDetails();
@@ -23,6 +25,7 @@ export default function LoadVotingsDetails() {
     const { voteID } = useParams();
     const waitingMessage = 'Daten werden geladen'
 
+    console.log('props', location);
 
 
     useEffect(() => {   
@@ -31,17 +34,21 @@ export default function LoadVotingsDetails() {
                 const zeroAddr = '0x0000000000000000000000000000000000000000'
                 const votingAddr = await factory.get_voting('0x' + voteID);
                 //console.log('address', votingAddr);
-                if (votingAddr !== zeroAddr) {
+                if (votingAddr !== ZERO_ADDRESS) {
                     const EVOTING_ABI = artifacts[2].abi;
                     const contract = new Contract(votingAddr, EVOTING_ABI, l2Provider);
-                    const voteName = await contract.name();
-                    const voteDescription = await contract.description();
-                    const voteState = VOTING_STATES[(await contract.get_state())];
-                    const voteStartTime = (await contract.start_time()).toNumber();
-                    const voteEndTime = (await contract.end_time()).toNumber();
+
+                    let data = await contract.get_details();
+                    console.log('data', data);
+                    const voteName = data._name;
+                    const voteDescription = data._description;
+                    const voteState = VOTING_STATES[(data._state)];
+                    const voteStartTime = (data._start_time).toNumber();
+                    const voteEndTime = (data._end_time).toNumber();
+                    const voteID = data._voteID;
                     const admin = await contract.admin();
                     const _ballots = [];
-                    const ballots = await contract.get_ballot_papers();
+                    const ballots = data._ballot_papers;
                 
                     for (let i = 0; i < ballots.length; i++) {
                         const ballot = {
@@ -55,7 +62,7 @@ export default function LoadVotingsDetails() {
                     }
             
                     const isEditable = voteState === VOTING_STATES[0] ? true : false;
-                    const data = {
+                    data = {
                         isEditable,
                         voteName: voteName,
                         voteDescription: voteDescription,
@@ -71,12 +78,6 @@ export default function LoadVotingsDetails() {
                         contract
                     }
                     setVotingsDetails(data);
-                    /*
-                    dispatchVotingDetails({
-                        type: actions.init,
-                        data
-                    });
-                    */
                 }
             } catch (error) {
                 console.error(error);

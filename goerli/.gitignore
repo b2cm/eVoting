@@ -13,3 +13,7 @@ yarn.lock
 
 artifacts
 cache
+
+# Editor
+.editorconfig
+.gitattributes

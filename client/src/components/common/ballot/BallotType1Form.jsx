@@ -42,13 +42,7 @@ export default function BallotType1Form(props) {
             <TableHead>
                 <TableRow sx={{ borderBottom: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR}} >
                     <TableCell width={10} sx={{ borderRight: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR }}> 
-                        {disabled &&
-                            <Tooltip title='Antwort bearbeiten' style={{color: 'blue',}} >
-                                <IconButton size='large' onClick={handleEditAnswer}>
-                                    <EditIcon sx={{fontSize: 20}}/>
-                                </IconButton>
-                            </Tooltip>
-                        }
+                        
                     </TableCell>
                     <TableCell align='left' >
                     <Input 
@@ -87,3 +81,13 @@ export default function BallotType1Form(props) {
     </TableContainer>
   )
 }
+
+/*
+ {disabled &&
+                            <Tooltip title='Antwort bearbeiten' style={{color: 'blue',}} >
+                                <IconButton size='large' onClick={handleEditAnswer}>
+                                    <EditIcon sx={{fontSize: 20}}/>
+                                </IconButton>
+                            </Tooltip>
+                        }
+ */

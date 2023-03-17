@@ -12,7 +12,7 @@ export default async (hre: HardhatRuntimeEnvironment) => {
     const wallet = new Wallet(MNEMONIC_GOERLI!);
     
     const deployer = new Deployer(hre, wallet);
-    const artifact = await deployer.loadArtifact('FactoryEvoting2');
+    const artifact = await deployer.loadArtifact('FactoryEvoting');
 
     // Deposit some funds to L2 to be able to perform deposits.
     

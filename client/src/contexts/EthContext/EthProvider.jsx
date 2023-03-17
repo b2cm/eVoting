@@ -8,6 +8,7 @@ import { reducer, actions, initialState } from "./state";
 
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const VERIFIER_MEMBERSHIP_ZKP_ADDRESS = '0xBb00F6fB79D4922D95b4ad53a6358f297CC0435E';
 
   const init = useCallback(
     async (artifacts, chainId) => {
@@ -34,18 +35,32 @@ function EthProvider({ children }) {
 
             // Only for when deploying with hardhat
             const VerifierAddr = '0xa7Cf1CA0b79B717C25E3285a4C92190F53E7FCcB' //'0x131f79d89949E9dD77c7a1d856eF455c8F548511' //'0xf000CE7D8AE067Ec85c2dFc88Be09EE237692749' //'0x7601c69C15edA95CC52665F83DbccD591faa8355'//'0x5d9813735cB07f18adE6f148b545e86A8f03A44C'//'0x589CDC4026692F65191b94259c48478a631EC1e7';
+            const createContract = (name, addr, abi) => {
+              try {
+                const contract = new ethers.Contract(addr, abi, web3);
+                l1Contracts = {...l1Contracts, [name]: contract};
+              } catch (error) {
+                console.error(error);
+              }
+            }
             artifacts.forEach(artifact => {
               const { abi, contractName } = artifact;
               let contract;
               if (contractName === 'Verifier') {
+                /*
                 try {
                   contract = new ethers.Contract(VerifierAddr, abi, web3);
                 l1Contracts = {...l1Contracts, [contractName]: contract};
                 } catch (error) {
                   console.log('error', error);
                 }
+                */
+               createContract(contractName, VerifierAddr, abi);
                 
               };
+              if (contractName === 'VerifierMembershipZKP') {
+                createContract(contractName, VERIFIER_MEMBERSHIP_ZKP_ADDRESS, abi);
+              }
             });
   
             dispatch({
@@ -57,8 +72,8 @@ function EthProvider({ children }) {
       const initZKSyncChain = async () => {
         console.log('ZkSync chain');
         let l2Contracts;
-            const FACTORY_ADDRESS = '0xb34B2a89887CdF591Af55A1110a766F222B838d8';
-            const REGISTER_ADDRESS = '0x8b3C5Af9f90734AF6625D7266BDD03E2BD7B659c';
+            const FACTORY_ADDRESS = '0x54C26460cfEf6ed20e5931Ffd19e6E0B889EDa99' //'0xb34B2a89887CdF591Af55A1110a766F222B838d8';
+            const REGISTER_ADDRESS =  '0xD3c666482aA63dFa1ffC776554CA0282521Fb464' //'0x6075fB141a7FAc62e91286F1AA67aC3c4ae4b73f' //'0x8b3C5Af9f90734AF6625D7266BDD03E2BD7B659c';
             const PAYMASTER_ADDRESS = '0xEB7B801A52e9110329229d9785523c3Af7C0e896';
             const l2Provider = new Provider('https://zksync2-testnet.zksync.dev');
             
@@ -124,7 +139,8 @@ function EthProvider({ children }) {
         const artifact2 = require('../../contracts/zksync/artifacts-zk/contracts/FactoryEvoting.sol/FactoryEvoting.json');
         const artifact3 = require('../../contracts/zksync/artifacts-zk/contracts/Evoting.sol/Evoting.json');
         const artifact4 = require('../../contracts/zksync/artifacts-zk/contracts/Register.sol/Register.json');
-        const artifacts = [ artifact1, artifact2, artifact3, artifact4 ];
+        const artifact5 = require('../../contracts/goerli/artifacts/contracts/VerifierMembershipZKP.sol/VerifierMembershipZKP.json');
+        const artifacts = [ artifact1, artifact2, artifact3, artifact4, artifact5 ];
 
         const chainId = window.ethereum.chainId;
         init(artifacts, chainId);
