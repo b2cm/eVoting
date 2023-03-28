@@ -5,13 +5,14 @@ import { RelayProvider} from '@opengsn/provider';
 import { Contract, Provider } from "zksync-web3";
 import EthContext from "./EthContext";
 import { reducer, actions, initialState } from "./state";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const VERIFIER_MEMBERSHIP_ZKP_ADDRESS = '0xBb00F6fB79D4922D95b4ad53a6358f297CC0435E';
 
   const init = useCallback(
-    async (artifacts, chainId) => {
+    async (artifacts) => {
 
       const initGoerliChain = async () => {
         console.log('Goerli chain');
@@ -72,10 +73,12 @@ function EthProvider({ children }) {
       const initZKSyncChain = async () => {
         console.log('ZkSync chain');
         let l2Contracts;
-            const FACTORY_ADDRESS = '0x54C26460cfEf6ed20e5931Ffd19e6E0B889EDa99' //'0xb34B2a89887CdF591Af55A1110a766F222B838d8';
+            const FACTORY_ADDRESS = '0x3516FdFB9997A225901212cF090d339f0804739D' //'0x54C26460cfEf6ed20e5931Ffd19e6E0B889EDa99' //'0xb34B2a89887CdF591Af55A1110a766F222B838d8';
             const REGISTER_ADDRESS =  '0xD3c666482aA63dFa1ffC776554CA0282521Fb464' //'0x6075fB141a7FAc62e91286F1AA67aC3c4ae4b73f' //'0x8b3C5Af9f90734AF6625D7266BDD03E2BD7B659c';
             const PAYMASTER_ADDRESS = '0xEB7B801A52e9110329229d9785523c3Af7C0e896';
             const l2Provider = new Provider('https://zksync2-testnet.zksync.dev');
+            l2Provider.pollingInterval = 10000000;
+            console.log('l2 provider', l2Provider);
             
             artifacts.forEach(artifact => {
               const { contractName } = artifact;
@@ -97,11 +100,13 @@ function EthProvider({ children }) {
             });
       }
 
-
+/*
       window.onload = (event) => {
-        console.log('loading!!!');
+        console.log('loading!!!!');
         const chainId = window.ethereum.chainId;
-        console.log('chainId', chainId);
+        console.log(`chainId ${chainId}`);
+        window.alert(`chainId ${window.ethereum.chainId}`);
+        //window.alert('artifacts', artifacts);
       
         if (artifacts) {
           try {
@@ -112,13 +117,17 @@ function EthProvider({ children }) {
             }
           } catch (error) {
             console.log('Error', error);
+            window.alert('error', error);
           }
         }
       }
-
-      if (chainId) {
-        console.log('chainId inside', chainId);
+*/
+      const provider = await detectEthereumProvider()
+      if (provider) {
         try {
+          const chainId = await provider.request({
+            method: 'eth_chainId'
+          });
           if (chainId === '0x118') { // zksync network
             initZKSyncChain()
           } else if(chainId === '0x5') { // Goerli network
@@ -133,6 +142,7 @@ function EthProvider({ children }) {
 
     
   useEffect(() => {
+
     const tryInit = async () => {
       try { 
         const artifact1 = require("../../contracts/goerli/artifacts/contracts/Verifier.sol/Verifier.json");
@@ -141,13 +151,12 @@ function EthProvider({ children }) {
         const artifact4 = require('../../contracts/zksync/artifacts-zk/contracts/Register.sol/Register.json');
         const artifact5 = require('../../contracts/goerli/artifacts/contracts/VerifierMembershipZKP.sol/VerifierMembershipZKP.json');
         const artifacts = [ artifact1, artifact2, artifact3, artifact4, artifact5 ];
-
-        const chainId = window.ethereum.chainId;
-        init(artifacts, chainId);
+        init(artifacts);
       } catch (err) {
         console.error(err);
       }
     };
+    
   
     tryInit();
   }, [init]);
