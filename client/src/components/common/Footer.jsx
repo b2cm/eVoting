@@ -1,4 +1,5 @@
 import {
+  Paper,
   Box,
   Button,
 } from '@mui/material';
@@ -15,13 +16,20 @@ export default function Footer(props) {
   }
   
   return (
-    <Box
+    <Paper
+    component='footer'
+    square variant="outlined"
         sx={{
+          marginTop: 'calc(10% + 60px)!important',
+          position: 'fixed',
+          bottom: 0,
+          width: '100%',
+          height: '10vh',
           display: 'flex',
           justifyContent: 'flex-end',
           alignItems: 'center',
           backgroundColor: '#F7F7F7',
-          height: '10vh',
+          //border: '1px solid black'
         }}
       >
         {isActive && 
@@ -51,7 +59,7 @@ export default function Footer(props) {
             </Button>
           </>
         }
-      </Box>
+      </Paper>
   
   );
 }

@@ -32,12 +32,7 @@ export default function Header() {
 
 
   return (
-    <Box  sx={{ 
-        //height: '5vh',
-        display: 'flex',
-        flexGrow: 1,
-        border: 'solid 1px'
-        }}>
+    <>
       <AppBar 
         position="fixed" 
         sx={{ 
@@ -46,9 +41,14 @@ export default function Header() {
           //border: 'solid 10px black'
         }}
       >
-        <Toolbar>
+        <Toolbar
+           sx={{ 
+              display: {xs: 'flex', sm: 'flex', md: 'flex', lg: 'flex', xl: 'flex'},
+             // border: 'solid 1px red'
+            }}
+        >
       
-            <Box width={200}>
+            <Box width={{xs: 35, sm: 40, md:200, lg: 200, xl:200}}>
                {showMenuButton &&
                 <>
                   {!isDrawerOpen && 
@@ -58,7 +58,7 @@ export default function Header() {
                       color="inherit"
                       aria-label="menu"
                       sx={{
-                          mr: 2,
+                          //mr: 2,
                           //border: 'solid 1px blue'
                       }}
                       onClick={() => setDrawer(true)}
@@ -75,7 +75,7 @@ export default function Header() {
                       color="inherit"
                       aria-label="menu"
                       sx={{
-                          mr: 2,
+                          //mr: 2,
                       }}
                       onClick={() => setDrawer(false)}
                   >
@@ -93,6 +93,7 @@ export default function Header() {
               variant="h4" 
               component="div" 
               sx={{
+                  //width: 200,
                   flexGrow: 1,
                   display:'flex',
                   justifyContent: 'center',
@@ -105,13 +106,19 @@ export default function Header() {
               </Link>
           </Typography>  
 
-          <Box width={200}>
-          <WalletButton />
+          <Box sx={{ 
+              display: {xs: 'none', sm: 'none', md: 'block', lg: 'block', xl: 'block'},
+             // border: 'solid 1px red'
+            }}
+          >
+          <WalletButton width={200} />
           </Box> 
         </Toolbar>
 
+
+       
     </AppBar>
       {isDrawerOpen && <Sidebar /> }
-    </Box>
+    </>
   );
 }

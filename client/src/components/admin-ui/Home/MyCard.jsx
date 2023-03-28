@@ -13,38 +13,41 @@ import { VOTING_STATES,
 import { getElectionStateColor } from '../../../utils/utils';
 
 export default function MyCard(props) {
-    const { voteName, voteDescription, state, createAt, voteStartTime, voteEndTime } = props;
+    const { voteName, voteDescription, state, createdAt, voteStartTime, voteEndTime } = props;
     const voteStartLocalDateTime = new Date(voteStartTime*1000).toLocaleString('de-DE', DATE_FORMAT_OPTIONS);
     const voteEndLocalDateTime = new Date(voteEndTime*1000).toLocaleString('de-DE', DATE_FORMAT_OPTIONS);
-    const createAtLocalDateTime = new Date(createAt*1000).toLocaleString('de-DE', DATE_FORMAT_OPTIONS);
+    const createAtLocalDateTime = new Date(createdAt*1000).toLocaleString('de-DE', DATE_FORMAT_OPTIONS);
    
 
   return (
     <Card sx={{
         //width: 350, 
         //height: 230,
-        marginBottom: 2 }}  >
+        //marginBottom: 1 
+        }}  >
         <CardActionArea sx={{  }}>
             <CardContent>
-                <Typography gutterBottom fontSize={17} component='div' >{voteName}</Typography>
-                <Typography gutterBottom variant='body3' component='div' sx={{height: 40, }}>{voteDescription}</Typography>
+                <Typography gutterBottom variant='body4' fontSize={16} fontWeight='bold' component='div' >{voteName}</Typography>
+                <Typography gutterBottom variant='body3' component='div' sx={{marginBottom: 2, }}>{voteDescription}</Typography>
                 
-                <Input 
-                    disabled
-                    disableUnderline
-                    size='small'
-                    style={{ 
+                <Typography 
+                    sx={{ 
                         width: 200,
                         border:'solid', 
                         borderWidth: '2px',
+                        color: getElectionStateColor(state),
                         borderColor: getElectionStateColor(state),
                         borderRadius: '0.30rem', 
                         marginTop: '0rem',
-                        marginBottom: '1.5rem'
+                        marginBottom: '1.5rem',
+                        fontWeight: 'bold',
+                        fontSize: '1em',
+                        textAlign: 'center'
                     }}
-                    inputProps={{ style:{ WebkitTextFillColor: getElectionStateColor(state), fontSize: '1.2em', fontWeight: 600, textAlign: 'center'}}}
-                    value={state}
-                />
+                >
+                    {state}
+                </Typography>
+
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -53,13 +56,13 @@ export default function MyCard(props) {
                     <Box sx={{
                         marginRight: 2,   
                     }}>
-                        <Typography gutterBottom fontSize={12} fontWeight={600} component='p' >
+                        <Typography gutterBottom fontSize={12} fontWeight='bold' component='p' >
                             Erstellt: 
                         </Typography>
-                        <Typography gutterBottom fontSize={12} fontWeight={600} component='p' >
+                        <Typography gutterBottom fontSize={12} fontWeight='bold' component='p' >
                             Start:
                         </Typography>
-                        <Typography fontSize={12} fontWeight={600} component='p' > 
+                        <Typography fontSize={12} fontWeight='bold' component='p' > 
                             Ende:
                         </Typography>
                     </Box>

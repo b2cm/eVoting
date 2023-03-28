@@ -22,6 +22,7 @@ export default function WalletButton(props) {
     const anchorRef = useRef(null);
     const { state, dispatch } = useEth();
     const [anchor, setAnchor] = useState(null);
+    const { width } = props;
 
     
     const isOpen = Boolean(anchor);
@@ -124,7 +125,7 @@ export default function WalletButton(props) {
         ref={anchorRef}
         onClick={handleToggle}
         startIcon={<Jazzicon diameter={25} seed={jsNumberForAddress(accounts[0])} />}
-        endIcon={!open ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+        //endIcon={!open ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
         variant="outlined" 
         size='small' 
         id="composition-button"
@@ -134,7 +135,7 @@ export default function WalletButton(props) {
         color="inherit"
         sx={{ 
           fontSize:12, 
-          width: 200,
+          width
         }}
       >
        {shortAddress(accounts[0])}
@@ -149,14 +150,21 @@ export default function WalletButton(props) {
         size='small'
         sx={{
             fontSize:12,
-            width: 200,
+            width
             //border: 'solid 1px blue'
         }}>
         Wallet Verbinden
       </Button>
       }
        
-        <Popper
+       
+      
+    </Box>
+  );
+}
+
+/*
+ <Popper
           open={open}
           anchorEl={anchorRef.current}
           role={undefined}
@@ -205,7 +213,4 @@ export default function WalletButton(props) {
             </Grow>
           )}
         </Popper>
-      
-    </Box>
-  );
-}
+*/

@@ -21,6 +21,7 @@ import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import BallotIcon from '@mui/icons-material/Ballot';
 import Toolbar from '@mui/material/Toolbar';
 import { SUCCESS_COLOR, TEXT_COLOR, SUCCESS_COLOR_HOVER } from '../../utils/colors';
+import WalletButton from './WalletButton';
 
 export default function Sidebar() {
     const { state: { isDrawerOpen, }, dispatch} = useEth();
@@ -76,6 +77,12 @@ export default function Sidebar() {
             </Button>
           <Divider />
           <List>
+            <Box sx={{ 
+              display: {xs: 'block', sm: 'block', md: 'none', lg: 'none', xl: 'none'},
+             // border: 'solid 1px red'
+            }}>
+              <WalletButton width={250}/>
+            </Box>
             {['Meine Wahlen', 'Registrierung Einstellen', 'Profil', 'Abmelden'].map((text, index) => (
               <ListItem key={index} disablePadding >
                 <ListItemButton >
@@ -91,6 +98,7 @@ export default function Sidebar() {
                 </ListItemButton>
               </ListItem>
             ))}
+            
           </List>
         </Box>
       );
