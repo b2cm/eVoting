@@ -4,6 +4,7 @@ import {
     VOTING_STATES, 
     ZERO_ADDRESS,
  } from "./constantes";
+import detectEthereumProvider from '@metamask/detect-provider';
 
 import { ELECTION_CANCELED_COLOR,
     ELECTION_IN_PREPARATION_COLOR,
@@ -62,6 +63,7 @@ export const switchNetwork = async (chain) => {
     let blockExplorer;
     const goerliChainId = '0x5';
     const zksyncChainID = '0x118';
+    const hardhatId = '0x7a69';
 
     if (chain === 'goerli') {
         chainId = goerliChainId;
@@ -75,46 +77,56 @@ export const switchNetwork = async (chain) => {
         rpcUrl = 'https://zksync2-testnet.zksync.dev';
         blockExplorer = 'https://zksync2-testnet.zkscan.io/';
 
+    } else if (chain === 'hardhat') {
+        chainId = hardhatId;
+        chainName = 'Hardhat';
+        rpcUrl = 'http://127.0.0.1:8545/';
+        blockExplorer = '';
     }
     // Check if MetaMask is installed
    // MetaMask injects the global API into window.ethereum
-   if (window.ethereum) {
+   const provider = await detectEthereumProvider();
+   if (provider) {
        try {
+        //alert(`eth:${chainId}`);
        // check if the chain to connect to is installed
-       await window.ethereum.request({
+       await provider.request({
            method: 'wallet_switchEthereumChain',
            params: [{ chainId: chainId }], // chainId must be in hexadecimal numbers
        });
        } catch (error) {
-       // This error code indicates that the chain has not been added to MetaMask
-       // if it is not, then install it into the user MetaMask
-       if (error.code === 4902) {
-           try {
-           await window.ethereum.request({
-               method: 'wallet_addEthereumChain',
-               params: [
-               {
-                   chainId: chainId,
-                   chainName: chainName,
-                   nativeCurrency: {
-                       name: 'Ether',
-                       symbol: 'ETH',
-                       decimals: 18
-                   },
-                   rpcUrls: [rpcUrl],
-                   blockExplorerUrls: [blockExplorer]
-               },
-               ],
-           });
-           } catch (addError) {
-           console.error(addError);
-           }
-       }
-       console.error(error);
+        // This error code indicates that the chain has not been added to MetaMask
+        // if it is not, then install it into the user MetaMask
+        if (error.code === 4902 || error.code === -32603) { // error code = -32603 => error code on metamask mobile browser
+            try {
+            await provider.request({
+                method: 'wallet_addEthereumChain',
+                params: [
+                {
+                    chainId: chainId,
+                    chainName: chainName,
+                    nativeCurrency: {
+                        name: 'Ether',
+                        symbol: 'ETH',
+                        decimals: 18
+                    },
+                    rpcUrls: [rpcUrl],
+                    blockExplorerUrls: [blockExplorer]
+                },
+                ],
+            });
+            } catch (addError) {
+                //alert(addError);
+                console.error(addError);
+            }
+        } else {
+            //alert('something going wrong here.');
+            console.error(error);
+        }
        }
    } else {
        // if no window.ethereum then MetaMask is not installed
-       alert('MetaMask is not installed. Please consider installing it: https://metamask.io/download.html');
+       //alert('MetaMask is not installed. Please consider installing it: https://metamask.io/download.html');
    } 
 }
 

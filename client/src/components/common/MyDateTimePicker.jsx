@@ -10,6 +10,7 @@ import {
 import { 
     grey,
 } from '@mui/material/colors';
+import { TEXT_COLOR } from '../../utils/colors';
 
 export default function MyDateTimePicker(props) {
     const { isEditable, value, label, setValue } = props;
@@ -32,29 +33,31 @@ export default function MyDateTimePicker(props) {
                 disableMaskedInput
                 label={label}
                 value={value}
-                disablePast
+                disablePast={isEditable}
                 onChange={newValue => {
                     handleChangeDateTime(newValue);
                 }}
                 renderInput={props => <TextField required 
                     size='small' 
+                    variant='outlined'
+                    inputProps={{ style: { WebkitTextFillColor: TEXT_COLOR, } }}
                     {...props}
-                    //inputProps={{ style: { WebkitTextFillColor: textColor, } }}
+                   // 
                 sx={{
                     width:1/2, 
-                    borderColor: borderColor,
+                    //borderColor: borderColor,
                     backgroundColor: inputBackgroundColor,
                     ":hover": {
                         backgroundColor: inputBackgroundColorHover,
                     }, 
                     '& .MuiOutlinedInput-root': {
                         '& fieldset': {
-                            height: 35,
+                            //height: 35,
                             border: 'solid 1px',
-                            borderLeft: 'none',
+                            //borderLeft: 'none',
                             borderRadius:0,
-                            fontSize:30,
-                            borderColor: borderColor
+                            //fontSize:30,
+                            //borderColor: borderColor
                             //backgroundColor: inputBackgroundColorHover
                         },
                         '&:hover fieldset': {
@@ -65,7 +68,7 @@ export default function MyDateTimePicker(props) {
                     },
                     "& .MuiOutlinedInput-input": {
                         //color: "red",
-                        fontSize: 12
+                        //fontSize: 12
                     }
                }} 
              />}

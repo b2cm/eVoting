@@ -37,7 +37,7 @@ export default function HomeHeader() {
                         backgroundColor: teal[700]
                     }
                 }}>
-                <Link to={'/vote/create'} 
+                <Link to={'/admin/vote/create'} 
                     style={{textDecoration: 'none', color: 'white'}}>
                     Neue Wahl Erstellen
                  </Link>

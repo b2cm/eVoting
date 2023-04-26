@@ -5,6 +5,7 @@ contract Register {
     address[] private eligibleVoters;
     bytes[] private hashedVoterIDs;
     string[] private lrs;
+    string[] private hashedIDs;
     mapping(bytes => string) private lrsPublicKeys; // hashedID => lrsPublicKey (Linkable Ring Signature pk)
 
     struct SHA512 {
@@ -18,6 +19,19 @@ contract Register {
 
     constructor() {
 
+    }
+
+    function storeHashedID(string memory _hashedID) external {
+        hashedIDs.push(_hashedID);
+        emit HashedIDStored();
+    }
+
+    function getHashedIDs() external view returns (string[] memory _hashedIDs) {
+        uint256 length = hashedIDs.length;
+        _hashedIDs = new string[](length);
+        for (uint256 i = 0; i < length; i++) {
+            _hashedIDs[i] = hashedIDs[i];
+        }
     }
 
     function storeHashedIDAndPK(bytes memory _hashedID, string memory _publicKey) external {

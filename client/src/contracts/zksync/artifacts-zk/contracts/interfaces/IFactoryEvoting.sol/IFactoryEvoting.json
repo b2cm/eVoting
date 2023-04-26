@@ -130,6 +130,11 @@
               "internalType": "string[]",
               "name": "candidates",
               "type": "string[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxSelectableAnswer",
+              "type": "uint256"
             }
           ],
           "internalType": "struct Utils.BallotPaper[]",

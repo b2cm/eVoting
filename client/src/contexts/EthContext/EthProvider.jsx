@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback, useEffect } from "react";
+import React, { useReducer, useCallback, useEffect, useRef } from "react";
 import { Box,} from '@mui/material';
 import * as  ethers from 'ethers';
 import { RelayProvider} from '@opengsn/provider';
@@ -6,9 +6,13 @@ import { Contract, Provider } from "zksync-web3";
 import EthContext from "./EthContext";
 import { reducer, actions, initialState } from "./state";
 import detectEthereumProvider from "@metamask/detect-provider";
+import MetaMaskOnboarding from '@metamask/onboarding';
 
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const provider = useRef();
+  const onboarding = useRef();
+
   const VERIFIER_MEMBERSHIP_ZKP_ADDRESS = '0xBb00F6fB79D4922D95b4ad53a6358f297CC0435E';
 
   const init = useCallback(
@@ -17,7 +21,7 @@ function EthProvider({ children }) {
       const initGoerliChain = async () => {
         console.log('Goerli chain');
         let l1Contracts = {};
-            const paymasterAddress = '0x7C10d29cfc9951958d8ffF6d9D9c9697A146bf70';//'0x7e4123407707516bD7a3aFa4E3ebCeacfcbBb107';
+            const paymasterAddress = '0x7e4123407707516bD7a3aFa4E3ebCeacfcbBb107'//'0x7C10d29cfc9951958d8ffF6d9D9c9697A146bf70';//'0x7e4123407707516bD7a3aFa4E3ebCeacfcbBb107';
             const config = {
               paymasterAddress,
               loggerConfiguration: {
@@ -59,14 +63,11 @@ function EthProvider({ children }) {
                createContract(contractName, VerifierAddr, abi);
                 
               };
-              if (contractName === 'VerifierMembershipZKP') {
-                createContract(contractName, VERIFIER_MEMBERSHIP_ZKP_ADDRESS, abi);
-              }
             });
   
             dispatch({
               type: actions.init,
-              data: { artifacts, web3, l1Contracts, provider, signer, chainId: '0x5' }
+              data: { artifacts, web3, ethProvider: provider.current, l1Contracts, provider, signer, chainId: '0x5' }
             });
       }
 
@@ -74,73 +75,133 @@ function EthProvider({ children }) {
         console.log('ZkSync chain');
         let l2Contracts;
             const FACTORY_ADDRESS = '0x3516FdFB9997A225901212cF090d339f0804739D' //'0x54C26460cfEf6ed20e5931Ffd19e6E0B889EDa99' //'0xb34B2a89887CdF591Af55A1110a766F222B838d8';
-            const REGISTER_ADDRESS =  '0xD3c666482aA63dFa1ffC776554CA0282521Fb464' //'0x6075fB141a7FAc62e91286F1AA67aC3c4ae4b73f' //'0x8b3C5Af9f90734AF6625D7266BDD03E2BD7B659c';
+            const REGISTER_ADDRESS =  '0x8CA5cBAB6859D77514F4BA22d54201619757D7c8' //'0xD3c666482aA63dFa1ffC776554CA0282521Fb464' //'0x6075fB141a7FAc62e91286F1AA67aC3c4ae4b73f' //'0x8b3C5Af9f90734AF6625D7266BDD03E2BD7B659c';
             const PAYMASTER_ADDRESS = '0xEB7B801A52e9110329229d9785523c3Af7C0e896';
+            const VERIFIER_MEMBERSHIP_ZKP_ADDRESS = '0x9841A1904A8Fd56Dd9124eF46aEA731fa82c4711';
             const l2Provider = new Provider('https://zksync2-testnet.zksync.dev');
             l2Provider.pollingInterval = 10000000;
             console.log('l2 provider', l2Provider);
             
             artifacts.forEach(artifact => {
-              const { contractName } = artifact;
+              const { contractName, abi } = artifact;
               if (contractName === 'FactoryEvoting') {
-                const abi = artifact.abi;
+                //const abi = artifact.abi;
                 const contract = new Contract(FACTORY_ADDRESS, abi, l2Provider);
                 l2Contracts = {...l2Contracts, [contractName]: contract};
               }
               if (contractName === 'Register') {
-                const abi = artifact.abi;
+                //const abi = artifact.abi;
                 const contract = new Contract(REGISTER_ADDRESS, abi, l2Provider);
+                l2Contracts = {...l2Contracts, [contractName]: contract};
+              }
+              if (contractName === 'VerifierMembershipZKP') {
+                //const abi = artifact.abi;
+                const contract = new Contract(VERIFIER_MEMBERSHIP_ZKP_ADDRESS, abi, l2Provider);
                 l2Contracts = {...l2Contracts, [contractName]: contract};
               }
             });
             //console.log('l2Contracts', l2Contracts);
             dispatch({
               type: actions.init,
-              data: {  artifacts, l2Contracts, l2Provider, chainId: '0x118', paymaster: PAYMASTER_ADDRESS }
+              data: {  artifacts, l2Contracts, l2Provider, ethProvider: provider.current, chainId: '0x118', paymaster: PAYMASTER_ADDRESS }
             });
       }
 
-/*
-      window.onload = (event) => {
-        console.log('loading!!!!');
-        const chainId = window.ethereum.chainId;
-        console.log(`chainId ${chainId}`);
-        window.alert(`chainId ${window.ethereum.chainId}`);
-        //window.alert('artifacts', artifacts);
-      
-        if (artifacts) {
-          try {
-            if (chainId === '0x118') { // zksync network
-              initZKSyncChain()
-            } else if(chainId === '0x5') { // Goerli network
-              initGoerliChain()
+      const initHardhat = async () => {
+        console.log('Hardhat chain');
+        const web3provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545/");
+
+        let l1Contracts = {};
+            const paymasterAddress = '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707';
+            const config = {
+              paymasterAddress,
+              loggerConfiguration: {
+                logLevel: 'debug',
+                //loggerUrl: 'logger.opengsn.org'
+              },
+              //performDryRunViewRelayCall: false,
+            };
+            const provider = await RelayProvider.newProvider({
+              provider:  window.ethereum,
+              config
+            }).init();
+  
+            const web3 = new ethers.providers.Web3Provider(provider);
+            const signer = web3.getSigner();
+
+            // Only for when deploying with hardhat
+            const VerifierAddr = '0x3Aa5ebB10DC797CAC828524e59A333d0A371443c';
+            const createContract = (name, addr, abi) => {
+              try {
+                const contract = new ethers.Contract(addr, abi, web3);
+                l1Contracts = {...l1Contracts, [name]: contract};
+              } catch (error) {
+                console.error(error);
+              }
             }
-          } catch (error) {
-            console.log('Error', error);
-            window.alert('error', error);
-          }
-        }
+            artifacts.forEach(artifact => {
+              const { abi, contractName } = artifact;
+              if (contractName === 'Verifier') {
+               createContract(contractName, VerifierAddr, abi); 
+              };
+            });
+  
+            dispatch({
+              type: actions.init,
+              data: { artifacts, web3, ethProvider: provider.current, l1Contracts, provider, signer, chainId: '0x5' }
+            });
       }
-*/
-      const provider = await detectEthereumProvider()
-      if (provider) {
-        try {
-          const chainId = await provider.request({
+
+      try {
+        provider.current = await detectEthereumProvider();
+        if (provider.current) {
+          console.log('provider', provider.current)
+          const chainId = await provider.current.request({
             method: 'eth_chainId'
           });
+          
           if (chainId === '0x118') { // zksync network
             initZKSyncChain()
-          } else if(chainId === '0x5') { // Goerli network
+          }
+          if(chainId === '0x5') { // Goerli network
             initGoerliChain()
           }
-        } catch (error) {
-          console.log('Error', error);
+          if (chainId ==='0x7a69') { // hardhat
+            initHardhat();
+          }
         }
+      } catch (error) {
+        console.log('Error', error);
       }
       
     }, []);
+/*
+    useEffect(() => {
+      const browser = MetaMaskOnboarding._detectBrowser();
+      window.alert(`browser:${browser}`);
+      const getProvider = async () => { 
+        provider.current = await detectEthereumProvider();
+      }
+      if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+        getProvider(); 
+        if (provider.current && onboarding.current) {
+          console.log('current provider', provider.current)
+          onboarding.current.stopOnboarding();
+        }
+        dispatch({
+          type: actions.init,
+          data: {  ethProvider: provider.current }
+        });
+      } else {
+        if (!onboarding.current && browser !== null) {
+          onboarding.current = new MetaMaskOnboarding();
+          onboarding.current.startOnboarding();
+        }
+        
+      }
+    }, []);
 
-    
+   */ 
   useEffect(() => {
 
     const tryInit = async () => {
@@ -152,6 +213,8 @@ function EthProvider({ children }) {
         const artifact5 = require('../../contracts/goerli/artifacts/contracts/VerifierMembershipZKP.sol/VerifierMembershipZKP.json');
         const artifacts = [ artifact1, artifact2, artifact3, artifact4, artifact5 ];
         init(artifacts);
+       // const browsers = MetaMaskOnboarding._detectBrowser();
+       // window.alert(`browser:${browsers}`);
       } catch (err) {
         console.error(err);
       }
@@ -173,20 +236,24 @@ function EthProvider({ children }) {
         })
       } else if (typeof(e) === 'string') { // chain changed
         //console.log('state', state)
-        init(state.artifacts, e);
+        //window.alert(`new chain id:${e}`);
+        init(state.artifacts);
       }
       
     };
 
-    events.forEach(e => window.ethereum.on(e, handleChange));
-    return () => {
-      events.forEach(e => window.ethereum.removeListener(e, handleChange));
-    };
-  }, [init, state]);
+    if (provider.current) {
+      events.forEach(e => provider.current.on(e, handleChange));
+      return () => {
+        events.forEach(e => provider.current.removeListener(e, handleChange));
+      };
+    }
+    
+  }, [init, state,]);
 
 
   return (
-    <Box sx={{ height: '100vh'}}>
+    <Box>
        <EthContext.Provider value={{
       state,
       dispatch,

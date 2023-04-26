@@ -19,7 +19,12 @@ import { Link } from 'react-router-dom';
 export default function Header() {
     const { state: {isDrawerOpen, }, dispatch } = useEth();
     const location  = useLocation();
-    const showMenuButton = location.pathname === '/registration' || location.pathname.startsWith('/vote/login/') || location.pathname.startsWith('/vote/voting-cockpit/') ? false : true;
+    const showMenuButton = location.pathname === '/registration' ||
+                          location.pathname.startsWith('/vote/login/') ||
+                          location.pathname.startsWith('/vote/voting-cockpit/') ||
+                          location.pathname.startsWith('/admin/login') ||
+                          location.pathname === ('/')
+                          ? false : true;
 
     const setDrawer = (val) => {
       dispatch({
@@ -101,7 +106,7 @@ export default function Header() {
                   //border: 'solid 1px blue', 
               }}
             >
-              <Link to={'/'} style={{textDecoration: 'none', color: 'white'}}>
+              <Link to={'/admin/home'} style={{textDecoration: 'none', color: 'white'}}>
                 E-VOTING
               </Link>
           </Typography>  

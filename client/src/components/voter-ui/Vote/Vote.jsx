@@ -31,8 +31,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchField from '../../common/SearchField';
 import Footer from '../../common/Footer';
 import ControlOverview from './ControlOverview';
-import { checkEvery, computeZKPInputs, verifyMembershipZkp } from '../../../cryptography/pallier';
-import bigInt from 'big-integer';
+
 
 export default function Vote(props) {
     const [voteDetails, setVoteDetails] = useState(null);
@@ -43,6 +42,7 @@ export default function Vote(props) {
     const { l2Contracts, artifacts, l2Provider } = state;
     const { isAuthenticated } = props;
     const { voteID } = useParams();
+
 
     const nextBallot = () => {
         setSelectedIndex(selectedIndex => selectedIndex + 1);
@@ -146,7 +146,8 @@ export default function Vote(props) {
                         name: ballots[i].name,
                         information: ballots[i].information,
                         title: ballots[i].title,
-                        candidates: ballots[i].candidates
+                        candidates: ballots[i].candidates,
+                        maxSelectableAnswer: ballots[i].maxSelectableAnswer.toNumber(),
                     }
                     _ballots.push(ballot);
                 }

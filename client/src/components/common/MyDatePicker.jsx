@@ -8,10 +8,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function MyDatePicker(props) {
-    const { value, setValue, label, handleSearchVotesByDate } = props;
+    const { value, label, handleSearchVotesByDate } = props;
 
     const handleChangeValue = (value) => {
-      //setValue(value);
       handleSearchVotesByDate(value, label);
       
     }
@@ -21,7 +20,7 @@ export default function MyDatePicker(props) {
             label={label}
             value={value}
             onChange={handleChangeValue}
-            renderInput={(params) => <TextField {...params} size='small' />}
+            renderInput={(params) => <TextField {...params} size='small' sx={{fontSize: 25}} />}
         />
     </LocalizationProvider>
   )

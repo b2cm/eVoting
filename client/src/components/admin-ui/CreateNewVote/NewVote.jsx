@@ -34,6 +34,7 @@ export default function NewVote(props) {
         information: '', 
         title:'',
         candidates: [],
+        maxSelectableAnswer: 1
     };
     const [voteName, setVoteName] = useState('');
     const [voteDescription, setVoteDescription] = useState('');

@@ -69,7 +69,7 @@ export default function Sidebar() {
                     }
                 }}
             >
-              <Link to={'/vote/create'} 
+              <Link to={'/admin/vote/create'} 
                 state={{prevRoute}}
                 style={{textDecoration: 'none', color: 'white'}}>
                 Neue Wahl Erstellen

@@ -44,6 +44,29 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "_bytecodeHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_l1PreimageHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_l1PreimageBytesLen",
+          "type": "uint256"
+        }
+      ],
+      "name": "markBytecodeAsPublished",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "bool",
           "name": "_shouldSendToL1",
           "type": "bool"

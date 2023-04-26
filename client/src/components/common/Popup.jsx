@@ -86,12 +86,7 @@ export default function Popup(props) {
                 <Typography component='p' variant='h6' >
                     Wähler-ID: {voterID}
                 </Typography>
-                <Typography component='p' variant='h6' >
-                    PubKey: {keyPair.publicKey}
-                </Typography>
-                <Typography component='p' variant='h6' >
-                    PrivKey: {keyPair.privateKey}
-                </Typography>
+                
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'end'
@@ -110,3 +105,12 @@ export default function Popup(props) {
   </div>
   )
 }
+
+/*
+<Typography component='p' variant='h6' >
+                    PubKey: {keyPair.publicKey}
+                </Typography>
+                <Typography component='p' variant='h6' >
+                    PrivKey: {keyPair.privateKey}
+                </Typography>
+*/

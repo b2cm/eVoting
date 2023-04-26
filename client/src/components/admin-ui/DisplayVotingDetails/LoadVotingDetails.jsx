@@ -31,7 +31,6 @@ export default function LoadVotingsDetails(props) {
     useEffect(() => {   
         const getContractData = async factory => {
             try {
-                const zeroAddr = '0x0000000000000000000000000000000000000000'
                 const votingAddr = await factory.get_voting('0x' + voteID);
                 //console.log('address', votingAddr);
                 if (votingAddr !== ZERO_ADDRESS) {
@@ -56,7 +55,8 @@ export default function LoadVotingsDetails(props) {
                             name: ballots[i].name,
                             information: ballots[i].information,
                             title: ballots[i].title,
-                            candidates: ballots[i].candidates
+                            candidates: ballots[i].candidates,
+                            maxSelectableAnswer: ballots[i].maxSelectableAnswer
                         }
                         _ballots.push(ballot);
                     }
@@ -68,7 +68,7 @@ export default function LoadVotingsDetails(props) {
                         voteDescription: voteDescription,
                         voteStart: dayjs(voteStartTime * 1000),
                         voteEnd: dayjs(voteEndTime * 1000),
-                        voteID: voteID,
+                        voteID: voteID.slice(2),
                         voteState: voteState,
                         admin: admin,
                         ballots: _ballots,

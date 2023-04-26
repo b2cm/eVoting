@@ -57,8 +57,8 @@ export default function BallotPanelActions(props) {
     const Ballot = (ballotType, name, information, title, candidates) => {
         candidates.push('');
         return ballotType === 1 ? 
-            {ballotType, name, information, title, candidates: Array(0)} : 
-            {ballotType, name, information, title, candidates};
+            {ballotType, name, information, title, candidates: Array(0), maxSelectableAnswer: 1} : 
+            {ballotType, name, information, title, candidates, maxSelectableAnswer: 1};
     }
 
 

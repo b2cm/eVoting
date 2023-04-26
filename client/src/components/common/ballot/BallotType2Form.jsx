@@ -1,4 +1,5 @@
 import React, {
+    useState,
     Fragment,
 } from 'react';
 import {
@@ -15,6 +16,12 @@ import {
     Box,
     FormGroup,
     FormControlLabel,
+    Popper,
+    Paper, 
+    MenuItem,
+    MenuList,
+    ClickAwayListener,
+    TextField,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -42,13 +49,39 @@ export default function BallotType2Form(props) {
         setSelectedCandidate,
         candidates, 
         title,
+        maxSelectableAnswer,
+        handleChangeMaxSelectableAnswer,
         handleAddCandidate, 
         handleDeleteCandidate, 
         handleRenameCandidate, 
         handleChangeTitle 
     } = props;
 
+    const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+      setOpen((previousOpen) => !previousOpen);
+    };
+
+    const handleClose = (event) => {
+        if (anchorEl.current && anchorEl.current.contains(event.target)) {
+          return;
+        }
+    
+        setOpen(false);
+    };
+
+    const handleNewLine = (event) => {
+        handleClose(event);
+        handleAddCandidate();
+    }
+
+
   return (
+    <>
     <TableContainer 
             sx={{
                 width: 1, 
@@ -73,7 +106,8 @@ export default function BallotType2Form(props) {
                                 borderWidth: '1px', 
                                 borderColor: INPUT_LABEL_BACKGROUND_COLOR,
                                 }} >
-                                {isEditable && 
+                                {isEditable &&
+                                <>
                                     <Tooltip title='Kandidaten hinzufügen'>
                                         <span>
                                             <IconButton disabled={!isEditable} size='small' onClick={handleAddCandidate} >
@@ -81,17 +115,28 @@ export default function BallotType2Form(props) {
                                             </IconButton>
                                         </span>
                                     </Tooltip>
+                                    
+                                </> 
                                 }
                             </TableCell>
 
                             <TableCell align='left' >
-                                <Input 
+                                <TextField 
+                                    variant='standard'
+                                    InputProps={{
+                                        disableUnderline: true,
+                                        style: {
+                                            color: TEXT_COLOR,
+                                            fontSize: 12
+                                        }
+                                    }}
+                                    size='small'
                                     disabled={!isEditable}
                                     placeholder='Titel eintragen' 
                                     value={title} 
                                     onChange={handleChangeTitle} 
-                                    disableUnderline 
-                                    sx={{ color: TEXT_COLOR, width: 1, fontSize: 12, }}
+                                    //disableUnderline 
+                                    //sx={{ color: TEXT_COLOR, width: 1, fontSize: 30, }}
                                 />
                             </TableCell>
                         </>
@@ -143,7 +188,16 @@ export default function BallotType2Form(props) {
                                 }
                             </TableCell>
                             <TableCell align='left' sx={{ fontSize: 12}}>
-                                <Input 
+                                <TextField
+                                    variant='standard'
+                                    InputProps={{
+                                        disableUnderline: true,
+                                        style: {
+                                            color: TEXT_COLOR,
+                                            fontSize: 12
+                                        }
+                                    }}
+                                    size='small'
                                     disabled={!isEditable}
                                     placeholder='Name des Kandidaten eintragen'
                                     value={candidate} 
@@ -157,11 +211,12 @@ export default function BallotType2Form(props) {
                                         //input?.focus(); // === input && input.focus()
                                     }} 
                                     fullWidth 
-                                    disableUnderline 
+                                    //disableUnderline 
                                     
                                     sx={{ 
                                         color: TEXT_COLOR,
                                         fontSize: 12, 
+                                        borderWidth: 0,
                                         //backgroundColor: inputBackgroundColor,
                                         ":hover":{
                                         // backgroundColor: inputBackgroundColorHover,
@@ -200,11 +255,45 @@ export default function BallotType2Form(props) {
             </TableBody>
         </Table>
     </TableContainer>
+    <Box display='flex' marginTop={2} >
+        
+        <TextField 
+            disabled={!isEditable}
+            variant='outlined' 
+            type='number' 
+            label='Max JA Stimmen' 
+            value={maxSelectableAnswer}
+            onChange={handleChangeMaxSelectableAnswer}
+            helperText='Maximale Anzahl an JA Stimmen'
+            InputProps={{
+                inputProps: { 
+                    max: candidates.length, 
+                    min: 1 
+                }
+            }}
+        />
+    </Box>
+    </>
   )
 }
+
 /*
-<Fragment key={index}>
-                                                    <Checkbox label={option} />
-                                                    <Typography variant='h6' color={TEXT_COLOR} >{option}</Typography>
-                                                </Fragment>
+<Popper 
+                                        open={open}
+                                        anchorEl={anchorEl}
+                                    >
+                                        <Paper>
+                                            <ClickAwayListener onClickAway={handleClose}>
+                                                <MenuList  >
+                                                    <MenuItem sx={{fontSize: 12}}>
+                                                        Max Stimme einstellen
+                                                    </MenuItem>
+                                                    <MenuItem onClick={handleNewLine} sx={{fontSize: 12}}>
+                                                        Neue Zeile hinzufügen
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </ClickAwayListener>
+                                        </Paper>  
+                                    </Popper>
+
 */

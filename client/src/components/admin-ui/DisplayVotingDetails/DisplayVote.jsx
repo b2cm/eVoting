@@ -179,8 +179,6 @@ export default function DisplayVote(props) {
             whichBallots={whichBallots}
             setWhichBallots={setWhichBallots}
             admin={admin}
-            
-            //admin={admin} 
         />
         
 

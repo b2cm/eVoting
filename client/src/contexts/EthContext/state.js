@@ -15,6 +15,8 @@ const initialState = {
   l2Contracts: null,
   signer: null,
   chainId: null,
+  isAdminAuthenticated: false,
+  isVoterAuthenticated: false,
 };
 
 const reducer = (state, action) => {

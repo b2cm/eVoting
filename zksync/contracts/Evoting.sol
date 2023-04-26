@@ -1,6 +1,5 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-pragma abicoder v2;
 
 import './Utils.sol';
 
@@ -75,6 +74,9 @@ contract Evoting {
     function add_ballots(Utils.BallotPaper[] memory _ballot_papers) private  {
         uint256 length = _ballot_papers.length;
         for (uint256 i = 0; i < length; i++ ) {
+            if (_ballot_papers[i].ballotType == 2) {
+                require(_ballot_papers[i].maxSelectableAnswer <= _ballot_papers[i].candidates.length, 'Ballots not set correctly');
+            }
             ballot_papers.push(_ballot_papers[i]);
         }
         emit BallotsAdded();
@@ -190,9 +192,10 @@ contract Evoting {
     }
 
     function get_details() external view 
-    returns(string memory _name, string memory _description, VotingState _state, 
+    returns(address _admin, string memory _name, string memory _description, VotingState _state, 
     uint256 _start_time, uint256 _end_time, uint256 _createdAt, bytes32 _voteID, Utils.BallotPaper[] memory _ballot_papers) 
     {
+        _admin = admin;
         _name = name;
         _description = description;
         _state = get_state();

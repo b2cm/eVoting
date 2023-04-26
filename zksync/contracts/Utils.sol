@@ -13,6 +13,7 @@ library Utils {
         string information;
         string title;
         string[] candidates;
+        uint256 maxSelectableAnswer;
     }
 
      struct Ballot {

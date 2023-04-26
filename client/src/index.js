@@ -12,5 +12,7 @@ This effect is not applied in production mode.
 */
 
 root.render(
-  <App />
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );

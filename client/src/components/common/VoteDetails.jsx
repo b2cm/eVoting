@@ -1,7 +1,9 @@
 import { 
     Box,
     TextField,
-    Input } from '@mui/material';
+    Input,
+    Typography
+ } from '@mui/material';
 import { getElectionStateColor } from '../../utils/utils';
 import { INPUT_BACKGROUND_HOVER_COLOR } from '../../utils/colors';
 
@@ -29,87 +31,85 @@ export default function VoteDetails(props) {
    
   return (
     <Box sx={{ 
-            
+        marginTop:2,
+        display: 'flex',
+        flexDirection: {xs: 'column', sm: 'column', md: 'row', lg: 'row', xl: 'row'},
+        justifyContent: 'space-between',
+        marginBottom: 0,
+        }}>
+        <Box sx={{ 
         display: 'flex',
         flexDirection: 'column',
-        marginTop:2,
-        marginBottom:2,
-        }}
-    >
-        <Box sx={{ 
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 0,
-            }}>
-            <Box sx={{ 
-            display: 'flex',
-            flexDirection: 'column',
-            flexGrow: 3,
-            marginBottom: 0,
-            }}>
-                <TextField
-                    variant='standard'
-                    size='large'
-                    style={{ 
-                        maxWidth: 600, 
-                    }}
-                    placeholder='Unbenanntes Voting'
-                    value={voteName}
-                    onChange={handleSetVoteName}
-                    InputProps={{ disableUnderline: true, style: { 
-                        fontSize: '20px', 
-                        fontWeight: 550, 
-                        fontFamily: 'Arial',
-                        fontStyle: 'normal',
-                        letterSpacing: 0.5
-                    } }}
-                    sx={{
-                    
+        flexGrow: 3,
+        marginBottom: 0,
+        }}>
+            <TextField
+                variant='standard'
+                size='large'
+                style={{ 
+                    maxWidth: 600, 
+                }}
+                placeholder='Unbenanntes Voting'
+                value={voteName}
+                onChange={handleSetVoteName}
+                InputProps={{ disableUnderline: true, style: { 
+                    fontSize: '20px', 
+                    fontWeight: 550, 
+                    fontFamily: 'Arial',
+                    fontStyle: 'normal',
+                    letterSpacing: 0.5
+                } }}
+                sx={{
+                
+                ":hover":{
+                    backgroundColor: INPUT_BACKGROUND_HOVER_COLOR
+                }
+                }}
+            />
+            <TextField
+                variant='standard'
+                style={{
+                    maxWidth: 600
+                }}
+                InputProps={{ disableUnderline: true, style: { fontSize:12 } }}
+                placeholder='Beschreibung'
+                value={voteDescription}
+                onChange={handleSetVoteDescription}
+                multiline
+                maxRows={3}
+                sx={{
                     ":hover":{
+                    backgroundColor: INPUT_BACKGROUND_HOVER_COLOR
+                    },
+                    ":focus": {
                         backgroundColor: INPUT_BACKGROUND_HOVER_COLOR
                     }
-                    }}
-                />
-                <TextField
-                    variant='standard'
-                    style={{
-                        maxWidth: 600
-                    }}
-                    InputProps={{ disableUnderline: true, style: { fontSize:12 } }}
-                    placeholder='Beschreibung'
-                    value={voteDescription}
-                    onChange={handleSetVoteDescription}
-                    multiline
-                    maxRows={3}
-                    sx={{
-                        ":hover":{
-                        backgroundColor: INPUT_BACKGROUND_HOVER_COLOR
-                        },
-                        ":focus": {
-                            backgroundColor: INPUT_BACKGROUND_HOVER_COLOR
-                        }
-                    }}    
-                />
-            </Box>
-    
-            <Box>
-                <Input 
-                    disabled
-                    disableUnderline
-                    size='small'
-                    style={{ 
-                        width: 200,
-                        border:'solid 2px',
-                        borderColor: getElectionStateColor(voteState), 
-                        borderRadius: '0.30rem', 
-                    }}
-                    //InputProps={{ disableUnderline: true, style: { color:'blue !important' ,borderColor:'red', } }}
-                    inputProps={{ style:{ WebkitTextFillColor: getElectionStateColor(voteState), fontSize: '1.2em', fontWeight: 550, textAlign: 'center'}}}
-                    defaultValue={voteState}
-                />
-            </Box>
+                }}    
+            />
         </Box>
-    </Box>   
+
+        <Box sx={{
+            marginTop: {xs: 1, sm: 1, md: 0, lg: 0, xl: 0} 
+        }}>
+            
+            <Typography 
+                    sx={{ 
+                        width: 200,
+                        border:'solid', 
+                        borderWidth: '2px',
+                        color: getElectionStateColor(voteState),
+                        borderColor: getElectionStateColor(voteState),
+                        borderRadius: '0.30rem', 
+                        marginTop: '0rem',
+                        marginBottom: '1.5rem',
+                        fontWeight: 'bold',
+                        fontSize: {xs: '1.2em', sm: '1.2em', md: '1.4em', lg: '1.4em', xl: '1.4em'},
+                        textAlign: 'center'
+                    }}
+                >
+                    {voteState}
+                </Typography>
+        </Box>
+    </Box>  
   )
 }

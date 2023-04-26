@@ -28,6 +28,8 @@ export default function BallotType2(props) {
 
     const candidates = [...selectedBallot.candidates];
     const title = selectedBallot.title;
+    const maxSelectableAnswer = selectedBallot.maxSelectableAnswer;
+    console.log('ballot', selectedBallot)
 
     const updateBallots = () => {
         if (!whichBallots || whichBallots === 'old') {
@@ -39,6 +41,11 @@ export default function BallotType2(props) {
         } 
     }
 
+    const handleChangeMaxSelectableAnswer = (event) => {
+        console.log('max', event.target.value);
+        selectedBallot.maxSelectableAnswer = event.target.value;
+        updateBallots();
+    }
     const handleChangeTitle = (event) => {
         selectedBallot.title = event.target.value;
         updateBallots();
@@ -82,6 +89,8 @@ export default function BallotType2(props) {
         restructure={restructure}
         isEditable={isEditable}
         title={title}
+        maxSelectableAnswer={maxSelectableAnswer}
+        handleChangeMaxSelectableAnswer={handleChangeMaxSelectableAnswer}
         selectedCandidate={selectedCandidate}
         setSelectedCandidate={setSelectedCandidate}
         candidates={candidates}

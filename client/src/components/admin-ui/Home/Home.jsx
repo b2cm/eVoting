@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     Container,
     Box,
@@ -14,9 +14,12 @@ import MyCard from './MyCard';
 import { useEth } from '../../../contexts/EthContext'
 import { Contract, } from "zksync-web3";
 import { VOTING_STATES, } from '../../../utils/constantes';
+import { switchNetwork } from '../../../utils/utils'
 import Footer from '../../common/Footer';
 import HomeHeader from './HomeHeader';
 import HomeActions from './HomeActions';
+import MetaMaskOnboarding from '@metamask/onboarding';
+
 
 var isBetween = require('dayjs/plugin/isBetween');
 var isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
@@ -33,14 +36,28 @@ function Home() {
     const { state,} = useEth();
     const [voteData, setVoteData] = useState([]);
     const [voteDataFilter, setVoteDataFilter] = useState([]);
-    const { l2Contracts, signer, l2Provider, accounts, artifacts} = state;
+    const { l2Contracts, signer, l2Provider, accounts, artifacts, chainId, ethProvider, isAdminAuthenticated} = state;
+    const navigate = useNavigate();
+    console.log('is authenticate:', isAdminAuthenticated)
+
+
 
     const compareNumbers = (a, b) => {
-        const A = a.createAt;
-        const B = b.createAt;
+        const A = a.createdAt;
+        const B = b.createdAt;
         // Descending order
-        return B - A
+        return b - a;
     }
+
+    useEffect(() => {
+    
+        if (chainId && chainId !== '0x118') {
+            switchNetwork('zksync');
+        }
+        
+    }, [chainId]);
+
+    //console.log('artifacts', artifacts);
 
     useEffect(() => {
         const getContractData = async (contractAddr) => {
@@ -94,7 +111,8 @@ function Home() {
                    
                 }
 
-                const sortedData = data.sort((a, b) => compareNumbers(a, b));
+                const sortedData = data.sort((a, b) => compareNumbers(a.createdAt, b.createdAt));
+                console.log('sorted data:', sortedData);
                 setVoteData(sortedData);
                 setVoteDataFilter(sortedData);
             }
@@ -121,15 +139,6 @@ function Home() {
                 res.contract.on('VotingCanceled', () => {
                     functionsToRegister(factory);
                  });
-                 /*
-                res.contract.on('BallotsRemoved', async () => {
-                    setVoteData([]);
-                    setVoteDataFilter([]);
-                    setWaitingMessage('Daten werden aktualisiert');
-                    getDataFromAllContracts(factory);
-                 });
-                */
-
             });
         
         }
@@ -156,11 +165,10 @@ function Home() {
             return () => {
                 removeAllListeners(factory);
             }
-        }
-
-        
+        } 
     }, [l2Contracts, l2Provider, artifacts]);
 
+   
 
   return (
     <>
@@ -194,7 +202,7 @@ function Home() {
                         
                         <Grid key={index} item xs={12} sm={6} md={4} lg={4} xl={3} > 
                             <Link 
-                                to={`/vote/cockpit/${data.voteID.slice(2)}`} 
+                                to={`/admin/vote/cockpit/${data.voteID.slice(2)}`} 
                                 state={{
                                     voteName: data.voteName,
                                     voteDescription: data.voteDescription,

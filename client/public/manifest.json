@@ -1,6 +1,6 @@
 {
-  "short_name": "Truffle Box",
-  "name": "React Truffle Box",
+  "short_name": "eVoting",
+  "name": "Blockchain basiertes eVoting",
   "icons": [
     {
       "src": "favicon.ico",

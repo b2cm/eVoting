@@ -10,7 +10,9 @@ export default async (hre: HardhatRuntimeEnvironment) => {
     console.log(`Running deploy script for the verifyMembershipZkp contract`);
     const wallet = new Wallet(MNEMONIC_GOERLI!);
     const deployer = new Deployer(hre, wallet);
-    const artifact = await deployer.loadArtifact('VerifyMembersipZKP');
+    const artifact = await deployer.loadArtifact('VerifierMembershipZKP');
+    console.log(MNEMONIC_GOERLI);
+    console.log(artifact);
 
     const verifyMembershipZkp = await deployer.deploy(artifact, []);
 

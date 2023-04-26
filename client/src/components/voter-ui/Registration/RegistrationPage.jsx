@@ -99,9 +99,9 @@ export default function RegistrationPage() {
             type: 'General',
             innerInput: new Uint8Array(),
         });
-        const gasLimit = await register.connect(signer).estimateGas.storeHashedIDAndPK(
+        const gasLimit = await register.connect(signer).estimateGas.storeHashedID(
             hashedID,
-            publicKey,
+            //publicKey,
 
             {
                 customData: {
@@ -117,9 +117,9 @@ export default function RegistrationPage() {
         setProgress(60);
         setBuffer(100);
 
-        const txHandle = await register.connect(signer).storeHashedIDAndPK(
+        const txHandle = await register.connect(signer).storeHashedID(
             hashedID,
-            publicKey,
+            //publicKey,
             
             {
                 // Provide gas params manually
@@ -248,7 +248,10 @@ export default function RegistrationPage() {
             width: '100%',
         }}
         >
-            {openPopup && <Popup value={{voterID, keyPair}} setOpen={handleClosePopup} />}
+            {openPopup && <Popup value={{
+                voterID, 
+                keyPair
+                }} setOpen={handleClosePopup} />}
             {!chainId &&
                 <Typography variant='h4' textAlign='center'>
                     Please wait.
