@@ -1,0 +1,28 @@
+{
+  "name": "elgammal",
+  "packageManager": "yarn@3.2.0",
+  "scripts": {
+    "start": "node ./build/commonjs/main.js",
+    "build": "yarn build:esm && yarn build:cjs && yarn build:typings",
+    "build:esm": "tsc -p ./tsconfig.esm.json",
+    "build:cjs": "tsc -p ./tsconfig.cjs.json",
+    "build:typings": "tsc --declaration --emitDeclarationOnly",
+    "elgammal:build": "yarn build"
+  },
+  "main": "build/commonjs/index.js",
+  "browser": "build/esm/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "bigint-buffer": "^1.1.5",
+    "bigint-conversion": "^2.2.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "tslib": "^2.4.1"
+  },
+  "peerDependencies": {
+    "tslib": "^2.4.1"
+  }
+}
