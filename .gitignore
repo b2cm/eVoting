@@ -6,3 +6,8 @@
 !.yarn/sdks
 !.yarn/versions
 .vscode
+.DS_Store
+.env
+client
+goerli
+zksync

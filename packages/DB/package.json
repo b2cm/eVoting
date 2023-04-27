@@ -1,8 +1,0 @@
-{
-  "name": "DB",
-  "packageManager": "yarn@3.1.0",
-  "scripts": {
-    "start": "docker run --cap-add=sys_nice -p 3306:3306 --name pallier-mysql -e MYSQL_ROOT_PASSWORD=1234 -d mysql",
-    "db:start": "yarn start"
-  }
-}
