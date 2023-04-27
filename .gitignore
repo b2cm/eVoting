@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # Dependencies
@@ -32,6 +33,8 @@ coverage
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+=======
+>>>>>>> e-crypto
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -40,4 +43,12 @@ yarn-error.log*
 !.yarn/sdks
 !.yarn/versions
 .vscode
+<<<<<<< HEAD
 node_modules
+=======
+.DS_Store
+.env
+client
+goerli
+zksync
+>>>>>>> e-crypto
