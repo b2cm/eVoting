@@ -11,12 +11,15 @@ import { INPUT_BACKGROUND_HOVER_COLOR } from '../../utils/colors';
 
 export default function VoteDetails(props) {
     const {
+        isEditable,
         voteName,
         voteDescription,
         voteState,
         setVoteName,
         setVoteDescription,
     } = props;
+
+    //const isEditable = voteState === VOTING_STATES[0] ? true : false;
 
     const handleSetVoteName = event => {
         const newName = event.target.value;
@@ -44,6 +47,7 @@ export default function VoteDetails(props) {
         marginBottom: 0,
         }}>
             <TextField
+                disabled={!isEditable}
                 variant='standard'
                 size='large'
                 style={{ 
@@ -67,6 +71,7 @@ export default function VoteDetails(props) {
                 }}
             />
             <TextField
+            disabled={!isEditable}
                 variant='standard'
                 style={{
                     maxWidth: 600

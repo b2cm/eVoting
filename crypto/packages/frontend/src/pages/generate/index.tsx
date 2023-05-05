@@ -39,7 +39,9 @@ export default function GeneratePage() {
 
   async function createTallyKey() {
     const priv_key = GenerateRandom();
+    console.log('priv:', priv_key);
     const pubkey = GenPublicKey(priv_key);
+    console.log('pub:', pubkey.compressed.toString(16));
     await axios.post(BACKEND_URL + "/Submitkey", {
       userId,
       pubKey: pubkey.compressed.toString(16),
@@ -240,8 +242,8 @@ export default function GeneratePage() {
       try {
         if (!TallyKeyPub && !TallyKeyPriv) {
           //console.log("creating TallyKey");
-          const TallyKey = await createTallyKey();
-          console.log("tally key ", TallyKey);
+          await createTallyKey();
+          //console.log("tally key ", TallyKey);
         }
       } catch (e) {
         console.error(e);
@@ -249,6 +251,10 @@ export default function GeneratePage() {
     };
     cb();
   }, [userId]);
+
+  useEffect(() => {
+    console.log('tally key:', TallyKeyPriv, TallyKeyPriv);
+  }, [TallyKeyPriv, TallyKeyPub]);
 
   return (
     <div className="flex flex-col items-center space-y-4">

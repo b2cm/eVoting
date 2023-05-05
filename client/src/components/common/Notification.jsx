@@ -8,6 +8,10 @@ import {
     IconButton,
     Button,
     Typography,
+    Card, 
+    CardContent,
+
+
 } from '@mui/material';
 import ModalUnstyled from '@mui/base/ModalUnstyled';
 import CloseIcon from '@mui/icons-material/Close';
@@ -52,7 +56,7 @@ const BackdropUnstyled = React.forwardRef((props, ref) => {
   `;
   
   const style = (theme) => ({
-    width: '70%',
+    width: '50%',
     bgcolor: 'white',
     border: '1px solid currentColor',
     padding: '16px 32px 24px 32px',
@@ -71,8 +75,9 @@ export default function Notification(props) {
             //onClose={setOpen}
             slots={{ backdrop: Backdrop }}
         >
-            <Container sx={style}>
-                <Box sx={{
+            <Card sx={style}>
+              <CardContent>
+              <Box sx={{
                     display: 'flex',
                     justifyContent: 'end',
                     mb: 5
@@ -86,8 +91,8 @@ export default function Notification(props) {
                 <Typography component='p' variant='h6' >
                     {message}
                 </Typography>
-                
-            </Container>
+              </CardContent>
+            </Card>
         </Modal>
   </div>
   )

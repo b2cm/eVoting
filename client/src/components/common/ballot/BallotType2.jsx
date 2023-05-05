@@ -29,7 +29,6 @@ export default function BallotType2(props) {
     const candidates = [...selectedBallot.candidates];
     const title = selectedBallot.title;
     const maxSelectableAnswer = selectedBallot.maxSelectableAnswer;
-    console.log('ballot', selectedBallot)
 
     const updateBallots = () => {
         if (!whichBallots || whichBallots === 'old') {

@@ -6,8 +6,8 @@
   "devDependencies": {
     "@chainlink/contracts": "^0.5.1",
     "@matterlabs/hardhat-zksync-deploy": "0.6.3",
-    "@matterlabs/hardhat-zksync-solc": "0.3.16",
-    "@matterlabs/zksync-contracts": "0.6.1",
+    "@matterlabs/hardhat-zksync-solc": "0.3.17",
+    "@matterlabs/zksync-contracts": "latest",
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",

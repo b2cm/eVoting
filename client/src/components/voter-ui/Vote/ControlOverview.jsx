@@ -37,7 +37,7 @@ export default function ControlOverview(props) {
     const { signer, artifacts, l2Provider, l2Contracts } = state;
     const { voteID } = useParams();
     const { ballots, answersPerBallot, handleCloseOverview } = props;
-    console.log('answers', answersPerBallot);
+    //console.log('answers', answersPerBallot);
 
     const getBallots = async () => {
         try {
@@ -74,8 +74,8 @@ export default function ControlOverview(props) {
             const VERIFIER_MEMBERSHIP_ZKP_ADDRESS = '0xBb00F6fB79D4922D95b4ad53a6358f297CC0435E';
             const abi = artifacts[4].abi;
             const contract = new ethers.Contract(VERIFIER_MEMBERSHIP_ZKP_ADDRESS, abi, web3);
-            console.log('contract', contract);
-            console.log('artifacts', l2Contracts);
+            //console.log('contract', contract);
+            //console.log('artifacts', l2Contracts);
             return contract;
         }
     }, [artifacts]);
@@ -94,7 +94,7 @@ export default function ControlOverview(props) {
         const finalBallots = [];
        for (let i = 0; i < answersPerBallot.length; i++) {
             const options = answersPerBallot[i].options;
-            finalBallots.push({id: answersPerBallot[i].ballotID, vote: []});
+            finalBallots.push({id: answersPerBallot[i].ballotID, data: []});
            if (Array.isArray(options)) {
                 //console.log('typeOfOptions', answersPerBallot[i]);
                 const candidates = ballots[answersPerBallot[i].ballotID].candidates;
@@ -104,11 +104,15 @@ export default function ControlOverview(props) {
                     const [c, proof] = createMemberShipZKP(options[j].candidate, candidates, pub);
                     //const verify = verifyMembershipZkp(c, proof, candidates, pub);
                     //console.log('verify zkp membership candidate', verify);
+                    //console.log('ciphe1:', c);
+                    //console.log('proof:', proof);
                     
 
                     for (const [key, value] of Object.entries(options[j].answers)) {
                         if (value) {
                             const [c2, proof2] = createMemberShipZKP(key, BALLOT_TYPE1_ANSWERS, pub);
+                            console.log('cipher:', c2);
+                            console.log('proof:', proof2);
                             //const verify2 = verifyMembershipZkp(c2, proof2, BALLOT_TYPE1_ANSWERS, pub);
                             //console.log('verify zkp membership answers', verify2);
                             const cipher = ethers.utils.hexlify(c2);
@@ -117,8 +121,8 @@ export default function ControlOverview(props) {
                             //console.log('cipher', cipher);
                             try {
                                 const gasPrice = await l2Provider.getGasPrice();
-                                console.log('gas price:', ethers.utils.formatEther(gasPrice));
                                 /*
+                                console.log('gas price:', ethers.utils.formatEther(gasPrice));
                                 const gasLimit = await verifyMembershipZKP.connect(signer).estimateGas.verifyMembershipZKP(
                                     cipher,
                                     inputs.proof,
@@ -130,7 +134,7 @@ export default function ControlOverview(props) {
                                     ethers.utils.hexlify(pub)
                                 );
                                 console.log('gas', gasLimit);
-                                */
+                                
                                 const result = await verifyMembershipZKP.connect(signer).verifyMembershipZKP(
                                     cipher,
                                     inputs.proof,
@@ -150,6 +154,7 @@ export default function ControlOverview(props) {
                                 );
         
                                 console.log(`verify membership zkp at index ${i}: ${j}`, result);
+                                */
                             } catch (error) {
                                 console.error(error);
                             }
@@ -165,13 +170,13 @@ export default function ControlOverview(props) {
                            
                             finalBallots[i] = ({
                                 id: answersPerBallot[i].ballotID,
-                                vote: [
-                                    ...finalBallots[i].vote,
+                                data: [
+                                    ...finalBallots[i].data,
                                     {
                                     candidate: options[j].candidate,
                                     vote: ethers.utils.hexlify(c2), // Ciphertext
-                                    proof: proof,
-                                    proof2: proof2,
+                                    //proof: proof,
+                                    proof: proof2,
                                     signature: signature,
                                     voterID: 'TODO',
                                     counter: 'TODO',
@@ -188,6 +193,8 @@ export default function ControlOverview(props) {
                 for (const [key, value] of Object.entries(options)) {
                     if (value) {
                         const [c, proof] = createMemberShipZKP(key, BALLOT_TYPE1_ANSWERS, pub);
+                        console.log('cipher:', c);
+                        console.log('proof:', proof);
                         //const verify = verifyMembershipZkp(c, proof, BALLOT_TYPE1_ANSWERS, pub);
                         //console.log('verify zkp membership answers', verify);
                         const cipher = ethers.utils.hexlify(c);
@@ -195,7 +202,7 @@ export default function ControlOverview(props) {
                         const inputs = computeZKPInputs(c, proof, BALLOT_TYPE1_ANSWERS, pub);
                         //console.log('inputs', inputs);
                         //console.log('cipher', cipher);
-
+                        /*
                         const result = await contract.callStatic.verifyMembershipZKP(
                             cipher,
                             inputs.proof,
@@ -208,6 +215,7 @@ export default function ControlOverview(props) {
                         );
 
                         console.log(`verify membership zkp at index ${i}`, result);
+                        */
                        
                         const signature = signData(
                             ring, 
@@ -219,8 +227,8 @@ export default function ControlOverview(props) {
 
                         finalBallots[i] = ({
                             id: answersPerBallot[i].ballotID,
-                            vote: [
-                                ...finalBallots[i].vote,
+                            data: [
+                                ...finalBallots[i].data,
                                 {
                                 vote: ethers.utils.hexlify(c), // Ciphertext
                                 proof: proof,

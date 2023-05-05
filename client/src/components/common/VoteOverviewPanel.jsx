@@ -60,9 +60,6 @@ export default function VoteOverviewPanel(props) {
     
     const link = `localhost:3000/vote/voting-cockpit/${voteID}`;
 
-    console.log('vote id', voteID)
-    console.log('_vote id', _voteID)
-
     const handleChangeVoteName = event => {
         setVoteName(event.target.value);
     }

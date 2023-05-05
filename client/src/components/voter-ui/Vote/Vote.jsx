@@ -122,7 +122,7 @@ export default function Vote(props) {
 
 
     useEffect(() => {
-        console.log('answersPerBallot', answersPerBallot);
+        //console.log('answersPerBallot', answersPerBallot);
     }, [answersPerBallot]);
 
     useEffect(() => {
@@ -162,8 +162,8 @@ export default function Vote(props) {
                     ballots: _ballots,
                 }
                 setVoteDetails(data);
-                console.log('data', data);
-                console.log('ballots', data.ballots);
+                //console.log('data', data);
+                //console.log('ballots', data.ballots);
             } catch (error) {
                 console.error(error);
             }
@@ -171,7 +171,7 @@ export default function Vote(props) {
         if (l2Contracts) {
             const factory = l2Contracts.FactoryEvoting;
             getVoteDetails(factory);
-            console.log('artifact', artifacts);
+            //console.log('artifact', artifacts);
         }
     }, [l2Contracts, artifacts, l2Provider, voteID]);
 

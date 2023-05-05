@@ -12,6 +12,7 @@ import Vote from './components/voter-ui/Vote/Vote';
 import OnboardingPage from './components/common/OnboardingPage';
 import LoginAdmin from './components/admin-ui/Home/LoginAdmin';
 import ProtectedAdminRoutes from './components/admin-ui/Home/ProtectedAdminRoutes';
+import DisplayVote from './components/admin-ui/DisplayVotingDetails/DisplayVote';
 
 
 
@@ -41,7 +42,7 @@ export default function App() {
           } />
           <Route path="/admin/vote/cockpit/:voteID" element={
             <ProtectedAdminRoutes>
-              <LoadVotingsDetails/>
+              <DisplayVote />
             </ProtectedAdminRoutes>
           } /> 
           <Route path="/registration" element={<RegistrationPage />} />

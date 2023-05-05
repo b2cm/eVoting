@@ -24,60 +24,66 @@ export default function LoadVotingsDetails(props) {
     const { l2Contracts, artifacts, l2Provider } = state;
     const { voteID } = useParams();
     const waitingMessage = 'Daten werden geladen'
-
-    console.log('props', location);
-
+    let data = JSON.parse(location.state);
 
     useEffect(() => {   
         const getContractData = async factory => {
             try {
-                const votingAddr = await factory.get_voting('0x' + voteID);
+                //const votingAddr = await factory.get_voting('0x' + voteID);
                 //console.log('address', votingAddr);
-                if (votingAddr !== ZERO_ADDRESS) {
+                if (data.contractAddr !== ZERO_ADDRESS) {
+                    
                     const EVOTING_ABI = artifacts[2].abi;
-                    const contract = new Contract(votingAddr, EVOTING_ABI, l2Provider);
-
+                    const contract = new Contract(data.contractAddr, EVOTING_ABI, l2Provider);
+                    /*
                     let data = await contract.get_details();
                     console.log('data', data);
                     const voteName = data._name;
                     const voteDescription = data._description;
-                    const voteState = VOTING_STATES[(data._state)];
+                    
                     const voteStartTime = (data._start_time).toNumber();
                     const voteEndTime = (data._end_time).toNumber();
                     const voteID = data._voteID;
                     const admin = await contract.admin();
+                    */
+                   console.log('contract', data.contractAddr);
+                   console.log('contract 2', contract);
+                    const voteState = VOTING_STATES[await contract.get_state()];
                     const _ballots = [];
-                    const ballots = data._ballot_papers;
+                    const ballots = data.ballotPapers;
+                    console.log('ballots', ballots);
                 
                     for (let i = 0; i < ballots.length; i++) {
                         const ballot = {
-                            ballotType: ballots[i].ballotType,
-                            name: ballots[i].name,
-                            information: ballots[i].information,
-                            title: ballots[i].title,
-                            candidates: ballots[i].candidates,
-                            maxSelectableAnswer: ballots[i].maxSelectableAnswer
+                            ballotType: ballots[i][0],
+                            name: ballots[i][1],
+                            information: ballots[i][2],
+                            title: ballots[i][3],
+                            candidates: ballots[i][4],
+                            maxSelectableAnswer: ballots[i][5]
                         }
                         _ballots.push(ballot);
                     }
+                    console.log('ballots 2', _ballots);
             
                     const isEditable = voteState === VOTING_STATES[0] ? true : false;
-                    data = {
+                    
+                    const data1 = {
+                        ...data,
                         isEditable,
-                        voteName: voteName,
-                        voteDescription: voteDescription,
-                        voteStart: dayjs(voteStartTime * 1000),
-                        voteEnd: dayjs(voteEndTime * 1000),
-                        voteID: voteID.slice(2),
+                        voteStartTime: dayjs(data.voteStartTime * 1000),
+                        voteEndTime: dayjs(data.voteEndTime * 1000),
+                        voteID: voteID,
                         voteState: voteState,
-                        admin: admin,
                         ballots: _ballots,
                         ballots_to_add: [],
                         ballots_to_delete: [],
                         ballots_to_update: [],
                         contract
+
                     }
-                    setVotingsDetails(data);
+                    
+                    setVotingsDetails(data1);
                 }
             } catch (error) {
                 console.error(error);

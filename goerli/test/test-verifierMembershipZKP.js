@@ -36,6 +36,17 @@ describe('Verifier Membership ZKP', () => {
 
     it('should verify zkp', async () => {
         for ( const [key, value] of Object.entries(data.values)) {
+            const gas = await test.estimateGas.verifyMembershipZKP(
+                value.cipher,
+                value.proof,
+                value.isProof0Negativ,
+                value.as,
+                value.ias,
+                value.gmk,
+                value.e,
+                data.pub
+            );
+            console.log('gas', ethers.utils.formatEther(gas));
             result = await test.verifyMembershipZKP(
                 value.cipher,
                 value.proof,

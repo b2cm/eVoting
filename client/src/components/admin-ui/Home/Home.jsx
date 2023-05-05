@@ -38,7 +38,7 @@ function Home() {
     const [voteDataFilter, setVoteDataFilter] = useState([]);
     const { l2Contracts, signer, l2Provider, accounts, artifacts, chainId, ethProvider, isAdminAuthenticated} = state;
     const navigate = useNavigate();
-    console.log('is authenticate:', isAdminAuthenticated)
+
 
 
 
@@ -70,24 +70,24 @@ function Home() {
                 //console.log('data', data);
                 const voteName = data._name;
                 const voteDescription = data._description;
-                const state = VOTING_STATES[(data._state)];
+                const voteState = VOTING_STATES[(data._state)];
                 const voteStartTime = (data._start_time).toNumber();
                 const voteEndTime = (data._end_time).toNumber();
                 const createdAt = (data._createdAt).toNumber();
                 const voteID = data._voteID;
                 const ballotPapers = data._ballot_papers;
-                //const admin = await contract.admin();
+                const admin = data._admin;
                 data = {
-                    //admin,
+                    admin,
                     voteID,
                     voteName, 
                     voteDescription, 
-                    state,
+                    voteState,
                     createdAt, 
                     voteStartTime, 
                     voteEndTime,
                     ballotPapers,
-                    contract
+                    contractAddr
                 };
                 //console.log('vote data', data);
                 return {contract, data};
@@ -112,7 +112,6 @@ function Home() {
                 }
 
                 const sortedData = data.sort((a, b) => compareNumbers(a.createdAt, b.createdAt));
-                console.log('sorted data:', sortedData);
                 setVoteData(sortedData);
                 setVoteDataFilter(sortedData);
             }
@@ -197,38 +196,10 @@ function Home() {
             }}
              >
                 {voteDataFilter.map((data, index) => {
-                    const isEditable = data.state === VOTING_STATES[0] ? true : false;
                     return (
-                        
                         <Grid key={index} item xs={12} sm={6} md={4} lg={4} xl={3} > 
-                            <Link 
-                                to={`/admin/vote/cockpit/${data.voteID.slice(2)}`} 
-                                state={{
-                                    voteName: data.voteName,
-                                    voteDescription: data.voteDescription,
-                                    voteID: data.voteID,
-                                    voteStartTime: data.voteStartTime,
-                                    voteEndTime: data.voteEndTime,
-                                    admin: 'alex',
-                                    ballotPapers: data.ballotPapers,
-                                    //contract: data.contract,
-                                    isEditable, 
-                                    state: data.state
-                                    
-                                }}
-                                style={{textDecoration: 'none',}}
-                            >
-                                <MyCard 
-                                    voteName={data.voteName} 
-                                    voteDescription={data.voteDescription}
-                                    state={data.state}
-                                    createdAt={data.createdAt}
-                                    voteStartTime={data.voteStartTime} 
-                                    voteEndTime={data.voteEndTime} 
-                                />
-                            </Link>
-                        
-                    </Grid>
+                            <MyCard data={data} />
+                        </Grid>
                     )
                 })}
             </Grid>

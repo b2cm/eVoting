@@ -3,6 +3,7 @@ import {
     useLayoutEffect,
     useCallback,
     useState,
+    useMemo,
 } from 'react';
 import { 
     Container,
@@ -13,31 +14,50 @@ import VotingTabs from '../../common/VotingTabs';
 import Footer from '../../common/Footer';
 import { useEth,} from "../../../contexts/EthContext";
 import VoteDetails from '../../common/VoteDetails';
+import { useLocation, useParams } from 'react-router-dom';
+import { Contract } from 'zksync-web3';
+import { VOTING_STATES, ZERO_ADDRESS } from '../../../utils/constantes';
+import dayjs from 'dayjs';
 
 export default function DisplayVote(props) {
     const { state, dispatch } = useEth();
-    const { voteDetails, dispatchVotingDetails } = props;
-    const {  l2Contracts, signer, l2Provider, paymaster } = state;
+    const [votingDetails, setVotingsDetails] = useState(null);
+ 
+    //const { voteDetails, dispatchVotingDetails } = props;
+    const {  l2Contracts, signer, l2Provider, paymaster, artifacts } = state;
     const [whichBallots, setWhichBallots] = useState('old'); // Old = original ballots loaded from the smart contract.
     const [tabValue, setTabValue] = useState(0);
+    //const { voteID } = useParams();
+    const location = useLocation();
+    const voteDetails = JSON.parse(location.state);
+    
     const [voteName, setVoteName] = useState(voteDetails.voteName);
     const [voteDescription, setVoteDescription] = useState(voteDetails.voteDescription);
     const [voteID, setVoteID] = useState(voteDetails.voteID);
-    const [voteStart, setVoteStart] = useState(voteDetails.voteStart);
-    const [voteEnd, setVoteEnd] = useState(voteDetails.voteEnd);
-    const [ballots, setBallots] = useState(voteDetails.ballots);
-    const [ballots_to_add, setBallots_to_add] = useState(voteDetails.ballots_to_add);
-    const [ballots_to_delete, setBallots_to_delete] = useState(voteDetails.ballots_to_delete);
-    const [ballots_to_update, setBallots_to_update] = useState(voteDetails.ballots_to_update);
-    const voteState = voteDetails.voteState;
-    const isEditable = voteDetails.isEditable;
-    const contract = voteDetails.contract;
+    const [voteStart, setVoteStart] = useState(voteDetails.voteStartTime);
+    const [voteEnd, setVoteEnd] = useState(voteDetails.voteEndTime);
+    const [ballots, setBallots] = useState(voteDetails.ballotPapers);
+    const [voteState, setVoteState] = useState(voteDetails.voteState);
+    const [ballots_to_add, setBallots_to_add] = useState([]);
+    const [ballots_to_delete, setBallots_to_delete] = useState([]);
+    const [ballots_to_update, setBallots_to_update] = useState([]);
+    const [isEditable, setIsEditable] = useState(() => {
+      return voteState === VOTING_STATES[0] ? true : false;
+    });
+
     const admin = voteDetails.admin;
    
-    const inputBackgroundColorHover = '#F7F7F7';
-    const handleInputHover = isEditable ? inputBackgroundColorHover : 'white';
+    const [abi, setAbi] = useState(artifacts[2].abi);
+    const contract = useMemo(() => {
+      return new Contract(voteDetails.contractAddr, abi, l2Provider);
+    }, [voteDetails.contractAddr, abi, l2Provider]);
+
+    useEffect(() => {
+      setAbi(artifacts[2].abi);
+    }, [artifacts])
     
-    const validateDate = () => {
+
+    const validateDate = (voteStart, voteEnd) => {
         return voteStart.isBefore(voteEnd);
     }
 
@@ -142,6 +162,52 @@ export default function DisplayVote(props) {
 
 
 
+
+    useEffect(() => {   
+      const getContractData = async () => {
+          try {
+            
+              if (voteDetails.contractAddr !== ZERO_ADDRESS) {
+                  const EVOTING_ABI = artifacts[2].abi;
+                  const contract = new Contract(voteDetails.contractAddr, EVOTING_ABI, l2Provider);
+                  const _voteState = VOTING_STATES[await contract.get_state()];
+                  if (_voteState !== voteState) {
+                    const _isEditable = voteState === VOTING_STATES[0] ? true : false;
+                    setVoteState(_voteState);
+                    setIsEditable(_isEditable);
+                  }
+                  const _ballots = [];
+                  for (let i = 0; i < ballots.length; i++) {
+                    try {
+                      const num = ethers.BigNumber.from(ballots[i][5].hex).toNumber(); // We need to recreate the BigNumber because we stringify the data.
+                      const ballot = {
+                        ballotType: ballots[i][0],
+                        name: ballots[i][1],
+                        information: ballots[i][2],
+                        title: ballots[i][3],
+                        candidates: ballots[i][4],
+                        maxSelectableAnswer: num
+                    }
+                    _ballots.push(ballot);
+                    setBallots([..._ballots]);
+                    } catch (error) {
+                      console.error(error);
+                    }
+                      
+                  }
+              }
+          } catch (error) {
+              console.error(error);
+          }
+      } 
+
+      if (l2Contracts) {
+          //const factory = l2Contracts.FactoryEvoting;
+          getContractData();
+      }
+
+  }, [l2Contracts, voteID, l2Provider, artifacts]);
+
   return (
    <>
      <Container sx={{
@@ -149,12 +215,14 @@ export default function DisplayVote(props) {
         //overflow: 'scroll'
     }}>
         <VoteDetails 
+            isEditable={isEditable}
             voteName={voteName}
             voteDescription={voteDescription}
             voteState={voteState}
             setVoteName={setVoteName}
             setVoteDescription={setVoteDescription}
         />
+       
        <VotingTabs 
             tabValue={tabValue}
             setTabValue={setTabValue}
@@ -166,7 +234,7 @@ export default function DisplayVote(props) {
             setVoteStart={setVoteStart}
             setVoteEnd={setVoteEnd}
             voteEnd={voteEnd} 
-            voteID={voteID} 
+            voteID={voteID.slice(2)} 
             ballots={ballots} 
             setBallots={setBallots} 
             ballots_to_add={ballots_to_add}
@@ -180,10 +248,15 @@ export default function DisplayVote(props) {
             setWhichBallots={setWhichBallots}
             admin={admin}
         />
-        
+
 
     </Container>
-    <Footer isActive={isEditable} isNewVoting={false} handleCreateNewVote={handleUpdateVoting} handleCancelVoting={handleCancelVoting} />
+    <Footer 
+      isActive={isEditable} 
+      isNewVoting={false} 
+      handleCreateNewVote={handleUpdateVoting}
+      handleCancelVoting={handleCancelVoting} 
+    />
    </>
   
   )

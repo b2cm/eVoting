@@ -80,8 +80,20 @@ export const BallotPaperRightComponent = (props) => {
             width: 1.9/2
             }}>
                 <CardContent>
-                    <Input placeholder='Unbenannter Stimmzettel' value={name} onChange={handleChangeName} autoFocus disableUnderline sx={{width: 1, fontSize: 12, marginBottom: 1}}/>
-                    <Input placeholder='Information über Stimmzettel eintragen' value={description} onChange={handleChangeDescription} disableUnderline sx={{ width: 1, fontSize:12, marginBottom: 2}}/>
+                    <Input 
+                        placeholder='Unbenannter Stimmzettel' 
+                        value={name} 
+                        onChange={handleChangeName} 
+                        disabled={!isEditable}
+                        disableUnderline 
+                        sx={{width: 1, fontSize: 12, marginBottom: 1}}/>
+                    <Input 
+                        placeholder='Information über Stimmzettel eintragen' 
+                        value={description} 
+                        onChange={handleChangeDescription} 
+                        disabled={!isEditable}
+                        disableUnderline 
+                        sx={{ width: 1, fontSize:12, marginBottom: 2}}/>
                     {
                         <>
                         {ballotType === 1 && 
