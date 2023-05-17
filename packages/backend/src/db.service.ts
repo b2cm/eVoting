@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { toBufferBE, toBigIntBE } from 'bigint-buffer';
 import { Signature } from 'lrs';
-import { Connection, Repository } from 'typeorm';
+import { Connection, In, Repository } from 'typeorm';
 import { Session } from './entities/session.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Candidate } from './entities/candidate.entity';
@@ -14,6 +14,8 @@ import { Trigger } from './entities/trigger.entity';
 import { Token } from './entities/tokens.entity';
 import { Limit } from './entities/limit.entity';
 import { FilteredVotes } from './entities/FilteredVotes.entity';
+import { TokenTrigger } from './entities/TokenTrigger.entity';
+import { encryptedTokens } from './entities/encryptedTokens.entity';
 
 @Injectable()
 export class DBService {
@@ -34,11 +36,18 @@ export class DBService {
     //Trigger Repository
     @InjectRepository(Trigger) private triggerRep: Repository<Trigger>,
 
+    //TokensTrigger Repository
+    @InjectRepository(TokenTrigger)
+    private tokenTriggerRep: Repository<TokenTrigger>,
+
     //Tokens Repository
     @InjectRepository(Token) private tokensRep: Repository<Token>,
 
     //Limit Repository
     @InjectRepository(Limit) private limitRep: Repository<Limit>,
+
+    @InjectRepository(encryptedTokens)
+    private encryptedTokensRep: Repository<encryptedTokens>,
 
     //Filtered Votes Repository
     @InjectRepository(FilteredVotes)
@@ -214,7 +223,6 @@ export class DBService {
     if (votes.length == 0) {
       //throw new Error('Session does not exist');
       console.log('Session does not exist');
-      
     }
 
     return votes.map((vote) => {
@@ -364,6 +372,105 @@ export class DBService {
       return {
         partyID: vote.partyID.toString(),
         votes: vote.votes.toString(),
+      };
+    });
+  }
+  async getTokenTriggerVal() {
+    const trigger = await this.tokenTriggerRep.find();
+    console.log('get trigger token', trigger);
+    if (trigger.length == 0) {
+      return 0;
+    } else return 1;
+  }
+
+  async setTokenTriggerVal(flag: number) {
+    const result = await this.getTokenTriggerVal();
+    console.log('result', result);
+    if (result == 1) {
+      console.log('updating token Trigger Value');
+      await this.tokenTriggerRep.update({ name: 'limitset' }, { val: flag });
+    } else {
+      console.log('creating trigger');
+      const trigger = new TokenTrigger();
+      trigger.name = 'limitset';
+      trigger.val = flag;
+      await this.tokenTriggerRep.insert(trigger);
+    }
+  }
+
+  async getTokensAll() {
+    const tokens = await this.tokensRep.find();
+    const allTokens = tokens.map((token) => {
+      return {
+        vid: token.vid.toString(),
+        HashedId: token.HashedId.toString(),
+        counter: token.counter.toString(),
+      };
+    });
+
+    let groupedTokens: any[] = [];
+    // group by vid and put counters in an array
+
+    allTokens.forEach((token) => {
+      const index = groupedTokens.findIndex(
+        (element) => element.vid == token.vid,
+      );
+      if (index == -1) {
+        groupedTokens.push({
+          vid: token.vid,
+          counters: [token.counter],
+          HashedId: token.HashedId,
+        });
+      } else {
+        groupedTokens[index].counters.push(token.counter);
+      }
+    });
+
+    // sort it by counters
+    groupedTokens.forEach((token) => {
+      token.counters.sort(function (a: string, b: string) {
+        return parseInt(a) - parseInt(b);
+      });
+    });
+    console.log('groupedTokens', groupedTokens);
+    return groupedTokens;
+  }
+
+  async storeEncryptedTokens(tokens: any[]) {
+    //console.log('tokens', tokens);
+    await Promise.all(
+      tokens.map(async (token) => {
+        console.log('storing token', token);
+        const tokenToStore = new encryptedTokens();
+        tokenToStore.encryptedCounter = Buffer.from(token.counter!);
+        tokenToStore.encryptedVid = Buffer.from(token.vid);
+        tokenToStore.HashedId = Buffer.from(token.HashedId);
+        tokenToStore.signature = Buffer.from(token.signature);
+        tokenToStore.counterIndex = token.counterIndex;
+        tokenToStore.pubkey = token.pubkey;
+        await this.encryptedTokensRep.insert(token);
+      }),
+    );
+
+    const encTokens = await this.encryptedTokensRep.find();
+    console.log('encTokens', encTokens.length);
+  }
+
+  async getEncryptedTokens(pubKey: string) {
+    const hash = await this.getVoterHash(BigInt('0x' + pubKey));
+    console.log('hash', hash);
+    const tokens = await this.encryptedTokensRep.find({
+      
+    });
+    console.log('tokens from the vote page ', tokens);
+
+    return tokens.map((token) => {
+      return {
+        encryptedCounter: token.encryptedCounter.toString(),
+        encryptedVid: token.encryptedVid.toString(),
+        signature: token.signature.toString(),
+        counterIndex: token.counterIndex,
+        pubkey: token.pubkey,
       };
     });
   }

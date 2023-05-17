@@ -64,20 +64,21 @@ export class VoteController {
   @Get('FilterVotes')
   async getFilteredVotes() {
     console.log('request received for filtered votes');
-     return await this.voteService.getFilteredVotes();
+    return await this.voteService.getFilteredVotes();
   }
 
   @Get('FilterOne')
   async getFilteredOne() {
     console.log('request received for filtered one');
     const results = await this.voteService.getFilteredVotes();
-    
+
     const parsed = JSON.parse(results[0].votes);
     console.log('parsed', parsed);
     const filteredData = parsed.map((vote: any) => ({ vote }));
-    return filteredData ;
+    return filteredData;
   }
 
+  //  this is what gets called from the vote page
   @Post('Voter/:pubkey')
   async getVoterData(
     @Param('pubkey') pubkey: string,
@@ -106,15 +107,7 @@ export class VoteController {
     // //* get the public key of all tally servers
     //const pubKey = Point.fromCompressed(TALLY_SERVER_KEY);
     const keys = await this.voteService.getKeys(body.sessionId);
-    //console.log('keys', keys);
 
-    //- get only the keys
-    // const partyTallyKeys = keys.map((key) => {
-    //   return key.TallypubKey;
-    // });
-    // console.log('partyTallyKeys', partyTallyKeys);
-
-    // * encrypt vid with all tally servers public keys
     const encryptedTokensAll = [];
 
     for (let j = 0; j < counterPoints.length; j++) {
@@ -160,6 +153,13 @@ export class VoteController {
       groups[id] = groups[id].map((n) => n.toString(16));
     }
     return groups;
+  }
+
+  @Post('getEncryptedTokens')
+  async getEncryptedTokens(@Body() body: { publicKey: string }) {
+    console.log('hitting API');
+    const res = await this.voteService.getEncryptedTokens(body.publicKey);
+    return res;
   }
 
   // * this has changed

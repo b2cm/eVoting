@@ -14,6 +14,7 @@ export interface Session {
 
 @Injectable()
 export class AppService {
+ 
   readonly sessions = new BehaviorSubject(new Map() as Map<string, Session>);
 
   constructor(private db: DBService) {}
@@ -84,25 +85,39 @@ export class AppService {
     await this.db.submitKey(partyId, pubKey, sessionId);
   }
 
-  async counterlimit (limit:number, HashedId:string){
-    await this.db.counterlimit(limit,HashedId)
+  async counterlimit(limit: number, HashedId: string) {
+    await this.db.counterlimit(limit, HashedId);
   }
 
-  async getcounterlimit (){
-    return await this.db.getcounterlimit()
+  async getcounterlimit() {
+    return await this.db.getcounterlimit();
   }
 
-
-  async getTriggerVal(){
-    return await this.db.getTriggerVal()
+  async getTokenTriggerVal() {
+    return await this.db.getTokenTriggerVal();
   }
 
-  async setTriggerVal(flag:number){
-    await this.db.setTriggerVal(flag)
+  async setTokenTriggerVal(flag: number) {
+    await this.db.setTokenTriggerVal(flag);
   }
 
-  async storeTokens(vid: string, HashedId: string , counter:string){
-
-    await this.db.storeTokens(vid,HashedId,counter)
+  async getTriggerVal() {
+    return await this.db.getTriggerVal();
   }
+
+  async setTriggerVal(flag: number) {
+    await this.db.setTriggerVal(flag);
+  }
+
+  async storeTokens(vid: string, HashedId: string, counter: string) {
+    await this.db.storeTokens(vid, HashedId, counter);
+  }
+
+  async getTokens() { 
+    return await this.db.getTokensAll();
+  }
+  async storeEncryptedTokens(tokens: any[]) {
+    await this.db.storeEncryptedTokens(tokens);
+  }
+
 }

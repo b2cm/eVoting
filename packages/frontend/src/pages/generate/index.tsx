@@ -9,7 +9,14 @@ import { Parties } from "../../components/parties";
 import { useObservable } from "rxjs-hooks";
 import { EMPTY, switchMap } from "rxjs";
 import { HashedIds } from "../../util/leaves";
-import { GenerateRandom, GenPublicKey } from "elgammal";
+import {
+  Point,
+  GenerateRandom,
+  GenPublicKey,
+  signature,
+  ElgammalEncrypt,
+  CURVE,
+} from "elgammal";
 
 export default function GeneratePage() {
   const { sessionId } = useParams();
@@ -20,11 +27,11 @@ export default function GeneratePage() {
   const [Party_counterlimit, SetParty_counterlimit] = useState(
     null as null | string
   );
- 
 
-  const [delay, setDelay] = useState(1000);
   const [message, SetMessage] = useState("");
   const [complete, SetComplete] = useState(false);
+
+  const [myVrf, setVrf] = useState(null as null | string);
   //If sessionId was not provided, we create a new sessionId
   useEffect(() => {
     if (!sessionId) {
@@ -49,8 +56,6 @@ export default function GeneratePage() {
     SetTallyKeyPriv(priv_key.toString(16));
   }
 
-
-
   useEffect(() => {
     const cb = async () => {
       try {
@@ -74,6 +79,27 @@ export default function GeneratePage() {
   }, [sessionId, session]);
 
   const [userId, parties] = useSession(session);
+
+  const WaitForTokens = async () => {
+    return new Promise((resolve, reject) => {
+      const myInter = setInterval(async function getUserData() {
+        try {
+          const {
+            data: { result },
+          } = await axios.get(BACKEND_URL + "/TokenTriggerVal");
+          console.log("result", result);
+          if (result == 1) {
+            clearInterval(myInter);
+            resolve("done");
+          }
+        
+        } catch (error) {
+          console.log(error);
+          reject(error);
+        }
+      }, 1000);
+    });
+  };
 
   const WaitForLimit = async () => {
     return new Promise((resolve, reject) => {
@@ -103,37 +129,114 @@ export default function GeneratePage() {
     [session]
   );
 
+  useEffect(() => {
+    setVrf(session?.vrf);
+  }, [session]);
 
   useEffect(() => {
-    //console.log("partyselection");
-    const allPartyIDs = parties.map((party) => party.partyId);
-    if (userId != null) {
-      allPartyIDs.push(userId);
+    const allPartyData = parties.map((party) => {
+      return {
+        partyId: party.partyId,
+        vrf: party.vrf,
+      };
+    });
+
+    // console.log("vrf", allPartyVrfs);
+    if (userId != null && myVrf != null) {
+      allPartyData.push({ partyId: userId, vrf: myVrf });
     }
-    //console.log(allPartyIDs);
-    allPartyIDs.sort((n1, n2) => {
-      if (n1 > n2) {
+
+    // sort allpartydata based on vrf
+    allPartyData.sort((n1, n2) => {
+      if (n1.vrf > n2.vrf) {
         return 1;
       }
-
-      if (n1 < n2) {
+      if (n1.vrf < n2.vrf) {
         return -1;
       }
-
       return 0;
     });
 
+    console.log("allParty vrfs", allPartyData);
+
     if (keys) {
       {
-        console.log("selecting party", allPartyIDs);
-        SetParty_vid(allPartyIDs[0]);
-        SetParty_counterlimit(allPartyIDs[1]);
+        //console.log("selecting party", allPartyData);
+        // set party where vrf = allpartyvrfs[0]
+
+        SetParty_vid(allPartyData[0].partyId);
+        SetParty_counterlimit(allPartyData[1].partyId);
         SetComplete(true);
       }
     }
     console.log("just checking");
   }, [keys]);
 
+  const encryptTokens = async () => {
+    // * get the tokens from the backend
+    const {
+      data: { tokens },
+    } = await axios.get(BACKEND_URL + "/getTokensAll");
+    const pubKeytoPoint = Point.fromCompressed(BigInt("0x" + TallyKeyPub));
+    const privKey = BigInt("0x" + TallyKeyPriv);
+
+    console.log("tokens", tokens);
+
+    // * encrypt the tokens
+    const encryptedTokens: any[] = [];
+    for (let i = 0; i < tokens.length; i++) {
+
+
+      const mappedVid = Point.fromXYPair(CURVE.Gx, CURVE.Gy).multiplyCT(
+        BigInt("0x" + tokens[i].vid)
+      );
+
+      const encryptedVid = ElgammalEncrypt(
+        Point.fromCompressed(BigInt("0x" + TallyKeyPub)),
+        mappedVid
+      )
+        .map((n) => n.compressed.toString(16).padStart(256 / 4 + 1))
+        .join("");
+
+      const counters = tokens[i].counters
+      let counterIndex =0 ; 
+      for ( let i = 0 ; i < counters.length ; i++ ) {
+
+        const mappedCounter = Point.fromXYPair(CURVE.Gx, CURVE.Gy).multiplyCT(
+          BigInt("0x" + counters[i])
+        );
+        const encryptedCounter = ElgammalEncrypt(
+          Point.fromCompressed(BigInt("0x" + TallyKeyPub)),
+          mappedCounter
+        )
+          .map((n) => n.compressed.toString(16).padStart(256 / 4 + 1))
+          .join("");
+        const sign = signature(tokens[i].vid, BigInt("0x" + TallyKeyPriv));
+        const [R, s, e] = sign;
+        const signObj = {
+          R: R.compressed.toString(16),
+          s: s.toString(),
+          e: e.toString(),
+        };
+        const signJson = JSON.stringify(signObj);
+        encryptedTokens.push({
+          vid: encryptedVid,
+          counter: encryptedCounter,
+          HashedId: tokens[i].HashedId,
+          signature: signJson,
+          counterIndex: counterIndex,
+          pubkey : TallyKeyPub
+        });
+        counterIndex += 1;
+
+      }
+    }
+
+    // * post the encrypted tokens to the backend
+    console.log("tokens to encrypt", encryptedTokens);
+
+    await axios.post(BACKEND_URL + "/StoreEncryptedTokens", { encryptedTokens: encryptedTokens});
+  };
 
   const FetchlimitsandGenerateCounters = async () => {
     const {
@@ -148,6 +251,7 @@ export default function GeneratePage() {
     for (let i = 0; i < HashIds.length; i++) {
       const vid = GenerateRandom();
       let counter = BigInt(Math.floor(Math.random() * 10000000).toString(10));
+
       for (let j = 0; j < limits[j]; j++) {
         // * for every hash id generate limit number of counters
         counter += 1n;
@@ -162,7 +266,6 @@ export default function GeneratePage() {
     await postTokens(tokens);
   };
 
-  
   const postTokens = async (tokens: any[]) => {
     let promises = [];
     for (let i = 0; i < tokens.length; i++) {
@@ -179,6 +282,11 @@ export default function GeneratePage() {
     });
   };
 
+  const waitAndEncrypt = async () => {
+    await WaitForTokens();
+    await encryptTokens();
+  };
+
   useEffect(() => {
     if (!keys) return;
     //  Party for generating Counter limit
@@ -191,6 +299,7 @@ export default function GeneratePage() {
           const limit = Math.floor(Math.random() * (8 - 5 + 1) + 5);
           limits.push({ Limit: limit, HashedId: element });
         });
+
         // Post the limit to the backend
         console.log(limits);
         let promises = [];
@@ -207,9 +316,10 @@ export default function GeneratePage() {
         });
 
         await axios.post(BACKEND_URL + "/SetTriggerVal", { flag: 1 });
-        SetMessage("limits generated");
+        SetMessage("limits generated & encrypted tokens ");
       };
       generateLimits();
+      waitAndEncrypt();
     }
     // Party for generating VoterIds & Counter
     else if (userId === Party_vid) {
@@ -221,21 +331,23 @@ export default function GeneratePage() {
         await WaitForLimit();
         await FetchlimitsandGenerateCounters();
         SetMessage("Generated vids");
+        await axios.post(BACKEND_URL + "/SetTokenTriggerVal", { flag: 1 });
+        waitAndEncrypt();
+        SetMessage("Generated vids & encyrpted tokens");
       };
 
       waitandgenerate();
+    } else if (userId) {
+      SetMessage("waiting for tokens");
+      waitAndEncrypt();
+      SetMessage("Tokens encrypted");
 
-      // * get the limits from the backend
-      //FetchlimitsandGenerateCounters();
-      // SetMessage("vids generated");
-    } else if (userId != null) {
-      // parties that do nothing
-      SetMessage("");
+      //SetMessage("");
     }
   }, [complete]);
 
   useEffect(() => {
-    if(!userId) return;
+    if (!userId) return;
     const cb = async () => {
       try {
         if (!TallyKeyPub && !TallyKeyPriv) {
@@ -295,11 +407,10 @@ export default function GeneratePage() {
             <div>f: {keys.private.f.toString()}</div>
             <div>Vki: {keys.private.vki.toString()}</div>
             <h5 className="text-lg font-semibold">Selected Parties </h5>
-            <p> For Counter_limit : {Party_counterlimit} </p>
-            <p> For Token generation : {Party_vid}</p>
+            <p> For Counter: {Party_counterlimit} </p>
+            <p> For Token generation: {Party_vid}</p>
           </div>
           <div className="rounded-md text-center bg-blue-200 px-2 py-2">
-            
             {message}
           </div>
         </>

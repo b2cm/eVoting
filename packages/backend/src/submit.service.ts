@@ -140,4 +140,10 @@ export class SubmitVoteService {
 
     return filteredVotes;
   }
+
+
+  async getEncryptedTokens(publicKey: string) {
+    console.log('publicKey', publicKey);
+    return await this.db.getEncryptedTokens( publicKey);
+  }
 }
