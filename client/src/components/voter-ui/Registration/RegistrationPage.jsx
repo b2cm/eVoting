@@ -21,7 +21,7 @@ import {
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import InfoIcon from '@mui/icons-material/Info';
-import Popup from '../../common/Popup';
+//import Popup from '../../common/Popup';
 import { ethers } from 'ethers';
 import { TransactionDialogBox } from '../../common/TransactionDialogBox';
 import {
@@ -80,7 +80,7 @@ export default function RegistrationPage() {
         const sha512 = createHash('sha512');
         const voterID = sha512.update(email + password).digest('hex');
         let hashedID = '0x' + (poseidon(['0x' + voterID])).toString();
-        console.log('hashed voter', hashedID);
+        console.log('hashed voter', ethers.BigNumber.from(hashedID));
         console.log('voter id',voterID);
         const lrsKeypair = generatePair();
         console.log('lrs keypair',lrsKeypair);
@@ -94,6 +94,7 @@ export default function RegistrationPage() {
         console.log('pk big number', ethers.BigNumber.from('0x' + publicKey));
 
         const gasPrice = await l2Provider.getGasPrice();
+        console.log('gas price', gasPrice);
          // Encoding the ApprovalBased paymaster flow's input
         const paymasterParams = utils.getPaymasterParams(paymaster, {
             type: 'General',
@@ -227,7 +228,7 @@ export default function RegistrationPage() {
             console.log('paymaster balance', ethers.utils.formatEther(paymasterBalance));
         }
         //if (chainId !== '0x118') switchNetwork('zksync);
-        if (signer) getNonce();
+       // if (signer) getNonce();
           
     }, [signer]);
 
@@ -248,10 +249,8 @@ export default function RegistrationPage() {
             width: '100%',
         }}
         >
-            {openPopup && <Popup value={{
-                voterID, 
-                keyPair
-                }} setOpen={handleClosePopup} />}
+            
+
             {!chainId &&
                 <Typography variant='h4' textAlign='center'>
                     Please wait.
@@ -314,3 +313,11 @@ export default function RegistrationPage() {
 
   )
 }
+
+/*
+{openPopup && <Popup value={{
+                voterID, 
+                keyPair
+                }} setOpen={handleClosePopup} />
+            }
+*/

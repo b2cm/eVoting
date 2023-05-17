@@ -18,7 +18,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { initialize } from 'zokrates-js';
 import { poseidon } from '@big-whale-labs/poseidon';
 import MerkleTree  from '../../../cryptography/merkletree';
-import keypair from '../../../keypair.json';
+//import keypair from '../../../keypair.json';
 import { Contract, Provider } from "zksync-web3";
 import {
     TEXT_COLOR,
@@ -31,9 +31,10 @@ import { setSource, switchNetwork } from '../../../utils/utils';
 import * as ethers from 'ethers';
 import { generatePair } from '../../../cryptography/lrs';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import Notification from '../../common/Notification';
+//import Notification from '../../common/Notification';
 import { TransactionDialogBox } from '../../common/TransactionDialogBox';
 const _voterID = 'b01833143e6b75f918a574f9a39a66b250404c945ad0d64ec47b07b4b72c0bb88d9b181c386ff8132e2d5ba7ac4956a723e200925ab00d36bdd0b9a823a2580a';
+
 
 export default function Login() {
     const [voterID, setVoterID] = useState('');
@@ -73,7 +74,7 @@ export default function Login() {
         const l2Provider = new Provider('https://zksync2-testnet.zksync.dev');
         const REGISTER_ABI = (artifacts[3]).abi;
         const register = new Contract(REGISTER_ADDRESS, REGISTER_ABI, l2Provider);
-        const verifier = l1Contracts.Verifier;
+        const verifier = l1Contracts.VerifierZKPMembership;
         //console.log('ver', verifier);
         setWaitingMessage('Hashed ids werden herunterladen');
         const voterIDs = await register.getHashedIDs();
@@ -84,19 +85,15 @@ export default function Login() {
         for (let i = 0; i < voterIDs.length; i++) {
             ids[i] = BigInt(voterIDs[i].slice(2));
         }
-        while(ids.length < i) {
-            ids = [...ids, poseidon([i])];
-          
-        }
-        console.log('hashed voter ids', ids);
+    
         setWaitingMessage('Merkle tree und memebership proof werden erzeugt');
         const merkleTree = new MerkleTree(ids, { isHashed: true });
-        console.log('merkle', merkleTree);
+        //console.log('merkle', merkleTree);
         const hashedID = poseidon(['0x' + _voterID]);
-        console.log('hashed id', hashedID);
+        //console.log('hashed id', hashedID);
         const depth = merkleTree.getDepth();
         const proofOfMembership = merkleTree.getProof(hashedID);
-        console.log('proof of membership', proofOfMembership);
+        //console.log('proof of membership', proofOfMembership);
         setProgress(20);
         setBuffer(50);
         
@@ -104,12 +101,13 @@ export default function Login() {
             setWaitingMessage('Zero Knowledge credentials werden generiert');
             console.log('Compiling the program...');
             const artifacts = zokratesProvider.compile(setSource(depth));
-            console.log(artifacts);
+            //console.log(artifacts);
             const args = [merkleTree.getRoot().toString(), proofOfMembership.voterID, proofOfMembership.directionSelector, proofOfMembership.siblingValues];
-            console.log('args', args);
+            //console.log('args', args);
             console.log('Generating the witness...');
             setProgress(50);
             setBuffer(60);
+            const keypair = require(`../../../data/keypairs/keypairDepth${depth}.json`);
             const { witness, output } = zokratesProvider.computeWitness(artifacts, args);
             //console.log('witness', witness);
             //const Keypair = zokratesProvider.setup(artifacts.program);
@@ -118,23 +116,42 @@ export default function Login() {
             const proof = zokratesProvider.generateProof(artifacts.program, witness, keypair.pk);
             setProgress(60);
             setBuffer(70);
-            console.log('proof:', proof);
+            //console.log('proof:', proof);
             //const verify = zokratesProvider.verify(keypair.vk, proof);
             //console.log('verify', verify);
             setWaitingMessage('Zero Knowledge proof wird zur Verifizierung an die der Blockchain gesendet.\n Transaction bitte bestätigen!');
-            const gasLimit = await verifier.estimateGas.verifyTx(proof.proof, proof.inputs);
-            console.log('gasLimit', ethers.utils.formatEther(gasLimit));
+            
             try {
-                const txHandle = await verifier.connect(signer).verifyTx(proof.proof, proof.inputs, { gasLimit});
-                
+                const vk = {
+                    beta: keypair.vk.beta,
+                    alpha: keypair.vk.alpha,
+                    gamma: keypair.vk.gamma,
+                    delta: keypair.vk.delta,
+                    gamma_abc: keypair.vk.gamma_abc
+                }
+                const gasLimit = await verifier.estimateGas.verifyTx(vk, proof.proof, proof.inputs);
+                console.log('gasLimit', ethers.utils.formatEther(gasLimit));
+                const txHandle = await verifier.callStatic.verifyTx(vk, proof.proof, proof.inputs, { gasLimit });
                 console.log('tx', txHandle);
                 setProgress(70);
                 setBuffer(80);
                 setWaitingMessage('Verifizierung läuft');
-                const receipt = await txHandle.wait();
-                console.log('receipt', receipt);
+                //const receipt = await txHandle.wait();
+                //console.log('receipt', receipt);
                 setProgress(80);
                 setBuffer(100);
+                if (txHandle) {
+                    //alert('Authentication successful.');
+                    setWaitingMessage('Anmeldung erfolreich! \n Sie werden automatisch an die Voting-Cockpit weitergeleitet. \n Bestätigen Sie bitte das Netzwerkwechseln.')
+                    setIsAuthenticated(true);
+                    setProgress(100);
+                    //switchNetwork('zksync');
+                    // TODO: store voter address to the register contract on zksync
+                } else {
+                    setWaitingMessage('Anmeldung fehlgeschlagen!');
+                    setProgress(100);
+                }
+                /*
                 const events = receipt.events;
                 events.forEach(event => {
                     if (event.event === 'AuthentificationStatus') {
@@ -152,10 +169,16 @@ export default function Login() {
                         }
                     }
                 })
-                console.log('receipt', receipt);
+               */
             } catch (error) {
                 for (const [key, value] of Object.entries(error)) {
-                    console.log('here');
+                    let message;
+                    if (key === 'reason') {
+                        setWaitingMessage(message);
+                    }
+                    if (key === 'code') {
+                        setWaitingMessage(prevValue => prevValue + '' + value);
+                    }
                     console.log(`${key}: ${value}`);
                   }
                 console.log('ERROR:', Object.entries(error));
@@ -178,7 +201,7 @@ export default function Login() {
     }
 
     useEffect(()=> {
-        if (!isAuthenticated && chainId !== '0x5' ) switchNetwork('hardhat');
+        //if (!isAuthenticated && chainId !== '0x5' ) switchNetwork('hardhat');
      }, [isAuthenticated, chainId]);
 
      useEffect(()=> {

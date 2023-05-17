@@ -30,7 +30,7 @@ import { BALLOT_TYPE1_ANSWERS } from '../../../utils/constantes';
 import { useEth } from '../../../contexts/EthContext';
 import { Contract } from 'zksync-web3';
 import { useParams } from 'react-router-dom';
-import * as ethers from 'ethers';
+import { ethers } from 'ethers';
 
 export default function ControlOverview(props) {
     const { state } = useEth();
@@ -67,15 +67,16 @@ export default function ControlOverview(props) {
     }
     const pubKey = 826344133539501080037625820098479085508537651913848278597202485940166690727324676173937291847739931947912432722315708246773953702332257472293365813101604446355691625539637562922084273126849071642242125849438954933195671079141669460n
     const PrivKey= 462021571530507360931184193766058479594756767639082008652922236215650087933355898970098733653785079156445011276272783409846981484571287163809133213117546398165149966819670062929856838311038630980769066332193852360520143402466596867n
+    const MNEMONIC_GOERLI = "7b6a99cbccae2acf1cb5d737a5908c21cbbc5e913e239fbdf8b8f9e393c4843d";
+    const api_key = '5603dfe25e514e7198477778e8c05c7b';
+    const web3 = new ethers.providers.InfuraProvider('goerli', api_key);
+    const wallet = new ethers.Wallet(MNEMONIC_GOERLI, web3);
     const contract = useMemo(() => {
         if (artifacts) {
-            const api_key = '5603dfe25e514e7198477778e8c05c7b';
-            const web3 = ethers.getDefaultProvider(`https://goerli.infura.io/v3/${api_key}`);
-            const VERIFIER_MEMBERSHIP_ZKP_ADDRESS = '0xBb00F6fB79D4922D95b4ad53a6358f297CC0435E';
+            const VERIFIER_ZKP_ADDRESS = '0xc17049cdf90de161f523A95563f1bA3A1654B6Fa';
             const abi = artifacts[4].abi;
-            const contract = new ethers.Contract(VERIFIER_MEMBERSHIP_ZKP_ADDRESS, abi, web3);
-            //console.log('contract', contract);
-            //console.log('artifacts', l2Contracts);
+            const contract = new ethers.Contract(VERIFIER_ZKP_ADDRESS, abi, web3);
+           
             return contract;
         }
     }, [artifacts]);
@@ -88,8 +89,7 @@ export default function ControlOverview(props) {
         const ring = group.map((n) => BigInteger(n));
         //console.log('group', group);
         const pair = generatePair();
-       // console.log('pair', pair.publicKey.valueOf());
-        const pub = BigInt(pubKey);
+        const pub = BigInt(pair.publicKey);
         console.log('pub', pub.toString(16));
         const finalBallots = [];
        for (let i = 0; i < answersPerBallot.length; i++) {
@@ -111,31 +111,23 @@ export default function ControlOverview(props) {
                     for (const [key, value] of Object.entries(options[j].answers)) {
                         if (value) {
                             const [c2, proof2] = createMemberShipZKP(key, BALLOT_TYPE1_ANSWERS, pub);
-                            console.log('cipher:', c2);
+                            //console.log('cipher1:', c2);
                             console.log('proof:', proof2);
                             //const verify2 = verifyMembershipZkp(c2, proof2, BALLOT_TYPE1_ANSWERS, pub);
                             //console.log('verify zkp membership answers', verify2);
                             const cipher = ethers.utils.hexlify(c2);
                             const inputs = computeZKPInputs(c2, proof2, BALLOT_TYPE1_ANSWERS, pub);
                             //console.log('inputs', inputs);
-                            //console.log('cipher', cipher);
+                            //console.log('cipher2', cipher);
+                            const pk = ethers.utils.hexlify(pub);
+                            //console.log('pk', pk);
+                            
                             try {
-                                const gasPrice = await l2Provider.getGasPrice();
-                                /*
-                                console.log('gas price:', ethers.utils.formatEther(gasPrice));
-                                const gasLimit = await verifyMembershipZKP.connect(signer).estimateGas.verifyMembershipZKP(
-                                    cipher,
-                                    inputs.proof,
-                                    inputs.isProofONegativ,
-                                    inputs.as,
-                                    inputs.ias,
-                                    inputs.gmk,
-                                    inputs.e,
-                                    ethers.utils.hexlify(pub)
-                                );
-                                console.log('gas', gasLimit);
                                 
-                                const result = await verifyMembershipZKP.connect(signer).verifyMembershipZKP(
+                                //const gasPrice = await l2Provider.getGasPrice();
+                                const gasPrice = await web3.getGasPrice();
+                                console.log('gas price:', ethers.utils.formatEther(gasPrice));
+                                const gasLimit = await contract.estimateGas.verifyTx(
                                     cipher,
                                     inputs.proof,
                                     inputs.isProofONegativ,
@@ -143,22 +135,36 @@ export default function ControlOverview(props) {
                                     inputs.ias,
                                     inputs.gmk,
                                     inputs.e,
-                                    ethers.utils.hexlify(pub),
-
+                                    pk
+                                );
+                                console.log('gas limit', ethers.utils.formatEther(gasLimit));
+                                
+                                const result = await contract.callStatic.verifyTx(
+                                    cipher,
+                                    inputs.proof,
+                                    inputs.isProofONegativ,
+                                    inputs.as,
+                                    inputs.ias,
+                                    inputs.gmk,
+                                    inputs.e,
+                                    pk,
+                                    
                                     {
                                         // Provide gas params manually
-                                        maxFeePerGas: gasPrice,
-                                        maxPriorityFeePerGas: gasPrice,
-                                        gasPrice,
+                                        //maxFeePerGas: gasPrice,
+                                        //maxPriorityFeePerGas: gasPrice,
+                                        gasLimit,
+                                        //gasPrice
                                     }
+                                    
                                 );
         
                                 console.log(`verify membership zkp at index ${i}: ${j}`, result);
-                                */
+                                
                             } catch (error) {
                                 console.error(error);
                             }
-            
+                            
                             const signature = signData(
                                 ring, 
                                 new KeyPair({ value0: BigInteger(pubKey), value1: BigInteger(PrivKey) }),

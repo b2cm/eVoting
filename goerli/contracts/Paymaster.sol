@@ -10,13 +10,14 @@ contract Paymaster is BasePaymaster {
 
     event TargetSet(address target);
 
+    // The contract we are willing to pay gas for.
     function setTarget(address target) external onlyOwner {
         ourTarget = target;
         emit TargetSet(target);
     }
 
     function versionPaymaster() external view override virtual returns (string memory){
-        return "3.0.0-beta.2+opengsn.test-pea.ipaymaster";
+        return "3.0.0-beta.3+opengsn.test-pea.ipaymaster";
     }
 
     function deposit() public payable {
@@ -42,5 +43,10 @@ contract Paymaster is BasePaymaster {
         GsnTypes.RelayData calldata relayData
     ) internal view override{
         (context, success, gasUseWithoutPost, relayData);
+    }
+
+    function withdrawAll(address payable destination) public {
+        uint256 amount = relayHub.balanceOf(address(this));
+        withdrawRelayHubDepositTo(amount, destination);
     }
 }

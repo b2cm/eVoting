@@ -50,6 +50,7 @@ export default function BallotType2Form(props) {
         candidates, 
         title,
         maxSelectableAnswer,
+        countSelectedYESAnswers,
         handleChangeMaxSelectableAnswer,
         handleAddCandidate, 
         handleDeleteCandidate, 
@@ -240,11 +241,14 @@ export default function BallotType2Form(props) {
 
                                 <TableCell align='left' sx={{ fontSize: 12}}> 
                                     <Box sx={{ display: 'flex', alignItems: 'center'}}>
-                                            {BALLOT_TYPE1_ANSWERS.map((option, index2) => (
-                                                <FormGroup key={index2}>
-                                                    <FormControlLabel control={<Checkbox onChange={() => handleCheckboxChangeBallotType2(candidate, option)} checked={answersPerBallot[index].answers[option]} disabled={disabled? disabled: false}/>} label={option} />
-                                                </FormGroup>
-                                            ))}
+                                            {BALLOT_TYPE1_ANSWERS.map((option, index2) => {
+                                                const checked = answersPerBallot[index].answers[option];
+                                                return (
+                                                    <FormGroup key={index2}>
+                                                        <FormControlLabel control={<Checkbox onChange={() => handleCheckboxChangeBallotType2(candidate, option)} checked={checked} disabled={(option === 'JA' && !checked && countSelectedYESAnswers === maxSelectableAnswer) || disabled ? true : false}/>} label={option} />
+                                                    </FormGroup>
+                                                );
+                                            })}
                                     </Box>
                                 </TableCell>
                             </>

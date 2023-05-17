@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
+import 'hardhat/console.sol';
 
 // Definition here allows both the lib and inheriting contracts to use BigNumber directly.
 struct BigNumber { 
@@ -371,14 +372,15 @@ library BigNumbers {
         BigNumber memory n) 
     internal view returns(BigNumber memory) {
         // base^-exp = (base^-1)^exp
-        require(!a.neg && e.neg);
-
+        console.log('wronng 1');
+        require(!a.neg && e.neg, 'something wrong here');
+        console.log('wronng 2');
         //if modulus is negative or zero, we cannot perform the operation.
-        require(!n.neg && !isZero(n.val));
-
+        require(!n.neg && !isZero(n.val), 'and here too');
+        console.log('wronng 3');
         //base_inverse == inverse(base, modulus)
-        require(modinvVerify(a, n, ai), 'wrong inverse'); 
-            
+        //require(modinvVerify(a, n, ai), 'wrong inverse'); 
+        console.log('wronng 4');
         bytes memory _result = _modexp(ai.val,e.val,n.val);
         //get bitlen of result (TODO: optimise. we know bitlen is in the same byte as the modulus bitlen byte)
         uint bitlen = bitLength(_result);

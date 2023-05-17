@@ -5,6 +5,6 @@ import '../Utils.sol';
 
 interface IEVerifier{
 
-    function verifyTx(Utils.Proof memory proof, uint[2] memory input) external returns (bool r);
+    function verifyTx(Utils.VerifyingKey memory vk, Utils.Proof memory proof, uint[2] memory input) external returns (bool r);
 
 }

@@ -19,6 +19,7 @@ import Footer from '../../common/Footer';
 import HomeHeader from './HomeHeader';
 import HomeActions from './HomeActions';
 import MetaMaskOnboarding from '@metamask/onboarding';
+import detectEthereumProvider from "@metamask/detect-provider";
 
 
 var isBetween = require('dayjs/plugin/isBetween');
@@ -50,11 +51,21 @@ function Home() {
     }
 
     useEffect(() => {
-    
-        if (chainId && chainId !== '0x118') {
-            switchNetwork('zksync');
+
+        const provider = async () => {
+            const p = await detectEthereumProvider();
+            console.log('provider', p);
+            const chainId = await p.request({
+                method: 'eth_chainId'
+              });
+            console.log('chain', chainId);
+
+            if (chainId && chainId !== '0x118') {
+                switchNetwork('zksync');
+            }
         }
         
+        provider();
     }, [chainId]);
 
     //console.log('artifacts', artifacts);

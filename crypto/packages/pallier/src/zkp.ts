@@ -5,6 +5,7 @@ import { generator } from "./generator";
 import { hash } from "./hash";
 import { get_l, get_t } from "./t";
 import { getK } from "./K";
+import { ethers } from 'ethers';
 
 export function createMemberShipZKP(
   message: bigint,
@@ -63,6 +64,53 @@ export function createMemberShipZKP(
   vs[i!] = vi;
 
   return [cipher, [es, us, vs]] as const;
+}
+
+export function computeZKPInputs(
+  ciphertext: bigint,
+  //[es, us, vs]: [bigint[], bigint[], bigint[]],
+  proof: bigint[][],
+  validMessages: bigint[],
+  N: bigint
+) {
+
+  const e = BigInt("0x" + hash(BigInt(proof[1].join("")).toString(16), "hex")) % N;
+  let ukInv: string[] = []; // Array containing the modular inverse of uk for each message.
+  let gmk: string[] = []; 
+
+  const as = validMessages.map((m) => {
+    const _gmk = PowerMod(generator(N), m, N * N);
+    gmk.push(ethers.utils.hexlify(_gmk));
+    const uk = (InvMod(_gmk, N * N));
+    const _uk = (ciphertext * InvMod(_gmk, N * N)) % (N * N);
+    const uki = InvMod(_uk, N * N); // Modular inverse of _uk
+    ukInv.push(ethers.utils.hexlify(uki));
+    return ethers.utils.hexlify(uk);
+  });
+
+  const isProofONegativ = proof[0].map((e) => {
+    if (e < 0n) {
+      return true;
+    }
+    return false;
+  });
+
+  const p = proof.map((elem, i) => elem.map((value, j) => {
+    if (value < 0n) {
+      //console.log(`value at index ${i}:${j}`, value);
+      return ethers.utils.hexlify(value * -1n);
+    }
+    return ethers.utils.hexlify(value);
+  }));
+
+  return {
+    proof: p,
+    isProofONegativ,
+    as,
+    ias: ukInv,
+    gmk,
+    e: ethers.utils.hexlify(e), 
+  } as const;
 }
 
 export function verifyMembershipZkp(

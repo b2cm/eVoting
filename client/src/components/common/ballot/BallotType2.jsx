@@ -1,5 +1,6 @@
 import {
     useState,
+    useEffect,
 } from 'react';
 import BallotType2Form from './BallotType2Form';
 
@@ -11,6 +12,7 @@ import BallotType2Form from './BallotType2Form';
 export default function BallotType2(props) {
     
     const [selectedCandidate, setSelectedCandidate] = useState(0);
+    const [countSelectedYESAnswers, setCountSelectedYesAnswers] = useState(0);
     const {
         answersPerBallot,
         handleCheckboxChangeBallotType2,
@@ -29,6 +31,7 @@ export default function BallotType2(props) {
     const candidates = [...selectedBallot.candidates];
     const title = selectedBallot.title;
     const maxSelectableAnswer = selectedBallot.maxSelectableAnswer;
+    //console.log('data', answersPerBallot);
 
     const updateBallots = () => {
         if (!whichBallots || whichBallots === 'old') {
@@ -41,7 +44,7 @@ export default function BallotType2(props) {
     }
 
     const handleChangeMaxSelectableAnswer = (event) => {
-        console.log('max', event.target.value);
+        //console.log('max', event.target.value);
         selectedBallot.maxSelectableAnswer = event.target.value;
         updateBallots();
     }
@@ -79,6 +82,22 @@ export default function BallotType2(props) {
         }
     }
 
+    const handleMaxSelectedYESAnswers = () => {
+        if (restructure && disabled && !isEditable) {
+
+        }
+    }
+
+    useEffect(() => {
+        let count = 0;
+        for (let i = 0; i < answersPerBallot.length; i ++) {
+            if (answersPerBallot[i].answers.JA && count < maxSelectableAnswer) {
+                count += 1;
+            }
+        }
+        setCountSelectedYesAnswers(count);    
+    });
+
 
   return (
    <BallotType2Form
@@ -89,6 +108,7 @@ export default function BallotType2(props) {
         isEditable={isEditable}
         title={title}
         maxSelectableAnswer={maxSelectableAnswer}
+        countSelectedYESAnswers={countSelectedYESAnswers}
         handleChangeMaxSelectableAnswer={handleChangeMaxSelectableAnswer}
         selectedCandidate={selectedCandidate}
         setSelectedCandidate={setSelectedCandidate}

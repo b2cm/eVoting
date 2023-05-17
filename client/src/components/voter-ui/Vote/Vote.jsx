@@ -72,12 +72,33 @@ export default function Vote(props) {
         });
     }
 
+   
+
     const handleCheckboxChangeBallotType2 = (candidate, key) => {
+        if (key === 'JA') {
+            if (voteDetails.ballots[selectedIndex].totalSelectedAnswers < voteDetails.ballots[selectedIndex].maxSelectableAnswer) {
+                voteDetails.ballots[selectedIndex].totalSelectedAnswers = voteDetails.ballots[selectedIndex].totalSelectedAnswers + 1;
+                setVoteDetails(voteDetails);
+            }
+        } else {
+            if (voteDetails.ballots[selectedIndex].totalSelectedAnswers > 0) {
+                voteDetails.ballots[selectedIndex].totalSelectedAnswers = voteDetails.ballots[selectedIndex].totalSelectedAnswers - 1;
+                setVoteDetails(voteDetails);
+            }
+        }
+        const candidateObj = answersPerBallot[selectedIndex].options.find(o => o.candidate === candidate);
+        
+        //console.log('answers', candidateObj);
         setAnswersPerBallot(prevState => {
-            const candidateObj = prevState[selectedIndex].options.find(o => o.candidate === candidate);
+            //console.log('previous state', prevState);
+            const ballotObj = prevState[selectedIndex].options;
+            const candidateObj = ballotObj.find(o => o.candidate === candidate);
+            //console.log('candidate', candidateObj);
             for (const [_key, value] of Object.entries(candidateObj.answers)) {
                 if (_key === key) {
-                    candidateObj.answers[_key] = !value;
+                    if (!value) {
+                        candidateObj.answers[_key] = true;
+                    }
                 } else {
                     candidateObj.answers[_key] = false;
                 }
@@ -141,13 +162,15 @@ export default function Vote(props) {
                 const ballots = await contract.get_ballot_papers();
 
                 for (let i = 0; i < ballots.length; i++) {
+                    const maxSelectableAnswer = ballots[i].maxSelectableAnswer.toNumber();
                     const ballot = {
                         ballotType: ballots[i].ballotType,
                         name: ballots[i].name,
                         information: ballots[i].information,
                         title: ballots[i].title,
                         candidates: ballots[i].candidates,
-                        maxSelectableAnswer: ballots[i].maxSelectableAnswer.toNumber(),
+                        maxSelectableAnswer,
+                        totalSelectedAnswers: 0
                     }
                     _ballots.push(ballot);
                 }

@@ -16,7 +16,7 @@ import { VOTING_STATES,
 import { getElectionStateColor } from '../../../utils/utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
-import Notification from '../../common/Notification';
+//import Notification from '../../common/Notification';
 
 export default function MyCard(props) {
     const { voteID, voteName, voteDescription, voteState, createdAt, voteStartTime, voteEndTime } = props.data;
@@ -110,9 +110,10 @@ export default function MyCard(props) {
             </IconButton>
         </CardActions>
     </Card>
-
-    {(openSettings) && <Notification setOpen={handleClickSettings} />}
     </>
     
   )
 }
+
+
+// {(openSettings) && <Notification setOpen={handleClickSettings} />}
