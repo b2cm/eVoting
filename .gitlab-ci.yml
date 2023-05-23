@@ -33,7 +33,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - cd crypto
     - yarn install
     - yarn lrs:build && yarn pallier:build && yarn elgammal:build
-    - yarn db:start
+    # - yarn db:start
     - cd packages/lrs && yarn build:typings 
     - cd .. && yarn start:prod
     - echo "Compile complete."
