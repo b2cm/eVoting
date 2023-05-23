@@ -35,7 +35,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - yarn lrs:build && yarn pallier:build && yarn elgammal:build
     # - yarn db:start
     # - cd packages/lrs && yarn build:typings 
-    - cd backend && yarn build
+    - cd packages/backend && yarn build
     - yarn start:prod
     - echo "Compile complete."
 
