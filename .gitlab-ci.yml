@@ -33,13 +33,14 @@ build-job:       # This job runs in the build stage, which runs first.
     - cd crypto
     - yarn install
     - yarn lrs:build
-    #- yarn pallier:build
-    #- yarn elgammal:build
+    - yarn pallier:build
+    - yarn elgammal:build
     # - yarn db:start
     # - cd packages/lrs && yarn build:typings 
     - cd packages/lrs && ls
-    - yarn build
-    - yarn start:prod
+    - cd ..
+    #- yarn build
+    - yarn backend:dev
     - echo "Compile complete."
 
 unit-test-job:   # This job runs in the test stage.
