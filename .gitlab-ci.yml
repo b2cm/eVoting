@@ -30,11 +30,11 @@ build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
     - echo "Compiling the code..."
-    - cd crypto
-    - yarn install
-    - yarn lrs:build
-    - yarn pallier:build
-    - yarn elgammal:build
+    #- cd crypto
+    #- yarn install
+    #- yarn lrs:build
+    #- yarn pallier:build
+    #- yarn elgammal:build
     #- cd packages/lrs && yarn build:typings 
     #- cd packages/backend
     #- yarn prebuild && yarn build
