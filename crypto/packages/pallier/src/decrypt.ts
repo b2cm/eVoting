@@ -97,6 +97,18 @@ export async function decrypt(
 
   const validParties = otherZkps
     .map(({ partial_dec_res, R1, R2, z, cc, vki, partyNumber }) => {
+      console.log('proof decryption', {
+        ciphertext,
+        partial_dec_res,
+        R1,
+        R2,
+        z,
+        cc,
+        vki,
+        N,
+        delta,
+        vk
+      });
       const valid = ZKP_check(
         ciphertext,
         partial_dec_res,

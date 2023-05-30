@@ -14,9 +14,9 @@
   "types": "build/index.d.ts",
   "dependencies": {
     "bigint-crypto-utils": "^3.0.21",
+    "ethers": "^5.7.2",
     "rxjs": "^7.4.0",
-    "tslib": "^2.3.1",
-    "ethers": "^5.7.2"
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",

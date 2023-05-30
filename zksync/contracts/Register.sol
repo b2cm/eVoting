@@ -4,14 +4,9 @@ pragma solidity ^0.8.0;
 contract Register {
     address[] private eligibleVoters;
     bytes[] private hashedVoterIDs;
-    string[] private lrs;
+    bytes[] private lrs;
     string[] private hashedIDs;
-    mapping(bytes => string) private lrsPublicKeys; // hashedID => lrsPublicKey (Linkable Ring Signature pk)
-
-    struct SHA512 {
-        bytes32 part1;
-        bytes32 part2;
-    }
+    mapping(bytes => bytes) private lrsPublicKeys; // hashedID => lrsPublicKey (Linkable Ring Signature pk)
 
     event HashedIDStored();
     event VoterAdded();
@@ -34,7 +29,7 @@ contract Register {
         }
     }
 
-    function storeHashedIDAndPK(bytes memory _hashedID, string memory _publicKey) external {
+    function storeVoterData(bytes memory _hashedID, bytes memory _publicKey) external {
         hashedVoterIDs.push(_hashedID);
         lrsPublicKeys[_hashedID] = _publicKey;
         lrs.push(_publicKey);
@@ -56,17 +51,17 @@ contract Register {
         return _voterIDs;
     }
 
-    function storeLRSPK (bytes memory _hashedID, string memory _publicKey) external {
+    function storeLRSPK (bytes memory _hashedID, bytes memory _publicKey) external {
         lrsPublicKeys[_hashedID] = _publicKey;
         emit LRSPKStored();
     }
 
-    function getLRSPKs(bytes memory _hashedID) external view returns(string memory pk) {
+    function getLRSPKs(bytes memory _hashedID) external view returns(bytes memory pk) {
         pk = lrsPublicKeys[_hashedID];
     }
 
-    function getLRSGroup() external view returns(string[] memory _lrs) {
-        _lrs = new string[](lrs.length);
+    function getLRSGroup() external view returns(bytes[] memory _lrs) {
+        _lrs = new bytes[](lrs.length);
         for (uint256 i = 0; i < lrs.length; i++) {
             _lrs[i] = lrs[i];
         }

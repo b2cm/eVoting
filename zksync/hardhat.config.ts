@@ -60,12 +60,12 @@ module.exports = {
       }
     }
   },
-  /*
+  
   paths: {
     cache: '../client/src/contracts/zksync/cache',
     artifacts: '../client/src/contracts/zksync/artifacts'
   },
-  */
+  
   solidity: {
     version: "0.8.17",
   },

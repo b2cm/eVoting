@@ -8,8 +8,8 @@ import { useLocation } from 'react-router-dom';
 export default function Footer(props) {
   const { isActive, handleCreateNewVote, handleCancelVoting } = props;
   const location = useLocation();
-  const isVoteCockpitComponent = location.pathname.startsWith('/vote/cockpit');
-  const isCreateVoteComponent = location.pathname.startsWith('/vote/create');
+  const isVoteCockpitComponent = location.pathname.startsWith('/admin/vote/cockpit');
+  const isCreateVoteComponent = location.pathname.startsWith('/admin/vote/create');
 
   const handleCreateNewVote1 = () => {
     handleCreateNewVote();

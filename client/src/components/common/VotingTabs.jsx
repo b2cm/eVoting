@@ -7,7 +7,7 @@ import BallotPanel from './ballot/BallotPanel';
 import BallotIcon from '@mui/icons-material/Ballot';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ElectionResults from '../admin-ui/DisplayVotingDetails/ElectionResults';
+import ElectionResults from '../admin/DisplayVotingDetails/ElectionResults';
 import { VOTING_STATES } from '../../utils/constantes';
 import { VOTING_TAB_COLOR } from '../../utils/colors';
 import VoteOverviewPanel from './VoteOverviewPanel';

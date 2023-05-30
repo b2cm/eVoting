@@ -132,13 +132,13 @@ def remove_first_n_characters(a_string, number_to_remove):
 
 
 if __name__ == "__main__":
-    sessionId = "5478e77b-4134-4739-add6-7bdb358d55b8"
+    sessionId = "911b0e4d-c703-40bf-a83e-ee790e5de42b"
     # JS FILE WILL PROVIDE VOTE(PALLIER) , VOTER_ID(EL-GAMMAL), VOTE_INDEX(COUNTER), =========ZNK, SIGNATURE======
-    partyID = "4bdcfb5d-3e1c-400f-88d5-f86047b074e7"
+    partyID = "9e89636c-2467-458f-a135-d406f3ee012e"
     
     
     priv_key = (
-        "33c8e19148be761e55ad2017361bd2a585f11bfbd9f3e1a96643bb64f94b3882"
+        "b61812420f885ddc8e4857489709c05a4cdaa168f0b75da702b3c6f41867d8e5"
     )
     
     privK = Bn.from_hex(priv_key)

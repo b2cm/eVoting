@@ -10,7 +10,7 @@ import {
 import MetaMaskOnboarding from '@metamask/onboarding';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { actions, useEth } from '../../contexts/EthContext';
-import Home from '../admin-ui/Home/Home';
+import Home from '../admin/Home/Home';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function OnboardingPage(props) {

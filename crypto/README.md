@@ -8,10 +8,10 @@ yarn lrs:build && yarn pallier:build && yarn elgammal:build
 
 yarn db:start
 
-cd packages\lrs && yarn build:typings 
+cd packages/lrs && yarn build:typings 
 
-Yarn backend:dev
+yarn backend:dev
  
-Yarn frontend:dev
+yarn frontend:dev
 
 
