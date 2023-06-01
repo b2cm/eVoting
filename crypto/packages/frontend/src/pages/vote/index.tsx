@@ -7,6 +7,15 @@ import { KeyPair, signData, verifyKeyPair } from "lrs";
 import { useForm } from "react-hook-form";
 import { Groups } from "../../components/groups";
 import BigInteger from "big-integer";
+import {
+  Point,
+  GenerateRandom,
+  GenPublicKey,
+  signature,
+  ElgammalEncrypt,
+  CURVE,
+  verifySignature,
+} from "elgammal";
 
 export default function Vote() {
   const { sessionId } = useParams();
@@ -32,7 +41,7 @@ export default function Vote() {
     setLimit(Limit - 1);
     if (Limit == 0) {
       setoutofcounter(true);
-      setCurrentToken([{vid:"",counter:"",partyId:""}]);
+      setCurrentToken([{ vid: "", counter: "", partyId: "" }]);
       return;
     }
     return;
@@ -70,7 +79,8 @@ export default function Vote() {
     });
   }, [currentToken]);
 
-  // * this function is called when the user clicks on the vote button
+  // * this function is called when the user clicks on the connect to party button
+
   const getVoterData = async () => {
     if (!isValid) return;
     // here the call will be made to the backend to get the voter data corresponding to the public key
@@ -85,7 +95,7 @@ export default function Vote() {
     setLimit(tokens.length);
     console.log("tokens", tokens, "\n");
     setAllTokens(tokens);
-    setDisableConn(true)
+    setDisableConn(true);
   };
 
   useEffect(() => {
@@ -173,19 +183,8 @@ export default function Vote() {
       signature,
       groupId: g[0],
       token: JSON.stringify(currentToken),
-      //  counter: voterData.counter,
-      // vid: voterData.vid,
     });
-    
-  }, [
-    pub,
-    selected,
-    candidates,
-    sessionId,
-    // voterData?.counter,
-    // voterData?.vid,
-    currentToken
-  ]);
+  }, [pub, selected, candidates, sessionId, currentToken]);
 
   const [tokenIndex, setTokenIndex] = useState(0);
   const updateToken = () => {
@@ -193,6 +192,32 @@ export default function Vote() {
     setTokenIndex(tokenIndex + 1);
     setCurrentToken(allTokens[tokenIndex + 1]);
     setdisableConfirm(false);
+  };
+
+  const verifySign = async () => {
+    const pubkey = getValues().publicKey;
+    console.log("pubkey", pubkey);
+    const { data } = await axios.post(
+      BACKEND_URL + "/Vote/getEncryptedTokens",
+      {
+        publicKey: pubkey,
+      }
+    );
+
+    console.log("data", data);
+    //const verificationToken = data[0].encryptedCounter;
+    const verificationSignature = JSON.parse(data[0].signature.toString());
+    //console.log("verificationToken", verificationToken);
+    console.log("verificationSignature", verificationSignature);
+    const {R, s, e} = verificationSignature;
+    const bool = verifySignature(
+      BigInt(s),
+      Point.fromCompressed(BigInt("0x" + R)),
+      BigInt(e),
+      Point.fromCompressed(BigInt("0x" + pubkey))
+    );
+    console.log("bool", bool);
+    window.alert("Signature Verified");
   };
 
   return (
@@ -262,17 +287,31 @@ export default function Vote() {
             </div>
           )}
         </div>
-      </form> 
+      </form>
       <div>
-        <button onClick={() => getVoterData()} className="blue-btn ripple" disabled={disableConn}>
+        <button
+          onClick={() => getVoterData()}
+          className="blue-btn ripple"
+          disabled={disableConn}
+        >
           Connect to Party
         </button>
-        <div>
-        <button onClick={() => (updateToken())} className="blue-btn ripple" disabled={outofcounter}>
-          Get Next
+        <button
+          onClick={() => verifySign()}
+          className="blue-btn ripple"
+        >
+          Verify Signature
         </button>
+        <div>
+          <button
+            onClick={() => updateToken()}
+            className="blue-btn ripple"
+            disabled={outofcounter}
+          >
+            Get Next
+          </button>
         </div>
-        <div> Total Limit : { TotalLimit}</div>
+        <div> Total Limit : {TotalLimit}</div>
         <div> Remaining Limit : {Limit}</div>
         {voterData && (
           <div>
@@ -330,8 +369,7 @@ export default function Vote() {
             onClick={() => {
               encryptAndSend();
               decreaselimit();
-              setdisableConfirm(true)
-              
+              setdisableConfirm(true);
             }}
             className={
               "blue-btn ripple" + (isValid ? "" : " opacity-30 cursor-default")

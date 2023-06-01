@@ -16,6 +16,7 @@ import {
 import { Queue } from "../util/queue";
 import { Signaller } from "./signalling";
 
+
 //represents a connection with another party
 
 const baseConfig = {
@@ -27,13 +28,18 @@ export class Party {
     private pc: RTCPeerConnection,
     private channel: RTCDataChannel,
     private teardown: Subscription
+    
   ) {
     this._bufferMessages();
+    //this.vrfNumber = VrfGenerator();
   }
   private _messageBuffer = new Queue<string>();
   private _messagesAvailable$ = new Subject<string>();
+  //public vrfNumber : any;
 
   readonly ready$ = new BehaviorSubject(false);
+
+  readonly vrf$ = new BehaviorSubject(null );
 
   private _bufferMessages() {
     this.channel.onmessage = ({ data }) => {
@@ -42,6 +48,7 @@ export class Party {
         const m = JSON.parse(data);
         if ("ready" in m) {
           this.ready$.next(m.ready);
+          this.vrf$.next(m.vrfNumber);
         } else {
           throw new Error();
         }
@@ -51,7 +58,7 @@ export class Party {
       }
     };
   }
-
+// read
   get bufferedMessage$(): Observable<string> {
     if (!this._messageBuffer.isEmpty()) {
       return of(this._messageBuffer.dequeue() as string).pipe(
@@ -81,13 +88,22 @@ export class Party {
     this.pc.close();
   }
 
-  sendReady(ready: boolean) {
+  sendReady(ready: boolean, vrfNumber?: any) {
     this.channel.send(
       JSON.stringify({
         ready,
+        vrfNumber,
       })
     );
   }
+
+  // sendVrfNumber(vrfNumber: any) {
+  //   this.channel.send(
+  //     JSON.stringify({
+  //       vrfNumber,
+  //     })
+  //   );
+  // }
 }
 
 export async function createParty(

@@ -28,6 +28,7 @@ import { createParty, Party } from "./party";
 import { createSignaller, Signaller } from "./signalling";
 import { Signature, verifySignature } from "lrs";
 import BigInteger from "big-integer";
+import VrfGenerator from "../Vrf/vrf";
 
 const keyLength = 80n;
 const threshold = 2;
@@ -35,6 +36,7 @@ const threshold = 2;
 export abstract class Session {
   private _ready = new BehaviorSubject(false);
   private _generationInProgress = false;
+  private _vrf: any;
 
   get userId$() {
     return this.signaller.userId$;
@@ -44,6 +46,10 @@ export abstract class Session {
     return this._ready.getValue();
   }
 
+  get vrf() {
+    return this._vrf;
+  }
+
   get generationInProgress() {
     return this._generationInProgress;
   }
@@ -51,7 +57,9 @@ export abstract class Session {
   constructor(
     private signaller: Signaller,
     protected readonly sessionId: string
-  ) {}
+  ) {
+    this._vrf = VrfGenerator();
+  }
 
   readonly partiesChange$ = this.signaller.parties$.pipe(
     startWith({ parties: [] }),
@@ -146,12 +154,12 @@ export abstract class Session {
     this._ready.next(ready);
     this.parties$
       .pipe(first())
-      .subscribe((parties) => parties.forEach((p) => p.sendReady(ready)));
+      .subscribe((parties) => parties.forEach((p) => p.sendReady(ready, this.vrf)));
   }
 
   protected abstract performAction(userId: string, parties: Party[]): any;
 
-  cleanup() {
+  cleanup() { 
     this.signaller.cleanup();
     this.parties$.pipe(first()).subscribe((ps) => {
       ps.forEach((p) => p.cleanup());
@@ -170,6 +178,7 @@ export class EncryptSession extends Session {
         `parties:${this.sessionId}`,
         JSON.stringify(data.allParties)
       );
+      console.log("finished generation" + data.allParties);
       if (data.isFirstParty) {
         return axios.put(BACKEND_URL + "/SessionData", {
           sessionId: this.sessionId,
@@ -179,6 +188,7 @@ export class EncryptSession extends Session {
     });
   }
 
+  // Save to local storage
   private saveKeys(data: GeneratedKeys, userId: string) {
     window.localStorage.setItem(
       `keys:${this.sessionId}`,
@@ -208,8 +218,6 @@ export class DecryptSession extends Session {
       groupId: string;
       zkp: boolean;
       signature: boolean;
-      //voterID: string;
-      //counter: string;
       token: string;
     }[]
   >(1);
@@ -275,6 +283,7 @@ export class DecryptSession extends Session {
   }
 }
 
+// Read from local storage and return the keys
 export function readKeys(sessionId: string) {
   const s = window.localStorage.getItem(`keys:${sessionId}`);
   if (s) {
@@ -292,6 +301,7 @@ export function readKeys(sessionId: string) {
   return null;
 }
 
+// Create a new session
 export async function joinEncryptSession(sessionId: string) {
   const signaller = await createSignaller(sessionId + "/encrypt");
   return new EncryptSession(signaller, sessionId);
@@ -415,116 +425,12 @@ export async function getAndVerifyVotes(sessionId: string, flag = 0) {
       y0: vote.y0,
       zkp: valid,
       signature: sigVerified,
-      //voterID: vote.voterID,
-      //counter: vote.counter,
       token: vote.token,
     };
   });
 
   return { voteVerification, candidates, pubKey };
 }
-
-// export async function getAndVerifyVoteselection(sessionId: string) {
-//   const { data } = await axios.get<any[]>(BACKEND_URL + "/Vote/" + sessionId);
-//   const conv = (arr: string[]) =>
-//     arr.map(
-//       (v) =>
-//         (v.startsWith("-") ? BigInt(-1) : BigInt(1)) *
-//         BigInt("0x" + v.replace("-", ""))
-//     );
-
-//   // //Filtered + Shuffled votes:
-
-//   // const { data: filteredData } = await axios.get<{ vote: string }[]>(
-//   //   BACKEND_URL + "/Vote/FilterOne"
-//   // );
-//   // // // //create a set to speed lookup
-//   // const votesToInclude = new Set(
-//   //   filteredData.map((vote) => vote.vote.slice(2))
-//   // );
-
-//   // console.log("votesToInclude", votesToInclude);
-//   // console.log("dataFilter", filteredData);
-//   // console.log("dataoldd", data);
-
-//   //  VotesToInclude must have hex representation of the vote
-
-//   const votes = data
-//     //.filter((v) => votesToInclude.has(v.vote))
-//     .map((v) => ({
-//       vote: BigInt("0x" + v.vote),
-//       groupId: v.groupId,
-//       y0: BigInt("0x" + v.y0),
-//       s: BigInt("0x" + v.s),
-//       c: (v.c as string[]).map((c: string) => BigInt("0x" + c)),
-//       proof: (v.proof as string[][]).map((pArr) => conv(pArr)),
-//       //  counter: v.counter,
-//       //  voterID: v.vid,
-//       token: v.token,
-//     }));
-
-//   console.log("votes", { votes });
-
-//   const {
-//     data: { candidates: cand, pubKey },
-//   } = await axios.get(BACKEND_URL + "/SessionData/" + sessionId);
-
-//   const candidates = (cand as []).map((c: any) => ({
-//     title: c.title,
-//     message: BigInt("0x" + c.message),
-//   }));
-
-//   const { data: groupData } = await axios.get<{ [id: string]: string[] }>(
-//     BACKEND_URL + "/Vote/Voter"
-//   );
-
-//   const groups = Object.entries(groupData)
-//     .map(
-//       ([id, pubKeys]) => [id, pubKeys.map((key) => BigInt("0x" + key))] as const
-//     )
-//     .reduce((acc, [id, data]) => {
-//       acc[id] = data;
-//       return acc;
-//     }, {} as { [id: string]: bigint[] });
-
-//   const voteVerification = votes.map((vote) => {
-//     //verify signature
-//     const group = groups[vote.groupId];
-
-//     const sign = new Signature({
-//       value0: BigInteger(vote.y0),
-//       value1: BigInteger(vote.s),
-//       value2: vote.c.map((n: any) => BigInteger(n)),
-//     });
-
-//     const sigVerified = verifySignature(
-//       vote.vote,
-//       sign,
-//       group.map((k) => BigInteger(k))
-//     );
-
-//     //verify zkp
-//     const valid = verifyMembershipZkp(
-//       vote.vote,
-//       vote.proof as [bigint[], bigint[], bigint[]],
-//       candidates.map((c) => c.message),
-//       BigInt("0x" + pubKey)
-//     );
-
-//     return {
-//       vote: vote.vote,
-//       groupId: vote.groupId,
-//       y0: vote.y0,
-//       zkp: valid,
-//       signature: sigVerified,
-//       //voterID: vote.voterID,
-//       //counter: vote.counter,
-//       token: vote.token,
-//     };
-//   });
-
-//   return { voteVerification, candidates, pubKey };
-// }
 
 export async function GetLookUpTable() {
   const { data } = await axios.get<{ value: string; point: string }[]>(

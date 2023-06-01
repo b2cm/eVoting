@@ -11,18 +11,20 @@ export function useSession(session: Session | null) {
     [session]
   );
 
+  
   const parties = useObservable(
+    
     (i, session$) => {
       return session$.pipe(
         switchMap(([s]) => (s ? s.parties$ : EMPTY)),
         switchMap((ps) =>
           combineLatest(
             ps.map((p) =>
-              p.ready$.pipe(
-                startWith(false),
-                map((ready) => ({
+              combineLatest([p.ready$.pipe(startWith(false)), p.vrf$]).pipe(
+                map(([ready, vrf]) => ({
                   ...p,
                   ready,
+                  vrf
                 }))
               )
             )
@@ -30,7 +32,7 @@ export function useSession(session: Session | null) {
         )
       );
     },
-    [] as { partyId: string; ready: boolean }[],
+    [] as { vrf: any ,partyId: string; ready: boolean }[],
     [session]
   );
 

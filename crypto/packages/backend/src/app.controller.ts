@@ -1,7 +1,9 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { async } from 'rxjs';
 import { AppService } from './app.service';
 import { TALLY_SERVER_KEY } from './constants';
 import { TALLY_SERVER_KEY_PRIV } from './constants';
+import { getVoter } from './utils';
 
 @Controller()
 export class AppController {
@@ -71,17 +73,11 @@ export class AppController {
 
   @Get('getCounterlimit')
   async getcounterlimit() {
-    //console.log('body', body.HashedId);
-    
-    
-      const res= await this.appService.getcounterlimit();
-      const limits = res.map((element: any) => element.limit);
-      const HashIds = res.map((element: any) => element.HashedId.toString());
-      //console.log('res',res);
-      //console.log('limits',limits);
-      //console.log('HashIds',HashIds);
-      return { limits: limits, HashIds: HashIds };
-    }
+    const res = await this.appService.getcounterlimit();
+    const limits = res.map((element: any) => element.limit);
+    const HashIds = res.map((element: any) => element.HashedId.toString());
+    return { limits: limits, HashIds: HashIds };
+  }
 
   @Post('SetTriggerVal')
   async setTriggerVal(@Body() body: { flag: number }) {
@@ -94,6 +90,17 @@ export class AppController {
     const result = await this.appService.getTriggerVal();
     return { result: result };
   }
+  @Get('TokenTriggerVal')
+  async getTokenTriggerVal() {
+    const result = await this.appService.getTokenTriggerVal();
+    return { result: result };
+  }
+
+  @Post('SetTokenTriggerVal')
+  async setTokenTriggerVal(@Body() body: { flag: number }) {
+    console.log('body', body.flag);
+    await this.appService.setTokenTriggerVal(body.flag);
+  }
 
   @Post('StoreTokens')
   async storeTokens(
@@ -103,7 +110,27 @@ export class AppController {
     await this.appService.storeTokens(body.vid, body.HashedId, body.counter);
   }
 
- 
+
+  @Post('StoreEncryptedTokens')
+  async storeEncryptedTokens(
+    @Body() body: { encryptedTokens: any[] },
+  ) {
+    //console.log('body', body.vid, body.HashedId, body.counter);
+   // console.log('received encrypted tokens', body.encryptedTokens);
+
+
+    await this.appService.storeEncryptedTokens(body.encryptedTokens);
+  }
+
+
+ // get all the tokens 
+  @Get('getTokensAll')
+  async getTokens() {
+  
+    const res = await this.appService.getTokens();
+    return { tokens : res };
+  }
 
   
+
 }

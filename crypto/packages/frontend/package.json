@@ -16,7 +16,10 @@
     "axios": "^0.24.0",
     "big-integer": "^1.6.51",
     "bigint-crypto-utils": "^3.0.20",
+    "bn.js": "^5.2.1",
     "elgammal": "workspace:^",
+    "elliptic": "^6.5.4",
+    "js-sha256": "^0.9.0",
     "lrs": "workspace:^",
     "pallier": "1.0.0",
     "react": "^17.0.2",
@@ -45,9 +48,11 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "chrome >= 67",
+      "edge >= 79",
+      "firefox >= 68",
+      "opera >= 54",
+      "safari >= 14"
     ],
     "development": [
       "last 1 chrome version",

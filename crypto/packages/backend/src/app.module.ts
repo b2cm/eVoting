@@ -19,6 +19,8 @@ import { Limit } from './entities/limit.entity';
 import { Token } from './entities/tokens.entity';
 import { Trigger } from './entities/trigger.entity';
 import { FilteredVotes } from './entities/FilteredVotes.entity';
+import { TokenTrigger } from './entities/TokenTrigger.entity';
+import { encryptedTokens } from './entities/encryptedTokens.entity';
 
 @Module({
   imports: [
@@ -43,7 +45,9 @@ import { FilteredVotes } from './entities/FilteredVotes.entity';
         Limit,
         Token,
         Trigger,
-        FilteredVotes
+        FilteredVotes,
+        TokenTrigger, 
+        encryptedTokens
       ],
     }),
     TypeOrmModule.forFeature([
@@ -59,7 +63,9 @@ import { FilteredVotes } from './entities/FilteredVotes.entity';
       Limit,
       Token,
       Trigger,
-      FilteredVotes
+      FilteredVotes,
+      TokenTrigger,
+      encryptedTokens
     ]),
   ],
   controllers: [AppController, VoteController, LookUpController],
