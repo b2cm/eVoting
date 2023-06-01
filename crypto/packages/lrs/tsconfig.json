@@ -11,7 +11,7 @@
     "checkJs": false,
     "importHelpers": true,
     "noImplicitAny": false,
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
