@@ -1,7 +1,7 @@
 {
   "name": "evoting-ui",
   "version": "0.1.0",
-
+  "homepage": "http://bccm-s7.hs-mittweida.de",
   "private": true,
   "description": "User interface for the decentralized voting system",
   "main": "index.js",

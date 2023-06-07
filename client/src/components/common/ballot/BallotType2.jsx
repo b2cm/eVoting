@@ -89,13 +89,15 @@ export default function BallotType2(props) {
     }
 
     useEffect(() => {
-        let count = 0;
-        for (let i = 0; i < answersPerBallot.length; i ++) {
-            if (answersPerBallot[i].answers.JA && count < maxSelectableAnswer) {
-                count += 1;
+        if (answersPerBallot) {
+            let count = 0;
+            for (let i = 0; i < answersPerBallot.length; i ++) {
+                if (answersPerBallot[i].answers.JA && count < maxSelectableAnswer) {
+                    count += 1;
+                }
             }
-        }
-        setCountSelectedYesAnswers(count);    
+            setCountSelectedYesAnswers(count);
+            }    
     });
 
 
