@@ -130,6 +130,25 @@ export class AppController {
     return { tokens : res };
   }
 
-  
+  @Get('getHashedIDs')
+async getHashedIDs() {
+const hashedIDs = await this.appService.getHashedIDs();
+return { hashedIDs };
+}
+
+@Get('getLRSGroup')
+async getLRSGroup() {
+const group = await this.appService.getLRSGroup();
+return { group };
+}
+
+@Get('getVotes')
+async getVotes(
+@Body() body: { voteID: string}
+) {
+const votes = await this.appService.getVotes(body.voteID);
+return { votes };
+}
 
 }
+
