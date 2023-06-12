@@ -6,5 +6,9 @@
 !.yarn/sdks
 !.yarn/versions
 .vscode
+<<<<<<< HEAD
 node_modules
 node_modules
+=======
+node_modules
+>>>>>>> e-crypto

@@ -1863,6 +1863,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@eslint/js@npm:8.42.0":
   version: 8.42.0
   resolution: "@eslint/js@npm:8.42.0"
@@ -1870,6 +1871,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> e-crypto
 "@ethersproject/abi@npm:5.7.0, @ethersproject/abi@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/abi@npm:5.7.0"
@@ -2272,10 +2275,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@gar/promisify@npm:^1.0.1, @gar/promisify@npm:^1.1.3":
   version: 1.1.3
   resolution: "@gar/promisify@npm:1.1.3"
   checksum: 4059f790e2d07bf3c3ff3e0fec0daa8144fe35c1f6e0111c9921bd32106adaa97a4ab096ad7dab1e28ee6a9060083c4d1a4ada42a7f5f3f7a96b8812e2b757c1
+=======
+"@gar/promisify@npm:^1.0.1":
+  version: 1.1.2
+  resolution: "@gar/promisify@npm:1.1.2"
+  checksum: d05081e0887a49c178b75ee3067bd6ee086f73c154d121b854fb2e044e8a89cb1cbb6de3a0dd93a519b80f0531fda68b099dd7256205f7fbb3490324342f2217
+>>>>>>> e-crypto
   languageName: node
   linkType: hard
 
@@ -5682,7 +5692,11 @@ __metadata:
     tslib: ^2.4.0
     typeorm: 0.2
     uuid: ^8.3.2
+<<<<<<< HEAD
     zksync-web3: ^0.15.0
+=======
+    zksync-web3: ^0.14.3
+>>>>>>> e-crypto
   languageName: unknown
   linkType: soft
 
@@ -17204,6 +17218,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"scrypt-js@npm:3.0.1":
+  version: 3.0.1
+  resolution: "scrypt-js@npm:3.0.1"
+  checksum: b7c7d1a68d6ca946f2fbb0778e0c4ec63c65501b54023b2af7d7e9f48fdb6c6580d6f7675cd53bda5944c5ebc057560d5a6365079752546865defb3b79dea454
+  languageName: node
+  linkType: hard
+
 "secure-random@npm:^1.1.1, secure-random@npm:^1.1.2":
   version: 1.1.2
   resolution: "secure-random@npm:1.1.2"
@@ -20583,11 +20604,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "zksync-web3@npm:^0.15.0":
   version: 0.15.1
   resolution: "zksync-web3@npm:0.15.1"
   peerDependencies:
     ethers: ^5.7.0
   checksum: d417ea6c61b173e4035f08a8fc1ce5c23bf8f007ddf19134c431a3f300aadc284272a3e434bba89dee87a63f10d1928ce78c97d2106f17f1e7bb00ee7cdb7be3
+=======
+"zksync-web3@npm:^0.14.3":
+  version: 0.14.4
+  resolution: "zksync-web3@npm:0.14.4"
+  peerDependencies:
+    ethers: ^5.7.0
+  checksum: f702a3437f48a8d42c4bb35b8dd13671a168aadfc4e23ce723d62959220ccb6bf9c529c60331fe5b91afaa622147c6a37490551474fe3e35c06ac476524b5160
+>>>>>>> e-crypto
   languageName: node
   linkType: hard
