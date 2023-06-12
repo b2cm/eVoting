@@ -6,9 +6,9 @@ import { v4 as UUID } from 'uuid';
 import { DBService } from './db.service';
 import { ethers } from 'ethers';
 import { Contract , Provider, Wallet, utils } from "zksync-web3";
-import  { abi as REGISTER_ABI }  from './contracts/zksync/artifacts-zk/contracts/Register.sol/Register.json';
-import { abi as FACTORY_ABI } from './contracts/zksync/artifacts-zk/contracts/FactoryEvoting.sol/FactoryEvoting.json';
-import { abi as EVOTING_ABI } from './contracts/zksync/artifacts-zk/contracts/Evoting.sol/Evoting.json';
+import  { abi as REGISTER_ABI }  from './artifacts-zk/contracts/Register.sol/Register.json';
+import { abi as FACTORY_ABI } from './artifacts-zk/contracts/FactoryEvoting.sol/FactoryEvoting.json';
+import { abi as EVOTING_ABI } from './artifacts-zk/contracts/Evoting.sol/Evoting.json';
 
 export interface Session {
   parties: {
