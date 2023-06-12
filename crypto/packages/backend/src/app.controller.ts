@@ -3,7 +3,6 @@ import { async } from 'rxjs';
 import { AppService } from './app.service';
 import { TALLY_SERVER_KEY } from './constants';
 import { TALLY_SERVER_KEY_PRIV } from './constants';
-import { getVoter } from './utils';
 
 @Controller()
 export class AppController {
@@ -129,6 +128,32 @@ export class AppController {
   
     const res = await this.appService.getTokens();
     return { tokens : res };
+  }
+
+  // Inform the election parties that the registration period ended, so they can start generate the countera  and limmits for voters
+  @Post('RegistrationEnded')
+  async registrationEnded() {
+
+  }
+
+  @Get('getHashedIDs')
+  async getHashedIDs() {
+    const hashedIDs = await this.appService.getHashedIDs();
+    return { hashedIDs };
+  }
+
+  @Get('getLRSGroup')
+  async getLRSGroup() {
+    const group = await this.appService.getLRSGroup();
+    return { group };
+  }
+
+  @Get('getVotes')
+  async getVotes(
+    @Body() body: { voteID: string}
+  ) {
+    const votes = await this.appService.getVotes(body.voteID);
+    return { votes };
   }
 
   
