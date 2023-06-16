@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { useEth, actions } from '../../contexts/EthContext';
 
@@ -22,10 +22,15 @@ import BallotIcon from '@mui/icons-material/Ballot';
 import Toolbar from '@mui/material/Toolbar';
 import { SUCCESS_COLOR, TEXT_COLOR, SUCCESS_COLOR_HOVER } from '../../utils/colors';
 import WalletButton from './WalletButton';
+import RegisterPeriod from './RegisterPeriod';
+import { useNavigate } from 'react-router-dom';
 
 export default function Sidebar() {
-    const { state: { isDrawerOpen, }, dispatch} = useEth();
+    const { state: { isDrawerOpen, openRegisterDialogBox }, dispatch} = useEth();
     const prevRoute = useLocation().pathname;
+    const [openDialog, setOpenDialog] = useState(false);
+    const navigate = useNavigate();
+
     
     const setDrawer = (val) => {
       dispatch({
@@ -37,11 +42,25 @@ export default function Sidebar() {
     }
 
     const toggleDrawer = (open) => (event) => {
+      console.log('event', event)
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
           return;
         }
         setDrawer(open);
     };
+
+    const setOpenRegisterDialogBox = () => {
+      console.log('it is working!')
+      dispatch({
+        type: actions.init,
+        data: { 
+          openRegisterDialogBox: true,
+         }
+      });
+    }
+    const handleCloseRegisterDialog = () => {
+      setOpenDialog(false);
+    }
 
     const list = () => (
         <Box
@@ -51,12 +70,16 @@ export default function Sidebar() {
             alignItems: 'center',
             width: 300 }}
           role="presentation"
-          onClick={toggleDrawer(false)}
+          //onClick={toggleDrawer(false)}
           //onKeyDown={toggleDrawer(false)}
         >
             <Button 
                 variant="contained" 
                 size='large'
+                onClick={() => {
+                  setDrawer(false);
+                  navigate('/admin/vote/create', { state: {prevRoute}})}
+                }
                 sx={{
                     width: 250,
                     marginTop:2,
@@ -69,11 +92,7 @@ export default function Sidebar() {
                     }
                 }}
             >
-              <Link to={'/admin/vote/create'} 
-                state={{prevRoute}}
-                style={{textDecoration: 'none', color: 'white'}}>
-                Neue Wahl Erstellen
-              </Link>
+              Neue Wahl Erstellen
             </Button>
           <Divider />
           <List>
@@ -83,21 +102,40 @@ export default function Sidebar() {
             }}>
               <WalletButton width={250}/>
             </Box>
-            {['Meine Wahlen', 'Registrierung Einstellen', 'Profil', 'Abmelden'].map((text, index) => (
-              <ListItem key={index} disablePadding >
-                <ListItemButton >
+            <ListItem disablePadding >
+                <ListItemButton onClick={() => {
+                  setDrawer(false);
+                  navigate('/admin/home');
+                }} >
                   <ListItemIcon>
-                    {text === 'Meine Wahlen' && <BallotIcon fontSize='large' />}
-                    {text === 'Registrierung Einstellen' && <AccessTimeFilledIcon fontSize='large' />}
-                    {text === 'Profil' && <PersonIcon fontSize='large'/> }
-                    {text === 'Abmelden' && <LogoutIcon fontSize='large' />}
+                    <BallotIcon fontSize='large' />
                   </ListItemIcon>
-                  <Link to={text==='Meine Wahlen' && '/'} style={{textDecoration: 'none', color: TEXT_COLOR, }}>
-                    <ListItemText primary={text} primaryTypographyProps={{fontSize: '15px'}}/>
-                  </Link>
+                  <ListItemText primary='Meine Wahlen' primaryTypographyProps={{fontSize: '15px'}}/>
+                </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+                <ListItemButton onClick= {() => {
+                  //setDrawer(false);
+                  setOpenDialog(true) }
+                  } >
+                  <ListItemIcon>
+                    <AccessTimeFilledIcon fontSize='large' />
+                  </ListItemIcon>
+                  <ListItemText primary='Registrierung einstellen' primaryTypographyProps={{fontSize: '15px'}}/>
                 </ListItemButton>
               </ListItem>
-            ))}
+
+              <ListItem disablePadding>
+                <ListItemButton >
+                  <ListItemIcon>
+                    <LogoutIcon fontSize='large' />
+                  </ListItemIcon>
+                  <ListItemText primary='Abmelden' primaryTypographyProps={{fontSize: '15px'}}/>
+                </ListItemButton>
+              </ListItem>
+
+            
             
           </List>
         </Box>
@@ -123,6 +161,25 @@ export default function Sidebar() {
             <Toolbar />
             {list()}
         </Drawer>
+        {  <RegisterPeriod openDialog={openDialog} handleCloseDialog={handleCloseRegisterDialog} />}
     </div>
   )
 }
+
+/*
+{['Meine Wahlen', 'Registrierung Einstellen', 'Profil', 'Abmelden'].map((text, index) => (
+              <ListItem key={index} disablePadding >
+                <ListItemButton onClick={ text === 'Registrierung Einstellen'? () => setOpenDialog(true) : () => console.log('not working!') } >
+                  <ListItemIcon>
+                    {text === 'Meine Wahlen' && <BallotIcon fontSize='large' />}
+                    {text === 'Registrierung Einstellen' && <AccessTimeFilledIcon fontSize='large' />}
+                    {text === 'Profil' && <PersonIcon fontSize='large'/> }
+                    {text === 'Abmelden' && <LogoutIcon fontSize='large' />}
+                  </ListItemIcon>
+                  <Link to={text==='Meine Wahlen' && '/admin/home'} style={{textDecoration: 'none', color: TEXT_COLOR, }}>
+                    <ListItemText primary={text} primaryTypographyProps={{fontSize: '15px'}}/>
+                  </Link>
+                </ListItemButton>
+              </ListItem>
+            ))}
+ */

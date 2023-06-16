@@ -5,6 +5,7 @@ const actions = {
 
 const initialState = {
   isDrawerOpen: false,
+  openRegisterDialogBox: false,
   artifacts: null,
   web3: null,
   accounts: null,

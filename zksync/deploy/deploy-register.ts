@@ -17,3 +17,5 @@ export default async (hre: HardhatRuntimeEnvironment) => {
     console.log(`${artifact.contractName} was deployed to ${contractAddr}`);
     
 }
+
+const address = '0x6e1941645A1EbE44363307F3890f8F34Da5b6F21';

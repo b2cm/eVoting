@@ -1458,8 +1458,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Register.sol": {
-      "lastModificationDate": 1684484369559,
-      "contentHash": "e77ce7d3480be17cf3e11218a6c4c36e",
+      "lastModificationDate": 1686747055546,
+      "contentHash": "1f816e5a7735cc27ee06803ae7b60a4a",
       "sourceName": "contracts/Register.sol",
       "solcConfig": {
         "version": "0.8.17",

@@ -3,34 +3,55 @@ pragma solidity ^0.8.0;
 
 contract Register {
     address[] private eligibleVoters;
-    bytes[] private hashedVoterIDs;
+    bytes[] private votersHashedIDs;
     bytes[] private lrs;
     string[] private hashedIDs;
     mapping(bytes => bytes) private lrsPublicKeys; // hashedID => lrsPublicKey (Linkable Ring Signature pk)
+    uint256 private registrationStart;
+    uint256 private registrationEnd;
+    address public admin;
 
     event HashedIDStored();
     event VoterAdded();
     event LRSPKStored();
+    event RegistrationPeriodSet();
+
+    modifier onlyAdmin () {
+        require(msg.sender == admin, 'Not the admin');
+
+        _;
+    }
 
     constructor() {
-
+        admin = msg.sender;
     }
 
-    function storeHashedID(string memory _hashedID) external {
-        hashedIDs.push(_hashedID);
-        emit HashedIDStored();
+    function setRegistrationPeriod(uint256 _start, uint256 _end) external onlyAdmin {
+        require(_start < _end, 'The registration cannot end before it even starts');
+        require(_start >= block.timestamp && _end > block.timestamp, 'The registration can not take place in the past.');
+
+        registrationStart = _start;
+        registrationEnd = _end;
+
+        emit RegistrationPeriodSet();
     }
 
-    function getHashedIDs() external view returns (string[] memory _hashedIDs) {
-        uint256 length = hashedIDs.length;
-        _hashedIDs = new string[](length);
+    function isRegistrationOpen() public view returns (bool isOpen) {
+        isOpen = (registrationEnd > block.timestamp && registrationStart < block.timestamp);
+    }
+
+
+    function getHashedIDs() external view returns (bytes[] memory _hashedIDs) {
+        uint256 length = votersHashedIDs.length;
+        _hashedIDs = new bytes[](length);
         for (uint256 i = 0; i < length; i++) {
-            _hashedIDs[i] = hashedIDs[i];
+            _hashedIDs[i] = votersHashedIDs[i];
         }
     }
 
     function storeVoterData(bytes memory _hashedID, bytes memory _publicKey) external {
-        hashedVoterIDs.push(_hashedID);
+        require(isRegistrationOpen(), 'Registration has not started yet or has already ended');
+        votersHashedIDs.push(_hashedID);
         lrsPublicKeys[_hashedID] = _publicKey;
         lrs.push(_publicKey);
         emit HashedIDStored();
@@ -40,24 +61,6 @@ contract Register {
     function addEligibleVoter(address _voter) external {
         eligibleVoters.push(_voter);
         emit VoterAdded();
-    }
-
-    function getVoterIDs() external view returns(bytes[] memory) {
-        uint256 length = hashedVoterIDs.length;
-        bytes[] memory _voterIDs = new bytes[](length);
-        for (uint256 i = 0; i < length; i++) {
-            _voterIDs[i] = hashedVoterIDs[i];
-        }
-        return _voterIDs;
-    }
-
-    function storeLRSPK (bytes memory _hashedID, bytes memory _publicKey) external {
-        lrsPublicKeys[_hashedID] = _publicKey;
-        emit LRSPKStored();
-    }
-
-    function getLRSPKs(bytes memory _hashedID) external view returns(bytes memory pk) {
-        pk = lrsPublicKeys[_hashedID];
     }
 
     function getLRSGroup() external view returns(bytes[] memory _lrs) {
