@@ -43,12 +43,9 @@ yarn-error.log*
 !.yarn/sdks
 !.yarn/versions
 .vscode
-<<<<<<< HEAD
 node_modules
-=======
 .DS_Store
 .env
 client
 goerli
 zksync
->>>>>>> e-crypto

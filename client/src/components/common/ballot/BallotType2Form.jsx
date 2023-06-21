@@ -137,7 +137,7 @@ export default function BallotType2Form(props) {
                                     value={title} 
                                     onChange={handleChangeTitle} 
                                     //disableUnderline 
-                                    //sx={{ color: TEXT_COLOR, width: 1, fontSize: 30, }}
+                                    sx={{ color: TEXT_COLOR, width: 1, fontSize: 30, }}
                                 />
                             </TableCell>
                         </>
@@ -145,7 +145,17 @@ export default function BallotType2Form(props) {
 
                     {restructure && 
                         <>
-                            <TableCell align='left' width={400} >
+                            <TableCell>
+
+                            </TableCell>
+                            <TableCell 
+                                align='left' 
+                                //width={100} 
+                                sx={{
+                                    borderLeft: 'solid', 
+                                    borderWidth: '1px', 
+                                    borderColor: INPUT_LABEL_BACKGROUND_COLOR,
+                                    width: 500}} >
                                 <Typography variant='h6' color={TEXT_COLOR} >{title}</Typography>
                             </TableCell>
                         </>

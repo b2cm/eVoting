@@ -4,6 +4,7 @@ import {
     Input,
     Card,
     CardContent,
+    TextField
 } from '@mui/material';
 import BallotType1 from './BallotType1';
 import BallotType2 from './BallotType2';
@@ -81,13 +82,16 @@ export const BallotPaperRightComponent = (props) => {
             }}>
                 <CardContent>
                     <Input 
+                    multiline
                         placeholder='Unbenannter Stimmzettel' 
                         value={name} 
                         onChange={handleChangeName} 
                         disabled={!isEditable}
                         disableUnderline 
-                        sx={{width: 1, fontSize: 12, marginBottom: 1}}/>
-                    <Input 
+                        sx={{width: 1, fontSize: 12, fontWeight: 'bold', marginBottom: 1}}/>
+                    <Input
+                    multiline
+                    //variant='standard'
                         placeholder='Information über Stimmzettel eintragen' 
                         value={description} 
                         onChange={handleChangeDescription} 

@@ -65,12 +65,12 @@ export default function BallotPanelActions(props) {
     const createNewBallot = (ballotType) => {
         const newBallot = Ballot(ballotType, '', '',  '', []);
         if (whichBallots) { // We are in the vote cockpit component
-            setBallots_to_add(prevBallots => [newBallot,...prevBallots]);
+            setBallots_to_add(prevBallots => [...prevBallots, newBallot]);
             setWhichBallots('new');
         } else {
-            setBallots(prevBallots => [newBallot,...prevBallots]);
+            setBallots(prevBallots => [...prevBallots, newBallot]);
         }
-        setSelectedIndex(0);
+        setSelectedIndex(selectedIndex + 1);
         handleClose();
     }
 

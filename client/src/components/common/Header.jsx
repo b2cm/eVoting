@@ -56,7 +56,7 @@ export default function Header() {
             }}
         >
       
-            <Box width={{xs: 35, sm: 40, md:200, lg: 200, xl:200}}>
+            <Box width={{xs: 150, sm: 150, md:200, lg: 200, xl:200}}>
                {showMenuButton &&
                 <>
                   {!isDrawerOpen && 
@@ -109,17 +109,20 @@ export default function Header() {
                   //border: 'solid 1px blue', 
               }}
             >
-              <Link to={'/admin/home'} style={{textDecoration: 'none', color: 'white'}}>
-                E-VOTING
-              </Link>
+              {showMenuButton &&
+              <Link to={'/admin/home'}  style={{textDecoration: 'none', color: 'white'}}>
+              E-VOTING
+            </Link>
+              }
+              {!showMenuButton && <p>E-VOTING</p>}
           </Typography>  
 
           <Box sx={{ 
-              display: {xs: 'none', sm: 'none', md: 'block', lg: 'block', xl: 'block'},
+              display: {xs: 'block', sm: 'block', md: 'block', lg: 'block', xl: 'block'},
              // border: 'solid 1px red'
             }}
           >
-          <WalletButton width={200} />
+           <WalletButton width={{xs: 150, sm: 150, md: 200, lg: 200, xl: 200}} />
           </Box> 
         </Toolbar>
 
