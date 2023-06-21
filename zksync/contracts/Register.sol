@@ -10,11 +10,13 @@ contract Register {
     uint256 private registrationStart;
     uint256 private registrationEnd;
     address public admin;
+    string public sessionID;
 
     event HashedIDStored();
     event VoterAdded();
     event LRSPKStored();
     event RegistrationPeriodSet();
+    event SessionIDSet();
 
     modifier onlyAdmin () {
         require(msg.sender == admin, 'Not the admin');
@@ -24,6 +26,11 @@ contract Register {
 
     constructor() {
         admin = msg.sender;
+    }
+
+    function setSessionID(string memory _id) external {
+        sessionID = _id;
+        emit SessionIDSet();
     }
 
     function setRegistrationPeriod(uint256 _start, uint256 _end) external onlyAdmin {

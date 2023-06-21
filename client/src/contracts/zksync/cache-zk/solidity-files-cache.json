@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Evoting.sol": {
-      "lastModificationDate": 1683299849349,
-      "contentHash": "3603f8933305ed593449ef022825015a",
+      "lastModificationDate": 1687273066551,
+      "contentHash": "920617ea95cfab322fa5e6eca86abe26",
       "sourceName": "contracts/Evoting.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -49,8 +49,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Utils.sol": {
-      "lastModificationDate": 1683904737034,
-      "contentHash": "b0af53ea5361ad4ea32a1dcf17f6f947",
+      "lastModificationDate": 1687273026629,
+      "contentHash": "f78600785a6c13ac1be915fff76d2278",
       "sourceName": "contracts/Utils.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -94,7 +94,7 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/FactoryEvoting.sol": {
-      "lastModificationDate": 1683299849349,
+      "lastModificationDate": 1687124966412,
       "contentHash": "b0f13878c461bed8ca0988186bd625bb",
       "sourceName": "contracts/FactoryEvoting.sol",
       "solcConfig": {
@@ -145,7 +145,7 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/interfaces/IFactoryEvoting.sol": {
-      "lastModificationDate": 1683299849350,
+      "lastModificationDate": 1687124966413,
       "contentHash": "8b3d83187e1117cf5d6d303d85a4cca7",
       "sourceName": "contracts/interfaces/IFactoryEvoting.sol",
       "solcConfig": {
@@ -1411,7 +1411,7 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/interfaces/IEvoting.sol": {
-      "lastModificationDate": 1683299849350,
+      "lastModificationDate": 1687124966413,
       "contentHash": "1512f916c17add0de2adde837ad30527",
       "sourceName": "contracts/interfaces/IEvoting.sol",
       "solcConfig": {
@@ -1458,8 +1458,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Register.sol": {
-      "lastModificationDate": 1686747055546,
-      "contentHash": "1f816e5a7735cc27ee06803ae7b60a4a",
+      "lastModificationDate": 1687262042157,
+      "contentHash": "4498560cce380ab4d1b1588e6ff29dde",
       "sourceName": "contracts/Register.sol",
       "solcConfig": {
         "version": "0.8.17",

@@ -16,12 +16,31 @@ library Utils {
         uint256 maxSelectableAnswer;
     }
 
+    struct Proof {
+        string[] p1;
+        string[] p2;
+        string[] p3;
+    }
+
+    struct Signature {
+        string y0;
+        string s;
+        string[] c;
+    }
+
      struct Ballot {
-        bytes32 vote;
-        bytes32 voterID;
-        bytes32 counter;
-        bytes32 signature;
-        bytes32 zkp;
+        string sessionId;
+        string cipherText; // The vote : musst be a string
+        Proof proof;
+        //bytes32 counter;
+        Signature signature;
+        string groupId;
+        string token;
+    }
+
+    struct BallotWithIndex {
+        uint8 index; // The index of the ballot paper => Just for the mapping.
+        Ballot[] ballot;
     }
 
 }

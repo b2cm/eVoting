@@ -19,10 +19,13 @@ import { Link } from 'react-router-dom';
 export default function Header() {
     const { state: {isDrawerOpen, }, dispatch } = useEth();
     const location  = useLocation();
-    const showMenuButton = location.pathname === '/registration' ||
-                          location.pathname.startsWith('/vote/login/') ||
-                          location.pathname.startsWith('/vote/voting-cockpit/') ||
-                          location.pathname.startsWith('/admin/login') ||
+    // `${process.env.PUBLIC_URL}`
+    const showMenuButton = //location.pathname === '/registration' ||
+                          location.pathname.includes('/vote/login/') ||
+                          location.pathname.includes('/login') ||
+                          location.pathname.includes('/registration') ||
+                          location.pathname.includes('/vote/voting-cockpit/') ||
+                          location.pathname.includes('/admin/login') ||
                           location.pathname === ('/')
                           ? false : true;
 

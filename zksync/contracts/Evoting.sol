@@ -14,9 +14,10 @@ contract Evoting {
     uint256 public createdAt;
     bool public canceled;
     Utils.BallotPaper[] public ballot_papers;
-
+    
+    mapping(uint256 => mapping(uint256 => Utils.Ballot[])) public votes_per_ballot_paper_type2_per_candidates; // ballotID => candidate index => votes[]
     mapping(uint256 => bool) public is_valid_ballot; // Check if ballot was not deleted(false).
-    mapping(uint256 => Utils.Ballot[]) public votes_per_ballot_paper; // Map votes to the corresponding ballot paper.
+    mapping(uint256 => Utils.Ballot[]) public votes_per_ballot_paper_type1; // Map votes to the corresponding ballot paper.
     mapping(address => Utils.Ballot[]) public votes_per_voters;
     mapping(uint256 => uint256) private count_total_votes_per_ballot_paper;
     uint256 private count_total_votes;
@@ -118,16 +119,29 @@ contract Evoting {
     *@param _ballots an array containing the ballots.
      */
      //TODO: Need to verify the signature and the zkp.
-    function vote(Utils.Ballot[] memory _ballots) external returns(bool success) {
+    function vote(Utils.BallotWithIndex[] memory _ballots) external {
         require(get_state() == VotingState.LIVE, 'Vote has not started yet or has ended or has been canceled');
         uint256 length = _ballots.length;
         for (uint256 i = 0; i < length; i++) {
-            votes_per_voters[msg.sender].push(_ballots[i]);
-            votes_per_ballot_paper[i].push(_ballots[i]);
-            count_total_votes_per_ballot_paper[i] += 1;
+            uint8 ballotType = ballot_papers[_ballots[i].index].ballotType;
+            //votes_per_voters[msg.sender].push(_ballots[i].ballot);
+            if (ballotType == 1) {
+                votes_per_ballot_paper_type1[i].push(_ballots[i].ballot[0]);
+                //count_total_votes_per_ballot_paper[i] += 1;
+            }
+            else if (ballotType == 2) {
+                for (uint256 j = 0; j < _ballots[i].ballot.length; i++ ) {
+                    votes_per_ballot_paper_type2_per_candidates[i][j].push(_ballots[i].ballot[j]);
+                }
+            }
+            
         }
         emit VoteReceived();
-        success = true;
+    }
+
+    function sendVote(Utils.Ballot memory _b) external {
+        votes_per_ballot_paper_type1[0].push(_b);
+        emit VoteReceived();
     }
 
     
@@ -135,7 +149,7 @@ contract Evoting {
         uint256 length = ballot_papers.length;
         Utils.Ballot[][] memory _ballots = new Utils.Ballot[][](length);
         for (uint256 i = 0; i < length; i ++) {
-            Utils.Ballot[] memory inner_ballots = votes_per_ballot_paper[i];
+            Utils.Ballot[] memory inner_ballots = votes_per_ballot_paper_type1[i];
             uint256 length2 = inner_ballots.length;
             Utils.Ballot[] memory _inner_ballots = new Utils.Ballot[](length2);
             for (uint256 j = 0; j < length2; j++) {

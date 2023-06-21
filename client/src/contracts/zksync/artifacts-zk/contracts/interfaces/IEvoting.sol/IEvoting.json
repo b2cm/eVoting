@@ -107,29 +107,68 @@
         {
           "components": [
             {
-              "internalType": "bytes32",
-              "name": "vote",
-              "type": "bytes32"
+              "internalType": "string",
+              "name": "sessionId",
+              "type": "string"
             },
             {
-              "internalType": "bytes32",
-              "name": "voterID",
-              "type": "bytes32"
+              "internalType": "string",
+              "name": "cipherText",
+              "type": "string"
             },
             {
-              "internalType": "bytes32",
-              "name": "counter",
-              "type": "bytes32"
+              "components": [
+                {
+                  "internalType": "string[]",
+                  "name": "p1",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "p2",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "p3",
+                  "type": "string[]"
+                }
+              ],
+              "internalType": "struct Utils.Proof",
+              "name": "proof",
+              "type": "tuple"
             },
             {
-              "internalType": "bytes32",
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "y0",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "s",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "c",
+                  "type": "string[]"
+                }
+              ],
+              "internalType": "struct Utils.Signature",
               "name": "signature",
-              "type": "bytes32"
+              "type": "tuple"
             },
             {
-              "internalType": "bytes32",
-              "name": "zkp",
-              "type": "bytes32"
+              "internalType": "string",
+              "name": "groupId",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "token",
+              "type": "string"
             }
           ],
           "internalType": "struct Utils.Ballot[][]",
@@ -145,29 +184,68 @@
         {
           "components": [
             {
-              "internalType": "bytes32",
-              "name": "vote",
-              "type": "bytes32"
+              "internalType": "string",
+              "name": "sessionId",
+              "type": "string"
             },
             {
-              "internalType": "bytes32",
-              "name": "voterID",
-              "type": "bytes32"
+              "internalType": "string",
+              "name": "cipherText",
+              "type": "string"
             },
             {
-              "internalType": "bytes32",
-              "name": "counter",
-              "type": "bytes32"
+              "components": [
+                {
+                  "internalType": "string[]",
+                  "name": "p1",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "p2",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "p3",
+                  "type": "string[]"
+                }
+              ],
+              "internalType": "struct Utils.Proof",
+              "name": "proof",
+              "type": "tuple"
             },
             {
-              "internalType": "bytes32",
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "y0",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "s",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "c",
+                  "type": "string[]"
+                }
+              ],
+              "internalType": "struct Utils.Signature",
               "name": "signature",
-              "type": "bytes32"
+              "type": "tuple"
             },
             {
-              "internalType": "bytes32",
-              "name": "zkp",
-              "type": "bytes32"
+              "internalType": "string",
+              "name": "groupId",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "token",
+              "type": "string"
             }
           ],
           "internalType": "struct Utils.Ballot[]",

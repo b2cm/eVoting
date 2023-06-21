@@ -22,7 +22,7 @@ export default function App() {
   return (
     <EthProvider>
       
-      <Router>
+      <Router basename={`${process.env.PUBLIC_URL}`}>
         <Header />
         <Toolbar />
         
@@ -47,6 +47,7 @@ export default function App() {
           } /> 
           <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/vote/login/:voteID" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/vote/voting-cockpit/:voteID" element={<Vote />} />   
         </Routes> 
    
@@ -55,4 +56,31 @@ export default function App() {
     </EthProvider>
   );
 }
+
+/*
+<Routes>
+          <Route path={`${process.env.PUBLIC_URL}/`} element={<OnboardingPage />} />
+          <Route path={`${process.env.PUBLIC_URL}/admin/login`} element={<LoginAdmin />} />
+          
+          <Route path={`${process.env.PUBLIC_URL}/admin/home`} element={
+            <ProtectedAdminRoutes>
+              <Home />
+            </ProtectedAdminRoutes>
+          } />
+          <Route path={`${process.env.PUBLIC_URL}/admin/vote/create`} element={
+            <ProtectedAdminRoutes>
+              <NewVote />
+            </ProtectedAdminRoutes>
+          } />
+          <Route path={`${process.env.PUBLIC_URL}/admin/vote/cockpit/:voteID`} element={
+            <ProtectedAdminRoutes>
+              <DisplayVote />
+            </ProtectedAdminRoutes>
+          } /> 
+          <Route path={`${process.env.PUBLIC_URL}/registration`} element={<RegistrationPage />} />
+          <Route path={`${process.env.PUBLIC_URL}/vote/login/:voteID`} element={<Login />} />
+          <Route path={`${process.env.PUBLIC_URL}/login`} element={<Login />} />
+          <Route path={`${process.env.PUBLIC_URL}/vote/voting-cockpit/:voteID`} element={<Vote />} />   
+        </Routes>
+*/
 
