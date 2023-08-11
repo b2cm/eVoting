@@ -7,11 +7,18 @@ import {
     Box,
     IconButton,
     LinearProgress,
-    Typography
+    Typography, 
+    Button,
 } from '@mui/material';
+import {
+    grey,
+    blue,
+    teal,
+} from '@mui/material/colors';
 import CloseIcon from '@mui/icons-material/Close';
 
-export const TransactionDialogBox = ({ openDialog, handleCloseDialog, waitingMessage, progress, buffer}) => {
+
+export const TransactionDialogBox = ({ handleLogout, handleCloseOverview, openDialog, handleCloseDialog, waitingMessage, progress, buffer}) => {
 
   return (
     <Dialog open={openDialog} fullWidth maxWidth={'md'} 
@@ -61,6 +68,36 @@ export const TransactionDialogBox = ({ openDialog, handleCloseDialog, waitingMes
                 <Typography variant="h5" color="text.secondary">{`${Math.round(progress)}%`}</Typography>
             </Box>
         </Box>
+        {(handleCloseOverview && handleLogout && progress === 100) && 
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
+                <Button  
+                    color='error'
+                    variant='contained' 
+                    size='large' 
+                    sx={{
+                        mr: 5,
+                        width: 1/3,
+                        fontSize: 12,
+                        
+                    }} 
+                    onClick={handleLogout}
+                >
+                    Abmelden
+                </Button>
+                <Button 
+                    variant='contained' 
+                    size='large' 
+                    onClick={() => handleCloseOverview(0, true)}
+                    sx={{
+                        width: 1/3,
+                        fontSize: 12,
+                       
+                    }}
+                >
+                    Erneut abstimmen
+                </Button>
+            </Box>
+        }
    
     </DialogContent>
    

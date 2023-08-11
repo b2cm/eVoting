@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Evoting.sol": {
-      "lastModificationDate": 1687273066551,
-      "contentHash": "920617ea95cfab322fa5e6eca86abe26",
+      "lastModificationDate": 1687427384575,
+      "contentHash": "300973e32deec0bcbf0a391dfa5fb668",
       "sourceName": "contracts/Evoting.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -94,7 +94,7 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/FactoryEvoting.sol": {
-      "lastModificationDate": 1687124966412,
+      "lastModificationDate": 1687327089272,
       "contentHash": "b0f13878c461bed8ca0988186bd625bb",
       "sourceName": "contracts/FactoryEvoting.sol",
       "solcConfig": {
@@ -1458,8 +1458,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Register.sol": {
-      "lastModificationDate": 1687262042157,
-      "contentHash": "4498560cce380ab4d1b1588e6ff29dde",
+      "lastModificationDate": 1687426659760,
+      "contentHash": "e7f490b201851c05eb333c8b35a1dd33",
       "sourceName": "contracts/Register.sol",
       "solcConfig": {
         "version": "0.8.17",

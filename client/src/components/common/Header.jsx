@@ -26,6 +26,7 @@ export default function Header() {
                           location.pathname.includes('/registration') ||
                           location.pathname.includes('/vote/voting-cockpit/') ||
                           location.pathname.includes('/admin/login') ||
+                          location.pathname === ('/logout') ||
                           location.pathname === ('/')
                           ? false : true;
 
@@ -52,11 +53,16 @@ export default function Header() {
         <Toolbar
            sx={{ 
               display: {xs: 'flex', sm: 'flex', md: 'flex', lg: 'flex', xl: 'flex'},
-             // border: 'solid 1px red'
+              //border: 'solid 1px red'
             }}
         >
       
-            <Box width={{xs: 150, sm: 150, md:200, lg: 200, xl:200}}>
+            <Box 
+              sx={{ 
+                display: {xs: 'none', sm: 'flex', md: 'flex', lg: 'flex', xl: 'flex'},
+                border: 'solid 1px red'
+              }}
+              width={{xs: 150, sm: 150, md:200, lg: 200, xl:200}}>
                {showMenuButton &&
                 <>
                   {!isDrawerOpen && 
@@ -101,7 +107,7 @@ export default function Header() {
               variant="h4" 
               component="div" 
               sx={{
-                  //width: 200,
+                  //width: 1,
                   flexGrow: 1,
                   display:'flex',
                   justifyContent: 'center',
@@ -114,16 +120,22 @@ export default function Header() {
               E-VOTING
             </Link>
               }
-              {!showMenuButton && <p>E-VOTING</p>}
-          </Typography>  
+              {!showMenuButton && <span>E-VOTING</span>}
+          </Typography> 
 
-          <Box sx={{ 
-              display: {xs: 'block', sm: 'block', md: 'block', lg: 'block', xl: 'block'},
-             // border: 'solid 1px red'
-            }}
-          >
-           <WalletButton width={{xs: 150, sm: 150, md: 200, lg: 200, xl: 200}} />
-          </Box> 
+          {(location.pathname !== '/logout') ? 
+              <Box sx={{ 
+                display: {xs: 'block', sm: 'block', md: 'block', lg: 'block', xl: 'block'},
+              // border: 'solid 1px red'
+              }}
+              >
+                <WalletButton width={{xs: 150, sm: 150, md: 200, lg: 200, xl: 200}} />
+              </Box>
+              :
+              <Box width={200} />
+           } 
+
+           
         </Toolbar>
 
 

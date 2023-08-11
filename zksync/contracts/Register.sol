@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 contract Register {
     address[] private eligibleVoters;
+    address[] public voters;
     bytes[] private votersHashedIDs;
     bytes[] private lrs;
     string[] private hashedIDs;
@@ -33,6 +34,13 @@ contract Register {
         emit SessionIDSet();
     }
 
+    // This function is yet not secure because it can be called by anyone.
+    // This function should be called just by the verifier contranct (proof of correct membership) deployed on L1.
+    function addVoter(address _voter) external {
+        voters.push(_voter);
+        emit VoterAdded();
+    }
+
     function setRegistrationPeriod(uint256 _start, uint256 _end) external onlyAdmin {
         require(_start < _end, 'The registration cannot end before it even starts');
         require(_start >= block.timestamp && _end > block.timestamp, 'The registration can not take place in the past.');
@@ -57,7 +65,7 @@ contract Register {
     }
 
     function storeVoterData(bytes memory _hashedID, bytes memory _publicKey) external {
-        require(isRegistrationOpen(), 'Registration has not started yet or has already ended');
+        //require(isRegistrationOpen(), 'Registration has not started yet or has already ended');
         votersHashedIDs.push(_hashedID);
         lrsPublicKeys[_hashedID] = _publicKey;
         lrs.push(_publicKey);
@@ -65,10 +73,6 @@ contract Register {
         emit LRSPKStored();
     }
 
-    function addEligibleVoter(address _voter) external {
-        eligibleVoters.push(_voter);
-        emit VoterAdded();
-    }
 
     function getLRSGroup() external view returns(bytes[] memory _lrs) {
         _lrs = new bytes[](lrs.length);
@@ -76,4 +80,11 @@ contract Register {
             _lrs[i] = lrs[i];
         }
     }
+
+    function addEligibleVoter(address _voter) external {
+        eligibleVoters.push(_voter);
+        emit VoterAdded();
+    }
+
+
 }

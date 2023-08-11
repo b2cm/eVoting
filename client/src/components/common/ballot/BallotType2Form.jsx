@@ -120,25 +120,27 @@ export default function BallotType2Form(props) {
                                 </> 
                                 }
                             </TableCell>
+                           
 
                             <TableCell align='left' >
-                                <TextField 
-                                    variant='standard'
-                                    InputProps={{
-                                        disableUnderline: true,
-                                        style: {
-                                            color: TEXT_COLOR,
-                                            fontSize: 12
-                                        }
-                                    }}
-                                    size='small'
-                                    disabled={!isEditable}
-                                    placeholder='Titel eintragen' 
-                                    value={title} 
-                                    onChange={handleChangeTitle} 
-                                    //disableUnderline 
-                                    sx={{ color: TEXT_COLOR, width: 1, fontSize: 30, }}
-                                />
+                            {isEditable && <Input 
+                        placeholder='Titel eintragen' 
+                        disabled={!isEditable}
+                        value={title} 
+                        onChange={handleChangeTitle} 
+                        disableUnderline 
+                        sx={{ 
+                            color: TEXT_COLOR, 
+                            width: 1, 
+                            fontSize: 12,
+                            "& .MuiInputBase-input.Mui-disabled": {
+                                WebkitTextFillColor: TEXT_COLOR
+                            }
+                            
+                         }}
+                    />}
+                    {!isEditable && <Typography variant='h6'>{'ksjdn'}</Typography>}
+                            
                             </TableCell>
                         </>
                     }

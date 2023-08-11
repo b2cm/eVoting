@@ -2,9 +2,9 @@ import { extendEnvironment, task, subtask } from "hardhat/internal/core/config/c
 
 require("@matterlabs/hardhat-zksync-deploy");
 require("@matterlabs/hardhat-zksync-solc");
-require("@nomiclabs/hardhat-waffle");
+//require("@nomiclabs/hardhat-waffle");
 require('dotenv').config();
-//require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-toolbox");
 
 const API_KEY = process.env.API_KEY;
 const MNEMONIC_GOERLI = process.env.MNEMONIC_GOERLI;

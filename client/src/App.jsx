@@ -13,6 +13,9 @@ import OnboardingPage from './components/common/OnboardingPage';
 import LoginAdmin from './components/admin/Home/LoginAdmin';
 import ProtectedAdminRoutes from './components/admin/Home/ProtectedAdminRoutes';
 import DisplayVote from './components/admin/DisplayVotingDetails/DisplayVote';
+import Foo from './components/common/Foo';
+import ProtectedVoterRoutes from './components/voter/ProtectedVoterRoutes';
+import { Logout } from './components/voter/Logout';
 
 
 
@@ -45,10 +48,17 @@ export default function App() {
               <DisplayVote />
             </ProtectedAdminRoutes>
           } /> 
+
+          <Route path="/vote/voting-cockpit/:voteID" element={
+              <ProtectedVoterRoutes>
+                <Vote /> 
+              </ProtectedVoterRoutes>
+          } />
           <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/vote/login/:voteID" element={<Login />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/vote/voting-cockpit/:voteID" element={<Vote />} />   
+          <Route path='/logout' element={<Logout />} />
+          <Route path="test" element={<Foo />} />  
         </Routes> 
    
       </Router>

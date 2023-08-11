@@ -130,7 +130,7 @@ contract Evoting {
                 //count_total_votes_per_ballot_paper[i] += 1;
             }
             else if (ballotType == 2) {
-                for (uint256 j = 0; j < _ballots[i].ballot.length; i++ ) {
+                for (uint256 j = 0; j < _ballots[i].ballot.length; j++ ) {
                     votes_per_ballot_paper_type2_per_candidates[i][j].push(_ballots[i].ballot[j]);
                 }
             }

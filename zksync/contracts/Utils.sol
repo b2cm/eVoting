@@ -43,4 +43,9 @@ library Utils {
         Ballot[] ballot;
     }
 
+    struct Votes {
+        uint8 index;
+        bool[][] val;
+    }
+
 }

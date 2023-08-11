@@ -21,6 +21,7 @@ export default function WalletButton(props) {
     const [open, setOpen] = useState(false);
     const anchorRef = useRef(null);
     const { state, dispatch } = useEth();
+    const { signer, accounts } = state;
     const [anchor, setAnchor] = useState(null);
     const { width } = props;
 
@@ -51,9 +52,9 @@ export default function WalletButton(props) {
           });
     }
 
-    const accounts = state.accounts;
-
-    const shortAddress = address => {
+    const shortAddress = () => {
+      console.log(signer)
+      const address = accounts[0];
         return `${address.slice(0, 6)}...${address.slice(address.length - 4)}`;
     }
 
@@ -120,10 +121,10 @@ export default function WalletButton(props) {
 
   return (
     <Box>
-      {accounts &&
+      {signer &&
       <Button
         ref={anchorRef}
-        onClick={handleToggle}
+        //onClick={handleToggle}
         startIcon={<Jazzicon diameter={25} seed={jsNumberForAddress(accounts[0])} />}
         //endIcon={!open ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
         variant="outlined" 
@@ -138,11 +139,11 @@ export default function WalletButton(props) {
           width
         }}
       >
-       {shortAddress(accounts[0])}
+       {shortAddress()}
       </Button>      
       }
 
-      {!accounts &&
+      {!signer &&
         <Button 
         onClick={connectWallet}
         color="inherit" 
@@ -162,55 +163,3 @@ export default function WalletButton(props) {
     </Box>
   );
 }
-
-/*
- <Popper
-          open={open}
-          anchorEl={anchorRef.current}
-          role={undefined}
-          placement="bottom-end"
-          transition
-          disablePortal
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              //in={open}
-              {...TransitionProps}
-              {...open ?  {timeout: 800 } : {}}
-              style={{
-                transformOrigin:
-                  placement === 'bottom-start' ? 'left top' : 'left bottom',
-              }}
-            >
-              <Paper style={{width:150}}>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList
-                    variant='menu'
-                    autoFocusItem={open}
-                    id="composition-menu"
-                    aria-labelledby="composition-button"
-                    onKeyDown={handleListKeyDown}
-                    sx={{
-                      fontSize: 20,
-                    }}
-                  >
-                    {menuItems.map((item, index) => (
-                      <MenuItem
-                        key={item} 
-                        onClick={event => handleMenuItemClick(event, index)}
-                        sx={{
-                          color: textColor,
-                          fontSize: 15,
-                        }}
-                      >
-                        {item}
-                      </MenuItem>
-                    ))}
-          
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
-*/

@@ -8,7 +8,8 @@ import {
     Input,
     Checkbox,
     Tooltip,
-    IconButton
+    IconButton,
+    Typography
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { BALLOT_TYPE1_ANSWERS } from '../../../utils/constantes';
@@ -41,11 +42,13 @@ export default function BallotType1Form(props) {
         <Table>
             <TableHead>
                 <TableRow sx={{ borderBottom: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR}} >
-                    <TableCell width={10} sx={{ borderRight: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR }}> 
+                    <TableCell 
+                    //width={10} 
+                    sx={{ borderRight: 'solid 1px', borderColor: INPUT_LABEL_BACKGROUND_COLOR }}> 
                         
                     </TableCell>
                     <TableCell align='left' >
-                    <Input 
+                    {isEditable && <Input 
                         placeholder='Titel eintragen' 
                         disabled={!isEditable}
                         value={title} 
@@ -60,7 +63,8 @@ export default function BallotType1Form(props) {
                             }
                             
                          }}
-                    />
+                    />}
+                    {!isEditable && <Typography variant='h6'>{title}</Typography>}
                     </TableCell>
                 </TableRow>
             </TableHead>

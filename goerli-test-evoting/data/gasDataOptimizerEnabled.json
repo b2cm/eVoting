@@ -1,0 +1,68 @@
+{
+    "description": "This file contains the gas analysis for the verification of the membership zkp for different tree depth",
+    "data": [
+        {
+            "description": "Gas data for tree of depth 2",
+            "totalGasUsed": 971120,
+            "avgGasUsed": 242780,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242765
+        },
+        {
+            "description": "Gas data for tree of depth 3",
+            "totalGasUsed": 1942108,
+            "avgGasUsed": 242763.5,
+            "maxGasUsed": 242777,
+            "minGasUsed": 242741
+        },
+        {
+            "description": "Gas data for tree of depth 4",
+            "totalGasUsed": 3884384,
+            "avgGasUsed": 242774,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242753
+        },
+        {
+            "description": "Gas data for tree of depth 5",
+            "totalGasUsed": 7768708,
+            "avgGasUsed": 242772.125,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242741
+        },
+        {
+            "description": "Gas data for tree of depth 6",
+            "totalGasUsed": 15537548,
+            "avgGasUsed": 242774.1875,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242729
+        },
+        {
+            "description": "Gas data for tree of depth 7",
+            "totalGasUsed": 31075600,
+            "avgGasUsed": 242778.125,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242741
+        },
+        {
+            "description": "Gas data for tree of depth 8",
+            "totalGasUsed": 62150300,
+            "avgGasUsed": 242774.609375,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242729
+        },
+        {
+            "description": "Gas data for tree of depth 9",
+            "totalGasUsed": 124300936,
+            "avgGasUsed": 242775.265625,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242729
+        },
+        {
+            "description": "Gas data for tree of depth 10",
+            "totalGasUsed": 248601956,
+            "avgGasUsed": 242775.34765625,
+            "maxGasUsed": 242789,
+            "minGasUsed": 242717
+        }
+    ]
+}
