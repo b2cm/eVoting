@@ -5,8 +5,8 @@ import {
     Box,
 
 } from '@mui/material';
-import  BallotPaperLeftComponent  from './BallotPaperLeftComponent';
-import { BallotPaperRightComponent } from './BallotPaperRightComponent';
+import BallotPaperLeftComponent  from './BallotPaperLeftComponent';
+import BallotPaperRightComponent from './BallotPaperRightComponent';
 
 export default function BallotPanel(props) {
     const [selectedIndex, setSelectedIndex] = useState(0);

@@ -10,7 +10,7 @@ import BallotType1 from './BallotType1';
 import BallotType2 from './BallotType2';
 
 
-export const BallotPaperRightComponent = (props) => {
+export default function BallotPaperRightComponent(props) {
 
     const { 
         ballots,  

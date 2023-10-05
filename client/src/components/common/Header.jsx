@@ -60,7 +60,7 @@ export default function Header() {
             <Box 
               sx={{ 
                 display: {xs: 'none', sm: 'flex', md: 'flex', lg: 'flex', xl: 'flex'},
-                border: 'solid 1px red'
+                //border: 'solid 1px red'
               }}
               width={{xs: 150, sm: 150, md:200, lg: 200, xl:200}}>
                {showMenuButton &&

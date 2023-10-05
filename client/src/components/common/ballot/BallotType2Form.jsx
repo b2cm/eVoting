@@ -123,24 +123,24 @@ export default function BallotType2Form(props) {
                            
 
                             <TableCell align='left' >
-                            {isEditable && <Input 
-                        placeholder='Titel eintragen' 
-                        disabled={!isEditable}
-                        value={title} 
-                        onChange={handleChangeTitle} 
-                        disableUnderline 
-                        sx={{ 
-                            color: TEXT_COLOR, 
-                            width: 1, 
-                            fontSize: 12,
-                            "& .MuiInputBase-input.Mui-disabled": {
-                                WebkitTextFillColor: TEXT_COLOR
-                            }
-                            
-                         }}
-                    />}
-                    {!isEditable && <Typography variant='h6'>{'ksjdn'}</Typography>}
-                            
+                                
+                                <TextField 
+                                    variant='standard'
+                                    InputProps={{
+                                        disableUnderline: true,
+                                        style: {
+                                            color: TEXT_COLOR,
+                                            fontSize: 12
+                                        }
+                                    }}
+                                    size='small'
+                                    disabled={!isEditable}
+                                    placeholder='Titel eintragen' 
+                                    value={title} 
+                                    onChange={handleChangeTitle} 
+                                    //disableUnderline 
+                                    sx={{ color: TEXT_COLOR, width: 1, fontSize: 30, }}
+                                />
                             </TableCell>
                         </>
                     }
@@ -151,14 +151,15 @@ export default function BallotType2Form(props) {
 
                             </TableCell>
                             <TableCell 
-                                align='left' 
-                                //width={100} 
+                                align='left'  
                                 sx={{
+                                    color: TEXT_COLOR, 
+                                    fontSize: 12,
                                     borderLeft: 'solid', 
                                     borderWidth: '1px', 
                                     borderColor: INPUT_LABEL_BACKGROUND_COLOR,
                                     width: 500}} >
-                                <Typography variant='h6' color={TEXT_COLOR} >{title}</Typography>
+                                <Typography variant='h6'  >{title}</Typography>
                             </TableCell>
                         </>
                         

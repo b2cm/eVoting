@@ -19,6 +19,7 @@ import { ICON_COLOR } from '../../../utils/colors';
 export default function BallotPanelActions(props) {
 
     const { 
+        showActionButtons,
         selectedIndex, 
         setSelectedIndex, 
         whichBallots, 
@@ -157,7 +158,7 @@ export default function BallotPanelActions(props) {
             //border: 'solid red'
          }}>
             <Box sx={{
-                display:'flex',
+                display: showActionButtons? 'flex': 'none',
                 flexDirection:'row',
                 justifyContent:'start',
                 paddingBottom: 0,
