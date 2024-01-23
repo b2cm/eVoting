@@ -52,3 +52,11 @@ client
 goerli
 zksync
 >>>>>>> e-crypto
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.vscod
