@@ -8,7 +8,7 @@ import { useSession } from "../../hooks/useSession";
 import { Parties } from "../../components/parties";
 import { useObservable } from "rxjs-hooks";
 import { EMPTY, switchMap } from "rxjs";
-import { HashedIds } from "../../util/leaves";
+
 import {
   Point,
   GenerateRandom,
@@ -21,7 +21,7 @@ import {
 export default function GeneratePage() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
-
+  const [HashedIds, setHashedIds] = useState<String[] |null>(null  )
   const [session, setSession] = useState(null as null | EncryptSession);
   const [Party_vid, SetParty_vid] = useState(null as null | string);
   const [Party_counterlimit, SetParty_counterlimit] = useState(
@@ -46,9 +46,7 @@ export default function GeneratePage() {
 
   async function createTallyKey() {
     const priv_key = GenerateRandom();
-    console.log('priv:', priv_key);
     const pubkey = GenPublicKey(priv_key);
-    console.log('pub:', pubkey.compressed.toString(16));
     await axios.post(BACKEND_URL + "/Submitkey", {
       userId,
       pubKey: pubkey.compressed.toString(16),
@@ -102,6 +100,19 @@ export default function GeneratePage() {
       }, 1000);
     });
   };
+
+
+  const fetchHashedIDs = async () => {
+    const {data } = await axios.get('http://bccm-s7.hs-mittweida.de:3100/getHashedIDs');
+    console.log("pls lev me alon " , data)
+    console.log("ids", data["hashedIDs"])
+    setHashedIds(data["hashedIDs"])
+
+  }
+  useEffect(() => {
+    // Fetch data from an API or any other source
+    fetchHashedIDs()
+  }, []);
 
   const WaitForLimit = async () => {
     return new Promise((resolve, reject) => {
@@ -295,9 +306,15 @@ export default function GeneratePage() {
     if (userId && userId == Party_counterlimit) {
       console.log("I am the counterlimit party");
 
+    
+
+
       const generateLimits = async () => {
         let limits: { Limit: number; HashedId: string }[] = [];
-        HashedIds.forEach((element) => {
+        
+        
+        
+        HashedIds!.forEach((element: any) => {
           const limit = Math.floor(Math.random() * (8 - 5 + 1) + 5);
           limits.push({ Limit: limit, HashedId: element });
         });
@@ -320,6 +337,7 @@ export default function GeneratePage() {
         await axios.post(BACKEND_URL + "/SetTriggerVal", { flag: 1 });
         SetMessage("limits generated & encrypted tokens ");
       };
+     
       generateLimits();
       waitAndEncrypt();
     }
@@ -354,8 +372,8 @@ export default function GeneratePage() {
       try {
         if (!TallyKeyPub && !TallyKeyPriv) {
           //console.log("creating TallyKey");
-          await createTallyKey();
-          //console.log("tally key ", TallyKey);
+          const TallyKey = await createTallyKey();
+          console.log("tally key ", TallyKey);
         }
       } catch (e) {
         console.error(e);
@@ -363,10 +381,6 @@ export default function GeneratePage() {
     };
     cb();
   }, [userId]);
-
-  useEffect(() => {
-    console.log('tally key:', TallyKeyPriv, TallyKeyPriv);
-  }, [TallyKeyPriv, TallyKeyPub]);
 
   return (
     <div className="flex flex-col items-center space-y-4">

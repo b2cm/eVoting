@@ -8,29 +8,37 @@
     "@matterlabs/hardhat-zksync-deploy": "0.6.3",
     "@matterlabs/hardhat-zksync-solc": "0.3.17",
     "@matterlabs/zksync-contracts": "latest",
+    "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
+    "@nomiclabs/hardhat-etherscan": "^3.0.0",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@opengsn/contracts": "^3.0.0-beta.1",
     "@openzeppelin/contracts": "^4.8.1",
     "@openzeppelin/contracts-upgradeable": "^4.8.1",
+    "@typechain/hardhat": "^6.1.2",
     "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
     "chai": "^4.3.7",
     "dotenv": "^16.0.3",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.7.2",
-    "hardhat": "^2.12.7",
+    "hardhat": "^2.17.4",
+    "hardhat-gas-reporter": "^1.0.8",
     "mocha": "^10.2.0",
+    "solidity-coverage": "^0.8.1",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5",
     "zksync-web3": "0.14.3"
   },
   "scripts": {
-    "test": "NODE_ENV=test hardhat test"
+    "test": "NODE_ENV=test hardhat test",
+    "test-hardhat": "hardhat test"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
-    "dayjs": "^1.11.7"
+    "@typechain/ethers-v5": "^11.1.1",
+    "dayjs": "^1.11.7",
+    "typechain": "^8.3.1"
   }
 }

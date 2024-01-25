@@ -1009,8 +1009,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/goerli/contracts/VerifierZKPCorrectEncryption.sol": {
-      "lastModificationDate": 1684248819706,
-      "contentHash": "2e8f0d484e48d5516e6d6ceb08d39b1d",
+      "lastModificationDate": 1688982355772,
+      "contentHash": "284222caf874dba97ae6933f44339bfb",
       "sourceName": "contracts/VerifierZKPCorrectEncryption.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -1047,8 +1047,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/goerli/contracts/libraries/BigNumbers.sol": {
-      "lastModificationDate": 1683809075785,
-      "contentHash": "1c762b24fbfbe2b5a05677b80b567f17",
+      "lastModificationDate": 1688982411295,
+      "contentHash": "68402c5ce67ebbccee4bd6cb53687751",
       "sourceName": "contracts/libraries/BigNumbers.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -1092,6 +1092,259 @@
         "settings": {
           "optimizer": {
             "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">= 0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
+    },
+    "/Users/kemlohalex/Documents/arbeit/evoting/goerli/contracts/Evoting.sol": {
+      "lastModificationDate": 1691677901325,
+      "contentHash": "7ec0c10d7861ffc6d65a021a07b59daf",
+      "sourceName": "contracts/Evoting.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Utils2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Evoting"
+      ]
+    },
+    "/Users/kemlohalex/Documents/arbeit/evoting/goerli/contracts/Utils2.sol": {
+      "lastModificationDate": 1687430361810,
+      "contentHash": "5d733f37d1ef6f8462e48fbc73b703bd",
+      "sourceName": "contracts/Utils2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Utils2"
+      ]
+    },
+    "/Users/kemlohalex/Documents/arbeit/evoting/goerli/contracts/VerifierZKPCorrectDecryption.sol": {
+      "lastModificationDate": 1689839294422,
+      "contentHash": "32acb6ce6c28bf2ba607ba3223d0fa80",
+      "sourceName": "contracts/VerifierZKPCorrectDecryption.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./libraries/BigNumbers.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.16"
+      ],
+      "artifacts": [
+        "VerifierZKPCorrectDecryption"
+      ]
+    },
+    "/Users/kemlohalex/Documents/arbeit/evoting/goerli-test-evoting/contracts/Evoting.sol": {
+      "lastModificationDate": 1691753242100,
+      "contentHash": "0371a27fe3421a3a2dd9cd5f5ce24dae",
+      "sourceName": "contracts/Evoting.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Utils2.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Evoting"
+      ]
+    },
+    "/Users/kemlohalex/Documents/arbeit/evoting/goerli-test-evoting/contracts/Utils2.sol": {
+      "lastModificationDate": 1691750558150,
+      "contentHash": "5b417c03588cd19994dcd0b537d5778e",
+      "sourceName": "contracts/Utils2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Utils2"
+      ]
+    },
+    "/Users/kemlohalex/Documents/arbeit/evoting/goerli-test-evoting/contracts/Utils.sol": {
+      "lastModificationDate": 1691678982756,
+      "contentHash": "fa0770887b056887e7709b810a2f18c2",
+      "sourceName": "contracts/Utils.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Utils"
+      ]
+    },
+    "/Users/kemlohalex/Documents/arbeit/evoting/goerli-test-evoting/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1691678995345,
+      "contentHash": "4ff3cd2f6272c9a6516e9ee4f2b967d3",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {

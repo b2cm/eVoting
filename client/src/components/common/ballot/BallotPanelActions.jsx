@@ -19,6 +19,7 @@ import { ICON_COLOR } from '../../../utils/colors';
 export default function BallotPanelActions(props) {
 
     const { 
+        showActionButtons,
         selectedIndex, 
         setSelectedIndex, 
         whichBallots, 
@@ -65,12 +66,12 @@ export default function BallotPanelActions(props) {
     const createNewBallot = (ballotType) => {
         const newBallot = Ballot(ballotType, '', '',  '', []);
         if (whichBallots) { // We are in the vote cockpit component
-            setBallots_to_add(prevBallots => [newBallot,...prevBallots]);
+            setBallots_to_add(prevBallots => [...prevBallots, newBallot]);
             setWhichBallots('new');
         } else {
-            setBallots(prevBallots => [newBallot,...prevBallots]);
+            setBallots(prevBallots => [...prevBallots, newBallot]);
         }
-        setSelectedIndex(0);
+        setSelectedIndex(selectedIndex + 1);
         handleClose();
     }
 
@@ -157,7 +158,7 @@ export default function BallotPanelActions(props) {
             //border: 'solid red'
          }}>
             <Box sx={{
-                display:'flex',
+                display: showActionButtons? 'flex': 'none',
                 flexDirection:'row',
                 justifyContent:'start',
                 paddingBottom: 0,

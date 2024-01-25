@@ -1,8 +1,7 @@
 {
-  "name": "evoting-admin",
+  "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://bccm-s7.hs-mittweida.de/evoting-admin",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -49,11 +48,9 @@
   },
   "browserslist": {
     "production": [
-      "chrome >= 67",
-      "edge >= 79",
-      "firefox >= 68",
-      "opera >= 54",
-      "safari >= 14"
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
     ],
     "development": [
       "last 1 chrome version",

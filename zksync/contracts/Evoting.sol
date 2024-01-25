@@ -5,7 +5,7 @@ import './Utils.sol';
 
 
 contract Evoting {
-    bytes32 public voteID;
+    string public voteID; // The session Id
     string public name;
     string public description;
     address public admin;
@@ -14,13 +14,15 @@ contract Evoting {
     uint256 public createdAt;
     bool public canceled;
     Utils.BallotPaper[] public ballot_papers;
+    Utils.Votes[] public votes;
     
-    mapping(uint256 => mapping(uint256 => Utils.Ballot[])) public votes_per_ballot_paper_type2_per_candidates; // ballotID => candidate index => votes[]
+    mapping(uint256 => mapping(uint256 => Utils.Vote[])) public votes_per_ballot_paper_type2_per_candidates; // ballotID => candidate index => votes[]
     mapping(uint256 => bool) public is_valid_ballot; // Check if ballot was not deleted(false).
-    mapping(uint256 => Utils.Ballot[]) public votes_per_ballot_paper_type1; // Map votes to the corresponding ballot paper.
-    mapping(address => Utils.Ballot[]) public votes_per_voters;
+    mapping(uint256 => Utils.Vote[]) public votes_per_ballot_paper_type1; // Map votes to the corresponding ballot paper.
+    mapping(address => Utils.Vote[]) public votes_per_voters;
     mapping(uint256 => uint256) private count_total_votes_per_ballot_paper;
     uint256 private count_total_votes;
+    mapping(uint256 => Utils.Vote[]) public finalVotes;
     
     struct VotingDetails {
         string name;
@@ -57,7 +59,7 @@ contract Evoting {
     event VotingUpdated();
 
 
-    constructor(bytes32 _voteID, string memory _name, string memory _description, address _admin, uint256 _start_time, uint256 _end_time, Utils.BallotPaper[] memory _ballot_papers) {
+    constructor(string memory _voteID, string memory _name, string memory _description, address _admin, uint256 _start_time, uint256 _end_time, Utils.BallotPaper[] memory _ballot_papers) {
         require(_start_time < _end_time, 'The end time must be greater than the start time.');
         voteID = _voteID;
         name = _name;
@@ -130,7 +132,7 @@ contract Evoting {
                 //count_total_votes_per_ballot_paper[i] += 1;
             }
             else if (ballotType == 2) {
-                for (uint256 j = 0; j < _ballots[i].ballot.length; i++ ) {
+                for (uint256 j = 0; j < _ballots[i].ballot.length; j++ ) {
                     votes_per_ballot_paper_type2_per_candidates[i][j].push(_ballots[i].ballot[j]);
                 }
             }
@@ -139,12 +141,46 @@ contract Evoting {
         emit VoteReceived();
     }
 
-    function sendVote(Utils.Ballot memory _b) external {
-        votes_per_ballot_paper_type1[0].push(_b);
+         //TODO: Need to verify the signature and the zkp.
+     
+    function cast_vote(Utils.Vote[][] memory _votes) external {
+        //require(get_state() == VotingState.LIVE, 'Vote has not started yet or has ended or has been canceled');
+        uint256 length1 = _votes.length;
+        for (uint256 i = 0; i < length1; i++) {
+            uint256 length2 = _votes[i].length;
+            for (uint256 j = 0; j < length2; j++) {
+                //console.log('token', j, ':', _ballots[i].ballot[j].proof.p1[0]);        
+                finalVotes[i].push(Utils.Vote(
+                    _votes[i][j].sessionId,
+                    _votes[i][j].cipherText,
+                    Utils.Proof(
+                    _votes[i][j].proof.p1,
+                    _votes[i][j].proof.p2,
+                    _votes[i][j].proof.p3
+                    ),
+                    Utils.Signature(
+                    _votes[i][j].signature.y0,
+                    _votes[i][j].signature.s,
+                    _votes[i][j].signature.c
+                    ),
+                    _votes[i][j].groupId,
+                    _votes[i][j].token
+                ));
+            }            
+        }
         emit VoteReceived();
     }
 
-    
+    function get_votes() external view returns(Utils.Vote[][] memory) {
+        uint256 length = ballot_papers.length;
+        Utils.Vote[][] memory _votes = new Utils.Vote[][](length);
+        for (uint256 i = 0; i < length; i++) {
+            _votes[i] = finalVotes[i];
+        }
+        return _votes;
+    }
+
+    /*
     function get_votes() external view returns(Utils.Ballot[][] memory) {
         uint256 length = ballot_papers.length;
         Utils.Ballot[][] memory _ballots = new Utils.Ballot[][](length);
@@ -159,6 +195,7 @@ contract Evoting {
         }
         return _ballots;
     }
+    */
 
     function get_count_total_votes() external view returns(uint256[] memory) {
          uint256 length = ballot_papers.length;
@@ -207,7 +244,7 @@ contract Evoting {
 
     function get_details() external view 
     returns(address _admin, string memory _name, string memory _description, VotingState _state, 
-    uint256 _start_time, uint256 _end_time, uint256 _createdAt, bytes32 _voteID, Utils.BallotPaper[] memory _ballot_papers) 
+    uint256 _start_time, uint256 _end_time, uint256 _createdAt, string memory _voteID, Utils.BallotPaper[] memory _ballot_papers) 
     {
         _admin = admin;
         _name = name;
@@ -219,5 +256,19 @@ contract Evoting {
         _voteID = voteID;
         _ballot_papers = get_ballot_papers();
 
+    }
+
+     function storeVotes(Utils.Votes[] memory _votes) external {
+        uint256 length = _votes.length;
+        for (uint256 i = 0; i < length; i++) {
+            uint8 ballotType = ballot_papers[i].ballotType;
+            if (ballotType == 1) {
+                votes[i].index = _votes[i].index;
+                votes[i].val = _votes[i].val;
+            }
+            else if (ballotType == 2){
+
+            }
+        }
     }
 }

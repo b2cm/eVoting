@@ -13,8 +13,8 @@ contract FactoryEvoting {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     EnumerableSet.AddressSet private admins;
-    mapping(bytes32 => address) private votingsAddr; // mapping voteID => contract address
-    bytes32[] private voteIDs;
+    mapping(string => address) private votingsAddr; // mapping voteID => contract address
+    string[] private voteIDs;
 
     event VotingCreated(address contractAddr);
 
@@ -28,8 +28,8 @@ contract FactoryEvoting {
         _;
     }
 
-    function get_voteIDs() external view returns(bytes32[] memory ) {
-        bytes32[] memory _voteIDs = new bytes32[](voteIDs.length);
+    function get_voteIDs() external view returns(string[] memory ) {
+        string[] memory _voteIDs = new string[](voteIDs.length);
         for (uint256 i = 0; i < voteIDs.length; i++) {
             _voteIDs[i] = voteIDs[i];
         }
@@ -39,7 +39,7 @@ contract FactoryEvoting {
     /**@dev Only an admin can call this function.
      */
      //TODO: Add param in documentation
-    function new_voting(bytes32 _voteID, string memory _name, string memory _description, uint256 _start_time, uint256 _end_time, Utils.BallotPaper[] memory _ballot_papers) external onlyAdmins {
+    function new_voting(string memory _voteID, string memory _name, string memory _description, uint256 _start_time, uint256 _end_time, Utils.BallotPaper[] memory _ballot_papers) external onlyAdmins {
         Evoting evoting = new Evoting(
             _voteID,
             _name,
@@ -77,7 +77,7 @@ contract FactoryEvoting {
     }
 
 
-    function get_voting(bytes32 _id) external view returns (address) {
+    function get_voting(string memory _id) external view returns (address) {
         return votingsAddr[_id];
     }
 

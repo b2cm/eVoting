@@ -1,0 +1,26 @@
+import "hashes/poseidon/poseidon" as hash;
+import "hashes/utils/256bitsDirectionHelper" as multiplex;
+
+const u32 DEPTH = 4; // defins the depth of the merkle tree, here it is 2**4
+
+// Merke-Tree inclusion proof for tree depth 4 using SNARK-efficient poseidon hashes
+// directionSelector => true if current digest is on the rhs of the hash otherwise false
+// public parameter: root
+// private parameter: direction selector, path, leaf
+
+def select(bool condition, field left, field right) -> (field, field) {
+    return (condition ? right : left, condition ? left : right);
+}
+
+def main(field root, private field leaf, private bool[DEPTH] directionSelector, private field[DEPTH] path) -> bool {
+    // Start from the leaf
+    field mut digest = leaf;
+
+    // Loop up the tree
+    for u32 i in 0..DEPTH {
+        (field, field) s = select(directionSelector[i], digest, path[i]);
+        digest = hash([s.0, s.1]);
+    }
+
+    return digest == root;
+}

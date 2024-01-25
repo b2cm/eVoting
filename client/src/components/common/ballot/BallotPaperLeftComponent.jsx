@@ -19,6 +19,7 @@ import { ICON_COLOR } from '../../../utils/colors';
 export default function BallotPaperLeftComponent(props) {
     
     const { 
+        showActionButtons,
         ballots,  
         setBallots,
         isEditable, 
@@ -32,7 +33,8 @@ export default function BallotPaperLeftComponent(props) {
         setSelectedIndex, 
         whichBallots, 
         setWhichBallots
-    } = props;    
+    } = props;   
+    console.log('action', showActionButtons) 
 
     const handleClickBallot = (index, which) => {
         setSelectedIndex(index);
@@ -76,7 +78,9 @@ export default function BallotPaperLeftComponent(props) {
             width: 500,
             //border: 'solid red'
          }}>
-            <BallotPanelActions 
+            { 
+                <BallotPanelActions
+                showActionButtons={showActionButtons}
                 selectedIndex={selectedIndex} 
                 setSelectedIndex={setSelectedIndex}
                 whichBallots={whichBallots} 
@@ -92,6 +96,7 @@ export default function BallotPaperLeftComponent(props) {
                 setBallots_to_update={setBallots_to_update}
 
             />
+            }
             
           <List style={{maxHeight: 500 , overflow: 'scroll'}} 
           sx={{marginTop: 2,}}>

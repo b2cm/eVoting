@@ -28,7 +28,7 @@ library Utils {
         string[] c;
     }
 
-     struct Ballot {
+     struct Vote {
         string sessionId;
         string cipherText; // The vote : musst be a string
         Proof proof;
@@ -40,7 +40,12 @@ library Utils {
 
     struct BallotWithIndex {
         uint8 index; // The index of the ballot paper => Just for the mapping.
-        Ballot[] ballot;
+        Vote[] ballot;
+    }
+
+    struct Votes {
+        uint8 index;
+        bool[][] val;
     }
 
 }

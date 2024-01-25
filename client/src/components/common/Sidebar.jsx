@@ -61,6 +61,7 @@ export default function Sidebar() {
     const handleCloseRegisterDialog = () => {
       setOpenDialog(false);
     }
+    
 
     const list = () => (
         <Box
@@ -97,7 +98,7 @@ export default function Sidebar() {
           <Divider />
           <List>
             <Box sx={{ 
-              display: {xs: 'block', sm: 'block', md: 'none', lg: 'none', xl: 'none'},
+              display: {xs: 'none', sm: 'none', md: 'none', lg: 'none', xl: 'none'},
              // border: 'solid 1px red'
             }}>
               <WalletButton width={250}/>

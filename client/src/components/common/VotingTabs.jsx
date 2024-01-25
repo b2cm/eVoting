@@ -123,7 +123,19 @@ export default function VotingTabs(props) {
       </TabPanel>
       {voteState === VOTING_STATES[2] && 
         <TabPanel value={tabValue} index={2} >
-          <ElectionResults />
+          <ElectionResults 
+            ballots={ballots} 
+            setBallots={setBallots} 
+            isEditable={isEditable}
+            ballots_to_add={ballots_to_add}
+            setBallots_to_add={setBallots_to_add}
+            ballots_to_delete={ballots_to_delete}
+            setBallots_to_delete={setBallots_to_delete}
+            ballots_to_update={ballots_to_update}
+            setBallots_to_update={setBallots_to_update}
+            whichBallots={whichBallots}
+            setWhichBallots={setWhichBallots}
+          />
         </TabPanel>
       }
 

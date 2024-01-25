@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Evoting.sol": {
-      "lastModificationDate": 1687273066551,
-      "contentHash": "920617ea95cfab322fa5e6eca86abe26",
+      "lastModificationDate": 1696502893194,
+      "contentHash": "1d83084b5dfeec322d251d2ecbdfe2ef",
       "sourceName": "contracts/Evoting.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -49,8 +49,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Utils.sol": {
-      "lastModificationDate": 1687273026629,
-      "contentHash": "f78600785a6c13ac1be915fff76d2278",
+      "lastModificationDate": 1696500766335,
+      "contentHash": "178c7d9fb8b0dab862f88481ad320565",
       "sourceName": "contracts/Utils.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -94,8 +94,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/FactoryEvoting.sol": {
-      "lastModificationDate": 1687124966412,
-      "contentHash": "b0f13878c461bed8ca0988186bd625bb",
+      "lastModificationDate": 1696503210114,
+      "contentHash": "96d37fba50e10fffe307d659494e0873",
       "sourceName": "contracts/FactoryEvoting.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -145,7 +145,7 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/interfaces/IFactoryEvoting.sol": {
-      "lastModificationDate": 1687124966413,
+      "lastModificationDate": 1696498698412,
       "contentHash": "8b3d83187e1117cf5d6d303d85a4cca7",
       "sourceName": "contracts/interfaces/IFactoryEvoting.sol",
       "solcConfig": {
@@ -1411,8 +1411,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/interfaces/IEvoting.sol": {
-      "lastModificationDate": 1687124966413,
-      "contentHash": "1512f916c17add0de2adde837ad30527",
+      "lastModificationDate": 1696501433311,
+      "contentHash": "149392a1fb3947384df94e735e6688da",
       "sourceName": "contracts/interfaces/IEvoting.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -1458,8 +1458,8 @@
       ]
     },
     "/Users/kemlohalex/Documents/arbeit/evoting/zksync/contracts/Register.sol": {
-      "lastModificationDate": 1687262042157,
-      "contentHash": "4498560cce380ab4d1b1588e6ff29dde",
+      "lastModificationDate": 1706013209178,
+      "contentHash": "08ff30a8dc5c03dcb72b0a50fcdfb505",
       "sourceName": "contracts/Register.sol",
       "solcConfig": {
         "version": "0.8.17",

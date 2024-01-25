@@ -200,13 +200,30 @@ export default function Decrypt() {
           {tally ? (
             <div>
               <h4>Tally:</h4>
-              {tally.map((c) => (
-                <div key={c.name}>
-                  <span>
-                    {c.name}: {c.votes} votes
-                  </span>
-                </div>
-              ))}
+              {tally.map((c, index) => {
+                let name;
+                switch (index) {
+                  case 0:
+                    name = "ja";
+                    break;
+                  case 1:
+                    name = "nein";
+                    break;
+                  case 2:
+                    name = "enthaltung";
+                    break;
+                  default:
+                    name = c.name;
+                }
+
+                return (
+                  <div key={c.name}>
+                    <span>
+                      {name}: {c.votes} votes
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <></>
