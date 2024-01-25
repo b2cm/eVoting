@@ -565,5 +565,4 @@ const VrfGenerator = () => {
 
 //console.log(VrfGenerator());
 
-//module.exports = VrfGenerator;
-export default VrfGenerator;
+module.exports = VrfGenerator

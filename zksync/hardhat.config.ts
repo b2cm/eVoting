@@ -1,4 +1,4 @@
-import { extendEnvironment, task, subtask } from "hardhat/internal/core/config/config-env";
+//import { extendEnvironment, task, subtask } from "hardhat/internal/core/config/config-env";
 
 require("@matterlabs/hardhat-zksync-deploy");
 require("@matterlabs/hardhat-zksync-solc");
@@ -16,8 +16,8 @@ const GOERLI_URL = `https://goerli.infura.io/v3/${API_KEY}`;
 const zkSyncTestnet =
   process.env.NODE_ENV == "test"
     ? {
-        url: "http://localhost:3050",
-        ethNetwork: "http://localhost:8545",
+        url: "http://localhost:8011",
+        ethNetwork: "http://localhost:8011",
         zksync: true,
       }
     : {

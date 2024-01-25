@@ -25,13 +25,13 @@ interface IEvoting {
     function delete_ballot(uint256 _ballot_id) external;
 
     /**@dev Only eligible voters can call this function.
-    *@param _ballots an array containing the ballots.
+    *@param _votes an array containing the ballots.
      */
-    function vote(Utils.Ballot[] memory _ballots) external returns(bool success);
+    function vote(Utils.Vote[] memory _votes) external returns(bool success);
 
     function get_voters() external view returns(address[] memory);
 
-    function get_votes() external view returns(Utils.Ballot[][] memory);
+    function get_votes() external view returns(Utils.Vote[][] memory);
 
     function get_count_total_votes() external view returns(uint256[] memory);
 

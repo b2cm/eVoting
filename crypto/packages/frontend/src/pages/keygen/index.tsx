@@ -1,16 +1,16 @@
 import axios, { AxiosResponse } from "axios";
 import { generatePair, KeyPair } from "lrs";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Groups } from "../../components/groups";
 import { BACKEND_URL } from "../../connections/api";
-import { HashedIds } from "../../util/leaves";
+
 
 export default function KeyGen() {
   const [pair, setPair] = useState(null as null | KeyPair);
   const [HashedID, setHashedID] = useState(null as null | string);
   const [buttonEnable, setButtonEnable] = useState(true);
   const [error, setError] = useState("");
-
+  const [HashedIds, setHashedIds] = useState<String[] |null>(null  )
   const [groups, setGroups] = useState(
     null as null | { [id: string]: bigint[] }
   );
@@ -19,6 +19,22 @@ export default function KeyGen() {
     setPair(generatePair());
   }, []);
 
+
+  const fetchHashedIDs = async () => {
+    const {data } = await axios.get('http://bccm-s7.hs-mittweida.de:3100/getHashedIDs');
+    console.log("pls lev me alon " , data)
+    console.log("ids", data["hashedIDs"])
+    setHashedIds(data["hashedIDs"])
+
+  }
+
+
+
+
+  useEffect(() => {
+    // Fetch data from an API or any other source
+    fetchHashedIDs()
+  }, []);
   const submit = useCallback(() => {
     const cb = async () => {
       if (!pair) {
@@ -53,15 +69,16 @@ export default function KeyGen() {
 
   const handlechange = useCallback((e) => {
     const inputHash = e.target.value;
+    console.log( "hashedids ", HashedIds);
+    if (HashedIds && HashedIds!.includes(inputHash)) {
 
-    if (HashedIds.includes(inputHash)) {
       setError("");
       setHashedID(inputHash);
       setButtonEnable(false);
     } else {
       setError("HashedID is not valid");
     }
-  }, []);
+  }, [HashedIds]);
 
   return (
     <div className="flex flex-col items-center space-y-4">

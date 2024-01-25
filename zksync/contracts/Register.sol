@@ -19,6 +19,13 @@ contract Register {
     event RegistrationPeriodSet();
     event SessionIDSet();
 
+    struct VoterData {
+        bytes pubKey;
+        bytes hashedId;
+    }
+
+    VoterData[] public voterData;
+
     modifier onlyAdmin () {
         require(msg.sender == admin, 'Not the admin');
 
@@ -69,8 +76,14 @@ contract Register {
         votersHashedIDs.push(_hashedID);
         lrsPublicKeys[_hashedID] = _publicKey;
         lrs.push(_publicKey);
+        VoterData memory data = VoterData(_publicKey, _hashedID);
+        voterData.push(data);
         emit HashedIDStored();
         emit LRSPKStored();
+    }
+
+    function getVoterData() public view returns(VoterData[] memory ) {
+        return voterData;
     }
 
 

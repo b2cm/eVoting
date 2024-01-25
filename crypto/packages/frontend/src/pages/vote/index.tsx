@@ -355,7 +355,7 @@ export default function Vote() {
             }}
           >
             <img alt="Candidate" src="/silhoutte.png" className="w-3/4" />
-            <span>{c.title}</span>
+            {i === 0 ? "Ja" : i === 1 ? "Nein" : i === 2 ? "Enthaltung" : ""}
           </div>
         ))}
       </div>
