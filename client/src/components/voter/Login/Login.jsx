@@ -35,7 +35,6 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { TransactionDialogBox } from '../../common/TransactionDialogBox';
 import { AcceptAGB } from './AcceptAGB';
 import axios, { AxiosResponse } from "axios";
-const _voterID = 'b01833143e6b75f918a574f9a39a66b250404c945ad0d64ec47b07b4b72c0bb88d9b181c386ff8132e2d5ba7ac4956a723e200925ab00d36bdd0b9a823a2580a';
 
 
 export default function Login() {
@@ -95,6 +94,7 @@ export default function Login() {
             const contains = async () => {
                 let { data } = await axios.get(BACKEND_URL + '/Vote/Voter');
                 for (const id in data) {
+                    console.log('data:', data);
                     data[id] = data[id].map((s) => BigInt("0x" + s));
                     for (let i = 0; i < data[id].length; i++) {
                         if (data[id][i] === BigInt('0x' + pubKey)) {
@@ -106,17 +106,13 @@ export default function Login() {
             }
             const cb = await contains()
             console.log('contains', cb);
+          
             if (!cb) {
                 result = await axios.post(BACKEND_URL + "/Vote/Voter", {
                     pubKey
                 });
-                /*
-                for (const id in data) {
-                    data[id] = data[id].map((s) => BigInt("0x" + s));
-                }
-                */
-    
-                console.log('data', result);
+        
+                console.log('data2', result);
                 
                 // send hashedID to backend
                 result = await axios.post(BACKEND_URL + "/Vote/HashedId", {
@@ -134,52 +130,14 @@ export default function Login() {
         
     }
 
-    useEffect(() => {
-        if (credentials) {
-            const hash = '0x' + poseidon(['0x' + credentials.id]);
-            const hashedID = ethers.utils.hexlify(ethers.BigNumber.from(hash));
-            const pubKey =  credentials.pk//.toString(16);
-            console.log('hashed id', hashedID);
-            console.log('pub key', pubKey);
-            console.log('pub key big int', BigInt('0x' + pubKey));
-            const pub1 = BigInt('0x' + pubKey).toString(16);
-            console.log('pub key 1', pub1);
-
-            const cb = async () => {
-                let result;
-                let { data } = await axios.get(BACKEND_URL + '/Vote/Voter');
-                let contains = false;
-                for (const id in data) {
-                    data[id] = data[id].map((s) => BigInt("0x" + s));
-                    for (let i = 0; i < data[id].length; i++) {
-                        if (data[id][i] === BigInt('0x' + pubKey)) {
-                            contains = true;
-                        }
-                    }
-                }
-                console.log('result', data);
-                console.log('contains', contains);
-            }
-
-            const getTokens = async() => {
-                const sessionId = 'f58277b8-84ac-4979-aeff-ee38b03cf93d';
-                const pub = '5017868837e5d22477e75d69da6f7c2b219eb5d073d7e5dbaadf563812f34fa83f1d6f0078e0a0a2d06dde198a256a9fead8c208f91c1d6caa7af61b8836aa06d1d49471c52efecb898f63fd88cbe0f573739a7b10b68fe7a0b2c842c6619272'
-                const result = await axios.post(BACKEND_URL + '/Vote/Voter/' + pubKey, {
-                    sessionId
-                });
-
-                console.log('results 2', result);
-            }
-
-            cb();
-            getTokens()
-        }
-    }, [credentials]);
-
-
+    const handleLogin2 = () => {
+        dispatch( {
+            type: actions.init,
+            data: { isVoterAuthenticated: true}
+        })
+    }
     const handleLogin = async() => {
         setShowAGB(false);
-        
         try {
             setOpenDialog(true);
             setWaitingMessage(['Anmeldung wird durchgefürht']);
@@ -193,21 +151,16 @@ export default function Login() {
             const web3 = new ethers.providers.InfuraProvider('goerli', api_key);
             const wallet = new ethers.Wallet(MNEMONIC_GOERLI, web3);
             const verifier = new ethers.Contract(verifierAddr, zkpABI, web3) //l1Contracts.VerifierZKPMembership;
-            console.log('register', register);
-            //setWaitingMessage('Hashed ids werden herunterladen');
             const voterIDs = await register.getHashedIDs(); // Change the function name to getHashedIDs
-            //console.log('ids', voterIDs);
+        
             setProgress(10);
             setBuffer(20);
             let ids = [];
-            const i = 15;
             for (let i = 0; i < voterIDs.length; i++) {
                 ids[i] = BigInt(voterIDs[i].slice(2));
             }
-    
-            //setWaitingMessage('Merkle tree und memebership proof werden erzeugt');
+
             const merkleTree = new MerkleTree(ids, { isHashed: true });
-            //console.log('merkle', merkleTree);
             console.log('credentials', credentials);
             const voterID = credentials.id;
             const hashedID = poseidon(['0x' + voterID]);
@@ -215,7 +168,6 @@ export default function Login() {
             console.log('pub key', pubKey);
             const depth = merkleTree.getDepth();
             const proofOfMembership = merkleTree.getProof(hashedID);
-            //console.log('proof of membership', proofOfMembership);
             setProgress(20);
             setBuffer(50);
         
@@ -223,24 +175,16 @@ export default function Login() {
             //setWaitingMessage('Zero Knowledge credentials werden generiert');
             console.log('Compiling the program...');
             const artifacts = zokratesProvider.compile(setSource(depth));
-            //console.log(artifacts);
             const args = [merkleTree.getRoot().toString(), proofOfMembership.voterID, proofOfMembership.directionSelector, proofOfMembership.siblingValues];
-            //console.log('args', args);
             console.log('Generating the witness...');
             setProgress(50);
             setBuffer(60);
             const keypair = require(`../../../data/keypairs/keypairDepth${depth}.json`);
             const { witness, output } = zokratesProvider.computeWitness(artifacts, args);
-            //console.log('witness', witness);
-            //const Keypair = zokratesProvider.setup(artifacts.program);
-            //setWaitingMessage('Zero knowledge proof wird generiert');
             console.log('Generating the proof...');
             const proof = zokratesProvider.generateProof(artifacts.program, witness, keypair.pk);
             setProgress(60);
             setBuffer(70);
-            //console.log('proof:', proof);
-            //const verify = zokratesProvider.verify(keypair.vk, proof);
-            //console.log('verify', verify);
             //setWaitingMessage('Zero Knowledge proof wird zur Verifizierung an die der Blockchain gesendet.\n Transaction bitte bestätigen!');
             
             try {
@@ -257,7 +201,7 @@ export default function Login() {
                 console.log('tx', txHandle);
                 setProgress(70);
                 setBuffer(80);
-                //setWaitingMessage('Verifizierung läuft');
+                setWaitingMessage('Verifizierung läuft');
             
                 setProgress(80);
                 setBuffer(100);
@@ -265,83 +209,19 @@ export default function Login() {
                     console.log('Here')
                     //alert('Authentication successful.');
                     //switchNetwork('zksync');
-                    // TODO: store voter address to the register contract on zksync
-                    
-                    try {
-                        const address = await signer.getAddress();
-                        const paymasterParams = utils.getPaymasterParams(paymaster, {
-                            type: 'General',
-                            innerInput: new Uint8Array(),
-                            });
-                    
-                            const gasPrice = await l2Provider.getGasPrice();
-                            console.log('gas ', gasPrice);
-
-                            const message1 = 'Anmeldung erfolreich!';
-                
-                            setWaitingMessage([message1,])
-                            //setIsUserAuthenticated(true);
-                            sendDataToTheBackend(pubKey, hashedID.toString(16));
-                            dispatch( {
-                                type: actions.init,
-                                data: { isVoterAuthenticated: true}
-                            })
-                            setProgress(100);
-                            
-                    /*
-                        const gasLimit = await register.connect(signer).estimateGas.addEligibleVoter(
-                            address,
-                            
-                            {
-                                customData: {
-                                    gasPerPubData: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
-                                    paymasterParams
-                                },
-                            }
-                            
-                        );
-                        const txHandle = await register.connect(signer).addEligibleVoter(
-                            address,
-                            {
-                                // Provide gas params manually
-                                maxFeePerGas: gasPrice,
-                                maxPriorityFeePerGas: gasPrice,
-                                gasLimit,
-                            
-                                // paymaster info
-                                customData: {
-                                  paymasterParams,
-                                  gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
-                                 },
-                                 
-                              } 
-                            );
-                        console.log('tx', txHandle);
-                        const receipt = await txHandle.wait();
-                        const events = receipt.events;
-                        console.log('receipt', receipt);
-                        events.forEach(e => {
-                            if (e.event === 'VoterAdded') {
-                                const message1 = 'Anmeldung erfolreich!';
-                                //const message2 = 'Um fortzufahren, bestätigen Sie bitte das Netzwerkwechseln'
-                                setWaitingMessage([message1,])
-                                setIsUserAuthenticated(true);
-                                setProgress(100);
-                            }
-                        });
-                        */
-                       console.log('Here 2')
-                       } catch (error) {
-                        setProgress(0);
-                        setBuffer(10)
-                        setWaitingMessage([error.code]);
-                       }
-
+                    const message1 = 'Anmeldung erfolreich!';
+                    setWaitingMessage([message1,]);
+                    sendDataToTheBackend(pubKey, hashedID.toString(16));
+                    setProgress(100);
+                    dispatch( {
+                        type: actions.init,
+                        data: { isVoterAuthenticated: true}
+                    })
                 } else {
                     setWaitingMessage(['Anmeldung fehlgeschlagen!']);
                     setProgress(100);
                 }
-
+                // This code block call the verify function as a transaction
                 /*
                 const receipt = await txHandle.wait();
                 console.log('receipt', receipt); 
@@ -364,7 +244,9 @@ export default function Login() {
                 })
                 */
                
-            } catch (error) {
+            } 
+            
+            catch (error) {
                 for (const [key, value] of Object.entries(error)) {
                     let message;
                     if (key === 'reason') {
@@ -381,6 +263,7 @@ export default function Login() {
                 setProgress(0);
                 setBuffer(10);
             }
+            
         
         })
         
@@ -405,39 +288,19 @@ export default function Login() {
     }
 
     useEffect(()=> {
-        if (!isVoterAuthenticated && chainId !== '0x118' ) switchNetwork('zksync');
-     }, [isVoterAuthenticated, chainId]);
-/*
-     useEffect(()=> {
-        if (isVoterAuthenticated ) switchNetwork('zksync');
-     }, [isVoterAuthenticated, chainId]);
-*/
-     useEffect(()=> {
-        if (isVoterAuthenticated && chainId === '0x118') {
-            dispatch({
-                type: actions.init,
-                data: { isVoterAuthenticated: true}
-            })
-            navigate(`/vote/voting-cockpit/${voteID}`, { state: { credentials}});
+        if (isVoterAuthenticated) {
+            if(chainId !== '0x118') switchNetwork('zksync');
+            else {
+                dispatch({
+                    type: actions.init,
+                    data: { isVoterAuthenticated: true}
+                })
+                navigate(`/vote/voting-cockpit/${voteID}`, { state: { credentials}});
+            }
+            
         }
      }, [isVoterAuthenticated, navigate, voteID, chainId]);
-
-     useEffect(() => {
-        const pair = generatePair();
-        //console.log('pair', pair.publicKey.toString(16))
-        const send = async () => {
-         const hash = poseidon(['0x' + credentials.id]);
-         console.log('hash', hash);
-         console.log('hash"string', hash.toString());
-          await axios.post(BACKEND_URL + "/Vote/HashedId", {
-            pubKey: credentials.pk.toString(16),
-            hashedId: hash.toString(),
-          });
-          
-        };
-
-    }, [credentials]);
-
+     
 
   return (
     <Container
@@ -534,7 +397,7 @@ export default function Login() {
                 <Button
                 variant='contained'
                 size='large'
-                onClick={handleShowAGB}
+                onClick={handleLogin}
                 disabled={credentials === null? true: false}
                 sx={{
                     width: 1,

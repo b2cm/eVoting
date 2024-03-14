@@ -12,48 +12,13 @@ import { toBigIntBE } from 'bigint-buffer';
 import { LookUpservice } from './lookup.service';
 import { Any } from 'typeorm';
 
-/**
- * @description Vote Controller
- *
- * @export
- * @class VoteController
- * @typedef {VoteController}
- */
 @Controller('Vote')
 export class VoteController {
-  /**
-   * Creates an instance of VoteController.
-   *
-   * @constructor
-   * @param {SubmitVoteService} voteService
-   * @param {LookUpservice} LookUpService
-   */
   constructor(
     private voteService: SubmitVoteService,
     private LookUpService: LookUpservice,
   ) {}
 
-  /**
-   * 
-   *
-   * @async
-   * @param {{
-        pubKey: string;
-        sessionId: string;
-        ciphertext: string;
-        proof: [string[], string[], string[]];
-        signature: {
-          y0: string;
-          s: string;
-          c: string[];
-        };
-        groupId: string;
-        // counter: string;
-        // vid: string;
-        token: string;
-      }} body
-   * @returns {*}
-   */
   @Post()
   async submitVote(
     @Body()
@@ -96,24 +61,12 @@ export class VoteController {
     );
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   @Get('FilterVotes')
   async getFilteredVotes() {
     console.log('request received for filtered votes');
     return await this.voteService.getFilteredVotes();
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   @Get('FilterOne')
   async getFilteredOne() {
     console.log('request received for filtered one');
@@ -121,26 +74,11 @@ export class VoteController {
 
     const parsed = JSON.parse(results[0].votes);
     console.log('parsed', parsed);
-    const counters = JSON.parse(results[0].counters);
-    console.log('counters', counters);
     const filteredData = parsed.map((vote: any) => ({ vote }));
-    const filteredCounters = counters.map((counter: any) => ({ counter }));
-
-    return {
-      filteredData,
-      filteredCounters,
-    };
+    return filteredData;
   }
 
   //  this is what gets called from the vote page
-  /**
-   *
-   *
-   * @async
-   * @param {string} pubkey
-   * @param {{ sessionId: string }} body
-   * @returns {unknown}
-   */
   @Post('Voter/:pubkey')
   async getVoterData(
     @Param('pubkey') pubkey: string,
@@ -151,6 +89,9 @@ export class VoteController {
       //throw new NotFoundException('No voter found');
       console.log('No voter found');
     }
+    //console.log('tokens', tokens);
+    // //* map vids to EC
+    // // convert vid to a point on the curve
     const vidP = Generator.multiplyCT(BigInt(tokens![0].vid));
 
     // //* map counters to EC
@@ -160,6 +101,11 @@ export class VoteController {
     console.log('cpppp', counterPoints);
 
     const limit = counterPoints.length;
+
+    // console.log('counterPoints', counterPoints);
+
+    // //* get the public key of all tally servers
+    //const pubKey = Point.fromCompressed(TALLY_SERVER_KEY);
     const keys = await this.voteService.getKeys(body.sessionId);
 
     const encryptedTokensAll = [];
@@ -200,14 +146,7 @@ export class VoteController {
     };
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {{
-    [id: string]: any[];
-    }}
-   */
+  // TODO: Fetch the voters from the blockchain
   @Get('Voter')
   async getVoterGroups() {
     const groups = await this.voteService.getVoterGroups();
@@ -217,42 +156,14 @@ export class VoteController {
     return groups;
   }
 
-  /**
-   * 
-   *
-   * @async
-   * @param {{ publicKey: string }} body
-   * @returns {res: {
-    encryptedCounter: string;
-    encryptedVid: string;
-    signature: string;
-    counterIndex: Number;
-    pubkey: string;
-      }[]}
-   */
   @Post('getEncryptedTokens')
   async getEncryptedTokens(@Body() body: { publicKey: string }) {
+    console.log('hitting API');
     const res = await this.voteService.getEncryptedTokens(body.publicKey);
     return res;
   }
 
-  /**
-   * 
-   *
-   * @async
-   * @param {string} sessionId
-   * @returns {
-   {
-    vote: bigint;
-    y0: bigint;
-    s: bigint;
-    c: bigint[];
-    proof: bigint[][];
-    groupId: string;
-    token: string;
-    }[]
-  }}
-   */
+  // * this has changed
   @Get(':sessionId')
   async getVotes(@Param('sessionId') sessionId: string) {
     console.log('here at wrong place');
@@ -273,13 +184,6 @@ export class VoteController {
     });
   }
 
-  /**
-   * @description Storing a voter
-   *
-   * @async
-   * @param {{ pubKey: string }} body
-   * @returns {unknown}
-   */
   @Post('Voter')
   async addVoter(@Body() body: { pubKey: string }) {
     const key = BigInt('0x' + body.pubKey);
@@ -291,35 +195,19 @@ export class VoteController {
     return groups;
   }
 
-  /**
-   * @description  endpoint to store the hashed ids
-   * @async
-   * @param {{ pubKey: string; hashedId: string }} body
-   * @returns {BigInt}
-   */
   @Post('HashedId')
   async addHashedId(@Body() body: { pubKey: string; hashedId: string }) {
     const key = BigInt('0x' + body.pubKey);
     console.log(body.pubKey);
+
+    //console.log(body);
     await this.voteService.addHashedId(body.hashedId, key);
   }
 
-  /**
-   *
-   * @description endpoint to store the filtered votes from the python algorithm
-   * @async
-   * @param {{ partyID: string; votes: string , counters: string}} body
-   * @returns {*}
-   */
   @Post('StoreFiltered')
-  async storefilteredVotes(
-    @Body() body: { partyID: string; votes: string; counters: string },
-  ) {
-    console.log(body.counters);
-    await this.voteService.storeFilteredVotes(
-      body.partyID,
-      body.votes,
-      body.counters,
-    );
+  async storefilteredVotes(@Body() body: { partyID: string; votes: string }) {
+    //console.log("request received")
+    //console.log(body.partyID)
+    await this.voteService.storeFilteredVotes(body.partyID, body.votes);
   }
 }

@@ -34,7 +34,6 @@ export default function BallotPaperLeftComponent(props) {
         whichBallots, 
         setWhichBallots
     } = props;   
-    console.log('action', showActionButtons) 
 
     const handleClickBallot = (index, which) => {
         setSelectedIndex(index);

@@ -22,6 +22,7 @@ export default function BallotPanel(props) {
         setBallots_to_update,
         whichBallots,
         setWhichBallots,
+        showActionButtons
     } = props;
    
   return (
@@ -35,6 +36,7 @@ export default function BallotPanel(props) {
             
         }}>
             <BallotPaperLeftComponent 
+                showActionButtons={showActionButtons}
                 selectedIndex={selectedIndex} 
                 setSelectedIndex={setSelectedIndex} 
                 ballots={ballots}

@@ -169,3 +169,33 @@ export  const getVoteDetails = async (voteContractAddr, voteID, evotingABI, l2Pr
         console.error(error);
     }
 } 
+
+export const getEvoting = async(l2Contracts, l2Provider, artifacts, voteID) => {
+    const factory = l2Contracts.FactoryEvoting;
+    const EVOTING_ABI = artifacts[2].abi;
+    const voteContractAddr = await factory.get_voting('0x' + voteID);
+    const evoting = new Contract(voteContractAddr, EVOTING_ABI, l2Provider);
+    return evoting;
+}
+
+export const getBallots = async (evoting) => {
+    try {    
+        const _ballots = [];
+        const ballots = await evoting.get_ballot_papers();
+
+        for (let i = 0; i < ballots.length; i++) {
+            const ballot = {
+                ballotType: ballots[i].ballotType,
+                name: ballots[i].name,
+                information: ballots[i].information,
+                title: ballots[i].title,
+                candidates: ballots[i].candidates
+            }
+            _ballots.push(ballot);
+        }
+        
+        return _ballots;
+    } catch (error) {
+        console.error(error);
+    }
+}

@@ -71,7 +71,8 @@ export default function VotingTabs(props) {
     setBallots_to_update,
     whichBallots,
     setWhichBallots,
-    admin
+    admin,
+    showActionButtons
    } = props;
 
   const handleChangeTabValue = (event, newValue) => {
@@ -107,7 +108,8 @@ export default function VotingTabs(props) {
         />
       </TabPanel>
       <TabPanel value={tabValue} index={1} >
-        <BallotPanel 
+        <BallotPanel
+          showActionButtons={showActionButtons} 
           ballots={ballots} 
           setBallots={setBallots} 
           isEditable={isEditable}

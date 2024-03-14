@@ -20,6 +20,7 @@ import BallotIcon from '@mui/icons-material/Ballot';
 import { useParams, useLocation } from 'react-router-dom';
 import { useEth } from '../../../contexts/EthContext';
 import { getElectionStateColor, getVoteDetails } from '../../../utils/utils';
+import { BACKEND_URL } from '../../../utils/constantes';
 import { Contract } from 'zksync-web3';
 import dayjs from 'dayjs';
 import { VOTING_STATES } from '../../../utils/constantes';
@@ -31,7 +32,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchField from '../../common/SearchField';
 import Footer from '../../common/Footer';
 import ControlOverview from './ControlOverview';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { poseidon } from '@big-whale-labs/poseidon';
 import { ethers } from 'ethers';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -48,19 +49,15 @@ export default function Vote(props) {
     const [overview, setOverview] = useState(false);
     const { state } = useEth();
     const { l2Contracts, artifacts, l2Provider, isVoterAuthenticated } = state;
-    //const { isVoterAuthenticated } = props;
     const { voteID } = useParams();
     const [searchedBallots, setSearchedBallots] = useState(voteDetails);
     const [searchValue, setSearchValue] = useState('');
+    const [encoding, setEncoding] = useState(null);
     const location = useLocation();
     const data = location.state;
-    //console.log('data', isVoterAuthenticated);
-    //const credentials = data.credentials;
-
-    //const matches = useMediaQuery('(min-width:600px)');
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.down('sm'));
-    console.log('match', matches);
+
 
     useEffect(() => {
         setSearchedBallots(voteDetails);
@@ -83,17 +80,12 @@ export default function Vote(props) {
 */
 
     const nextBallot = () => {
-        //const currentBallot = voteDetails.ballots[selectedIndex];
-        setSelectedIndex(selectedIndex => selectedIndex + 1);
-       //console.log('index', selectedIndex);
-        
+        setSelectedIndex(selectedIndex => selectedIndex + 1);        
     }
 
     const previousBallot = () => {
         setSelectedIndex(selectedIndex => selectedIndex - 1);
     }
-
-    
 
     const handleNewVotingPhase = () => {
         setOverview(false);
@@ -142,12 +134,9 @@ export default function Vote(props) {
                     ballotObj.options[_key] = false;
                 }
             }
-
             return [...prevState];
         });
     }
-
-   
 
     const handleCheckboxChangeBallotType2 = (candidate, key) => {
         setAnswersPerBallot(prevState => {
@@ -167,45 +156,9 @@ export default function Vote(props) {
     }
 
     useEffect(() => {
-        /*
-        if (voteDetails) {
-            const ballots = voteDetails.ballots;
-            const answersPerBallotIndex = [];
-            const answers = {
-                'JA': false,
-                'NEIN': false,
-                'ENTHALTUNG': false,
-            }
-            for (let i = 0; i < ballots.length; i++) {
-                if (ballots[i].ballotType === 1) {
-                    answersPerBallotIndex.push({
-                        ballotID: i,
-                        options: Object.assign({}, answers)
-                    });
-                } else if (ballots[i].ballotType === 2) {
-                    const options = []
-                    for (let j = 0; j < ballots[i].candidates.length; j++) {
-                        options.push({
-                            candidate: ballots[i].candidates[j],
-                            answers: Object.assign({}, answers)
-                        });
-                    }
-                    answersPerBallotIndex.push({
-                        ballotID: i,
-                        options
-                    });
-                }
-            }
-            setAnswersPerBallot(answersPerBallotIndex);
-        }*/
         if (voteDetails) setAnswersObjectFormat();
     }, [voteDetails,]);
 
-
-
-    useEffect(() => {
-        //console.log('answersPerBallot', answersPerBallot);
-    }, [answersPerBallot]);
 
     useEffect(() => {
         const getVoteDetails = async (factory) => {
@@ -246,16 +199,14 @@ export default function Vote(props) {
                     ballots: _ballots,
                 }
                 setVoteDetails(data);
-                //console.log('data', data);
-                //console.log('ballots', data.ballots);
             } catch (error) {
                 console.error(error);
             }
         }
+     
         if (l2Contracts) {
             const factory = l2Contracts.FactoryEvoting;
             getVoteDetails(factory);
-            //console.log('artifact', artifacts);
         }
     }, [l2Contracts, artifacts, l2Provider, voteID]);
 
@@ -263,6 +214,7 @@ export default function Vote(props) {
         setSelectedIndex(index);
     }
 
+    // Handle small screen size
     const [open, setOpen] = useState([]);
     const handleClick = (index) => {
         console.log(index);
@@ -304,9 +256,9 @@ export default function Vote(props) {
             <ListItemButton 
             
                 key={index}
-                selected={selectedIndex === index && open[index]}
-                onClick={() => handleClick(index)
-                    //handleClickBallot(index)
+                selected={selectedIndex === index } //&& open[index]}
+                onClick={() => //handleClick(index)
+                    handleClickBallot(index)
                 }
                 sx={{
                     border: 'solid 1px #CCCCCC',
@@ -352,48 +304,6 @@ export default function Vote(props) {
             </>
         )
     }
-
-    useEffect(() => {
-        if (data.credentials) {
-            const hash = '0x' + poseidon(['0x' + data.credentials.id]);
-            const hashedID = ethers.utils.hexlify(ethers.BigNumber.from(hash));
-            const pubKey = data.credentials.pk.toString(16);
-            console.log('hashed id', hashedID);
-            console.log('pub key', pubKey);
-            console.log('pub key big int', BigInt('0x' + pubKey));
-            const BACKEND_URL = '';
-
-            const cb = async () => {
-                let result;
-                let { data } = await axios.get(BACKEND_URL + '/Vote/Voter');
-                let contains = false;
-                for (const id in data) {
-                    data[id] = data[id].map((s) => BigInt("0x" + s));
-                    for (let i = 0; i < data[id].length; i++) {
-                        if (data[id][i] === BigInt('0x' + pubKey)) {
-                            contains = true;
-                        }
-                    }
-                }
-                console.log('result', data);
-                console.log('contains', contains);
-            }
-
-            const getTokens = async() => {
-                const sessionId = 'f58277b8-84ac-4979-aeff-ee38b03cf93d';
-                const pub = '5017868837e5d22477e75d69da6f7c2b219eb5d073d7e5dbaadf563812f34fa83f1d6f0078e0a0a2d06dde198a256a9fead8c208f91c1d6caa7af61b8836aa06d1d49471c52efecb898f63fd88cbe0f573739a7b10b68fe7a0b2c842c6619272'
-                const result = await axios.post(BACKEND_URL + '/Vote/Voter/' + pub, {
-                    sessionId
-                });
-
-                console.log('results 2', result);
-            }
-
-            //cb();
-            //getTokens()
-        }
-    }, [data.credentials]);
-
 
 
     return (
@@ -463,6 +373,7 @@ export default function Vote(props) {
                         {voteDetails.voteState === VOTING_STATES[1] &&
                             <>
                                 {(answersPerBallot && !overview) &&
+                                <>
                                     <Box sx={{
                                         width: 1,
                                         height: '64.5vh',
@@ -542,21 +453,24 @@ export default function Vote(props) {
 
                                             
                                         </Box>
+
+                                        
                                         
                                     </Box>
-                                    
+                                    <Box width={matches ? 1 : 1.9 / 2} marginTop={3} >
+                                    <Button variant='contained' size='large' fullWidth onClick={() => setOverview(true)}
+                                        sx={{
+                                            fontSize: 10,
+                                            //fontWeight: 'bold',
+                                            //backgroundColor: ELECTION_IN_PREPARATION_COLOR
+                                        }}
+                                    >
+                                        Weiter zur Kontrolle
+                                    </Button>
+                            </Box>
+                               </>     
                                 }
-                                <Box width={matches ? 1 : 1.9 / 2} marginTop={3} >
-                                                <Button variant='contained' size='large' fullWidth onClick={() => setOverview(true)}
-                                                    sx={{
-                                                        fontSize: 10,
-                                                        //fontWeight: 'bold',
-                                                        //backgroundColor: ELECTION_IN_PREPARATION_COLOR
-                                                    }}
-                                                >
-                                                    Weiter zur Kontrolle
-                                                </Button>
-                                            </Box>
+                                
                                 {overview &&
                                     <ControlOverview handleCloseOverview={handleCloseOverview} ballots={voteDetails.ballots} answersPerBallot={answersPerBallot} credentials={data.credentials} />
                                 }
@@ -573,14 +487,3 @@ export default function Vote(props) {
     )
 }
 
-
-/**
- * <Typography variant='h6' marginRight={2} component='div' display={'flex'}>
-                                    <Typography variant='h6' fontWeight={600} marginRight={1} noWrap>Beginn:</Typography>
-                                    {voteDetails.voteStart.format('DD.MM.YYYY-hh:m')}
-                                </Typography>
-                                <Typography variant='h6' marginRight={2} component='div' display={'flex'}>
-                                    <Typography variant='h6' fontWeight={600} marginRight={1} noWrap>Ende:</Typography>
-                                     {voteDetails.voteEnd.format('DD.MM.YYYY-hh:m')}
-                                </Typography>
- */

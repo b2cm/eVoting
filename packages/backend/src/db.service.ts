@@ -17,29 +17,8 @@ import { FilteredVotes } from './entities/FilteredVotes.entity';
 import { TokenTrigger } from './entities/TokenTrigger.entity';
 import { encryptedTokens } from './entities/encryptedTokens.entity';
 
-/**
- * Service for interacting with the database
- */
 @Injectable()
 export class DBService {
-  /**
-   * Creates an instance of DBService.
-   *
-   * @constructor
-   * @param {Repository<Session>} sessionRep
-   * @param {Repository<Candidate>} candRep
-   * @param {Repository<Voter>} voterRep
-   * @param {Repository<Vote>} voteRep
-   * @param {Repository<pubkeys>} pubkeysRep
-   * @param {Repository<HashedId>} hashedIdRep
-   * @param {Repository<Trigger>} triggerRep
-   * @param {Repository<TokenTrigger>} tokenTriggerRep
-   * @param {Repository<Token>} tokensRep
-   * @param {Repository<Limit>} limitRep
-   * @param {Repository<encryptedTokens>} encryptedTokensRep
-   * @param {Repository<FilteredVotes>} filteredVotesRep
-   * @param {Connection} connection
-   */
   constructor(
     @InjectRepository(Session) private sessionRep: Repository<Session>,
     @InjectRepository(Candidate) private candRep: Repository<Candidate>,
@@ -77,15 +56,6 @@ export class DBService {
     private connection: Connection,
   ) {}
 
-  /**
-   * @description add the session to the database
-   *
-   * @async
-   * @param {string} id
-   * @param {bigint} pubKey
-   * @param {{ name: string; message: bigint }[]} candidates
-   * @returns {*}
-   */
   async addSession(
     id: string,
     pubKey: bigint,
@@ -108,13 +78,6 @@ export class DBService {
     await this.candRep.insert(candidateEntities);
   }
 
-  /**
-   * @description get the session details from the database
-   *
-   * @param {string} sessionId
-   * @return {*}
-   * @memberof DBService
-   */
   async getSessionDetails(sessionId: string) {
     const session = await this.sessionRep.findOne(sessionId, {
       relations: ['candidates'],
@@ -133,17 +96,6 @@ export class DBService {
     };
   }
 
-  /**
-   * Get all voters from the databse and group them by group id
-   * This is done to help with lrs: with smaller ring size,
-   * we get faster signature and verification times
-   *
-   * So each voter will sign their vote with the public keys of
-   * only the voters in their group
-   *
-   * @async
-   * @returns {unknown}
-   */
   async getGroups() {
     const voters = await this.voterRep.find();
 
@@ -166,49 +118,22 @@ export class DBService {
     return groups;
   }
 
-  /**
-   * Get a single voter from db based on their public key
-   *
-   * @param {bigint} pubKey
-   * @returns {*}
-   */
   getVoter(pubKey: bigint) {
     return this.voterRep.findOne({
       pubKey: toBufferBE(pubKey, 1024),
     });
   }
-  /**
-   *
-   *
-   * @param {bigint} pubKey
-   * @returns {*}
-   */
   getVoterHash(pubKey: bigint) {
     return this.hashedIdRep.findOne({
       where: { PubKey: toBufferBE(pubKey, 1024) },
     });
   }
 
-  /**
-   *
-   * @description get the tokens from the database
-   * @param {Buffer} hashedId
-   * @return {*}
-   * @memberof DBService
-   */
   getTokens(hashedId: Buffer) {
     return this.tokensRep.find({
       where: { HashedId: hashedId },
     });
   }
-
-  /**
-   * @description  This is used on the keygen page whwere we need to get the public key of the voter
-   *
-   * @param {Voter} vote
-   * @return {*}
-   * @memberof DBService
-   * */
 
   async saveVoter(voter: Voter) {
     await this.voterRep.update(
@@ -219,16 +144,6 @@ export class DBService {
     );
   }
 
-  /**
-   * Add a voter to database
-   *
-   * @async
-   * @param {bigint} key Voter public key
-   * @param {string} groupId
-   * @param {bigint} Vid
-   * @param {bigint} counter
-   * @returns {*}
-   */
   async addVoter(key: bigint, groupId: string, Vid: bigint, counter: bigint) {
     const voter = new Voter();
 
@@ -240,19 +155,6 @@ export class DBService {
     await this.voterRep.insert(voter);
   }
 
-  /**
-   * Algorithm for submitting a vote
-   * We transform the data into db entities and insert into relevant tables
-   *
-   *
-   * @param {string} sessionId
-   * @param {bigint} vote
-   * @param {Signature} signature
-   * @param {string} groupId
-   * @param {[bigint[], bigint[], bigint[]]} proof
-   * @param {string} token
-   * @memberof DBService
-   */
   async addVote(
     sessionId: string,
     vote: bigint,
@@ -309,14 +211,7 @@ export class DBService {
       await queryRunner.release();
     }
   }
-
-  /**
-   * Get all votes for a session
-   *
-   * @param {string} sessionId
-   * @return {*}
-   * @memberof DBService
-   */
+  // *this has been changed
   async getSessionVotes(sessionId: string) {
     const votes = await this.voteRep.find({
       where: {
@@ -359,20 +254,13 @@ export class DBService {
         c: vote.c.sort((a, b) => a.idx - b.idx).map((c) => toBigIntBE(c.c)),
         proof,
         groupId: vote.groupId,
+        //counter: toBigIntBE(vote.counter).toString(16),
+        //vid: toBigIntBE(vote.voterID).toString(16),
         token: vote.token.toString(),
       };
     });
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {string} partyId
-   * @param {string} pubKey
-   * @param {string} sessionID
-   * @returns {*}
-   */
   async submitKey(partyId: string, pubKey: string, sessionID: string) {
     const partykey = new pubkeys();
     partykey.partyid = Buffer.from(partyId);
@@ -381,16 +269,13 @@ export class DBService {
 
     //console.log('partykey', partykey);
     await this.pubkeysRep.insert(partykey);
+
+    const keys = await this.pubkeysRep.find();
+
+    //console.log(keys);
+    //console.log(typeof keys);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {string} hashedId
-   * @param {bigint} pubKey
-   * @returns {*}
-   */
   async addHashedId(hashedId: string, pubKey: bigint) {
     const hashedIdEnt = new HashedId();
     hashedIdEnt.Hash = Buffer.from(hashedId);
@@ -401,14 +286,6 @@ export class DBService {
     await this.hashedIdRep.insert(hashedIdEnt);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {number} limit
-   * @param {string} HashedId
-   * @returns {*}
-   */
   async counterlimit(limit: number, HashedId: string) {
     const rows = await this.limitRep.find();
     if (rows.length == 15) {
@@ -425,24 +302,12 @@ export class DBService {
 
   // dbrepo.find({ where: { userId } });
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   async getcounterlimit() {
     const limit = await this.limitRep.find();
     // console.log('limit', limit);
     return limit;
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   async getTriggerVal() {
     const trigger = await this.triggerRep.find();
     console.log('gettrigger', trigger);
@@ -451,12 +316,6 @@ export class DBService {
     } else return 1;
   }
 
-  /**
-   *
-   *
-   * @param {number} flag
-   * @memberof DBService
-   */
   async setTriggerVal(flag: number) {
     const result = await this.getTriggerVal();
     console.log('result', result);
@@ -472,15 +331,6 @@ export class DBService {
     }
   }
 
-  /**
-   * This is used to store the tokens in the database generated by the token geneeration party
-   *
-   * @async
-   * @param {string} vid
-   * @param {string} HashedId
-   * @param {string} counter
-   * @returns {*}
-   */
   async storeTokens(vid: string, HashedId: string, counter: string) {
     const token = new Token();
     token.vid = Buffer.from(vid);
@@ -489,13 +339,6 @@ export class DBService {
     await this.tokensRep.insert(token);
   }
 
-  /**
-   * Fucntion to retrieve The tally server key
-   *
-   * @async
-   * @param {string} sessionID
-   * @returns {unknown}
-   */
   async getKeys(sessionID: string) {
     const keys = await this.pubkeysRep.find({
       where: {
@@ -511,52 +354,27 @@ export class DBService {
     });
   }
 
-  /**
-   * This function stores the filtering results in the database
-   *
-   * @async
-   * @param {string} partyID
-   * @param {string} votes
-   * @param {string} counters
-   * @returns {*}
-   */
-  async storeFilteredVotes(partyID: string, votes: string, counters: string) {
+  async storeFilteredVotes(partyID: string, votes: string) {
     //console.log('partyID', partyID);
     //console.log('votes', votes);
     const filteredVotes = new FilteredVotes();
     filteredVotes.partyID = Buffer.from(partyID);
     filteredVotes.votes = Buffer.from(votes);
-    filteredVotes.counters = Buffer.from(counters);
     await this.filteredVotesRep.insert(filteredVotes);
 
     // const votee= this.getFilteredVotes();
     // console.log('votee', votee);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   async getFilteredVotes() {
     const votes = await this.filteredVotesRep.find();
-    console.log('Allvotes', votes);
     return votes.map((vote) => {
       return {
         partyID: vote.partyID.toString(),
         votes: vote.votes.toString(),
-        counters: vote.counters.toString(),
       };
     });
   }
-  /**
-   *
-   * Function to get the trigger value for token generation
-   *
-   * @async
-   * @returns {number}
-   */
   async getTokenTriggerVal() {
     const trigger = await this.tokenTriggerRep.find();
     console.log('get trigger token', trigger);
@@ -565,13 +383,6 @@ export class DBService {
     } else return 1;
   }
 
-  /**
-   * The token generate party sets the trigger value to 1 when it has generated all the tokens
-   *
-   * @async
-   * @param {number} flag
-   * @returns {*}
-   */
   async setTokenTriggerVal(flag: number) {
     const result = await this.getTokenTriggerVal();
     console.log('result', result);
@@ -587,14 +398,6 @@ export class DBService {
     }
   }
 
-  /**
-   *
-   * Function to get all the tokens from the database
-   * Used by parties to encrypt the tokens
-   *
-   * @async
-   * @returns {unknown}
-   */
   async getTokensAll() {
     const tokens = await this.tokensRep.find();
     const allTokens = tokens.map((token) => {
@@ -633,13 +436,6 @@ export class DBService {
     return groupedTokens;
   }
 
-  /**
-   * Store the encrypted tokens in the database
-   *
-   * @async
-   * @param {any[]} tokens
-   * @returns {*}
-   */
   async storeEncryptedTokens(tokens: any[]) {
     //console.log('tokens', tokens);
     await Promise.all(
@@ -660,17 +456,12 @@ export class DBService {
     console.log('encTokens', encTokens.length);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {string} pubKey
-   * @returns {unknown}
-   */
   async getEncryptedTokens(pubKey: string) {
     const hash = await this.getVoterHash(BigInt('0x' + pubKey));
     console.log('hash', hash);
-    const tokens = await this.encryptedTokensRep.find({});
+    const tokens = await this.encryptedTokensRep.find({
+      
+    });
     console.log('tokens from the vote page ', tokens);
 
     return tokens.map((token) => {

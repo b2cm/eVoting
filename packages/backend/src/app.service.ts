@@ -4,64 +4,32 @@ import { Socket } from 'socket.io';
 import { updateBehaviorSubject } from './utils';
 import { v4 as UUID } from 'uuid';
 import { DBService } from './db.service';
+import { Contract , Provider } from "zksync-web3";
+import  { abi as REGISTER_ABI }  from './artifacts-zk/contracts/Register.sol/Register.json';
+import { abi as FACTORY_ABI } from './artifacts-zk/contracts/FactoryEvoting.sol/FactoryEvoting.json';
+import { abi as EVOTING_ABI } from './artifacts-zk/contracts/Evoting.sol/Evoting.json';
 
-/**
- *
- *
- * @export
- * @interface Session
- * @typedef {Session}
- */
 export interface Session {
-  /**
-   * 
-   *
-   * @type {{
-      socket: Socket;
-      id: string;
-    }[]}
-   */
   parties: {
     socket: Socket;
     id: string;
   }[];
 }
 
-/**
- *
- *
- * @export
- * @class AppService
- * @typedef {AppService}
- */
+
+const REGISTER_ADDR =  '0xA0F6641557c5917fD742A0B882E7C4FfdFFb5EeB'//'0x3041abcb251FF01A41a9FA7D533186D9C92FbDb4';
+const FACTORY_ADDR = '0x3516FdFB9997A225901212cF090d339f0804739D';
+const l2Provider = new Provider("https://zksync2-testnet.zksync.dev");
+const register = new Contract(REGISTER_ADDR, REGISTER_ABI, l2Provider);
+const factory = new Contract(FACTORY_ADDR, FACTORY_ABI, l2Provider);
+
 @Injectable()
 export class AppService {
-  /**
-   *
-   *
-   * @readonly
-   * @type {*}
-   */
+ 
   readonly sessions = new BehaviorSubject(new Map() as Map<string, Session>);
 
-  /**
-   * Creates an instance of AppService.
-   *
-   * @constructor
-   * @param {DBService} db
-   */
   constructor(private db: DBService) {}
 
-  /**
-   * Create a new session
-   * Session constitutes of the following entities:
-   * 1. Parties
-   * 2. Session Id
-   * 3. Public Key
-   * 4. A websocket room for the parties to communicate
-   *
-   * @returns {*}
-   */
   createSession() {
     const id = UUID();
     const s = this.sessions.getValue();
@@ -71,25 +39,10 @@ export class AppService {
     return id;
   }
 
-  /**
-   * Check if a session exists
-   *
-   * @param {string} id
-   * @returns {*}
-   */
   hasSession(id: string) {
     return this.sessions.getValue().has(id);
   }
 
-  /**
-   * Add a party to the session.
-   * This allows the server to broadcast messages to this party along with others
-   *
-   * @param {string} sessionId
-   * @param {Socket} sock
-   * @param {?string} [userId]
-   * @returns {{ id: string; socket: Socket; }}
-   */
   addParty(sessionId: string, sock: Socket, userId?: string) {
     const uId = userId || UUID();
 
@@ -118,15 +71,6 @@ export class AppService {
     return p;
   }
 
-  /**
-   * Add session info to the database
-   * This includes the session id, public key and candidates
-   *
-   * @async
-   * @param {string} sessionId
-   * @param {bigint} pubKey
-   * @returns {*}
-   */
   async addSessionDetails(sessionId: string, pubKey: bigint) {
     const b = BigInt(50);
     let pow = BigInt(0);
@@ -144,127 +88,101 @@ export class AppService {
     await this.db.addSession(sessionId, pubKey, candidates);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {string} sessionId
-   * @returns {unknown}
-   */
   async getSessionDetails(sessionId: string) {
     return await this.db.getSessionDetails(sessionId);
   }
 
-  /**
-   * Whenever a party joins a session
-   * Its public key is stored for further encryptions
-   *
-   * @async
-   * @param {string} partyId
-   * @param {string} pubKey
-   * @param {string} sessionId
-   * @returns {*}
-   */
   async submitKey(partyId: string, pubKey: string, sessionId: string) {
     await this.db.submitKey(partyId, pubKey, sessionId);
   }
 
-  /**
-   * @description set the counter limit
-   *
-   * counter limit is the number of votes a user can cast
-   *
-   * @async
-   * @param {number} limit
-   * @param {string} HashedId
-   * @returns {*}
-   */
   async counterlimit(limit: number, HashedId: string) {
     await this.db.counterlimit(limit, HashedId);
   }
 
-  /**
-   *
-   * @description get the counter limit
-   * @async
-   * @returns {number}
-   */
   async getcounterlimit() {
     return await this.db.getcounterlimit();
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   async getTokenTriggerVal() {
     return await this.db.getTokenTriggerVal();
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {number} flag
-   * @returns {*}
-   */
   async setTokenTriggerVal(flag: number) {
     await this.db.setTokenTriggerVal(flag);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   async getTriggerVal() {
     return await this.db.getTriggerVal();
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {number} flag
-   * @returns {*}
-   */
   async setTriggerVal(flag: number) {
     await this.db.setTriggerVal(flag);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {string} vid
-   * @param {string} HashedId
-   * @param {string} counter
-   * @returns {*}
-   */
   async storeTokens(vid: string, HashedId: string, counter: string) {
     await this.db.storeTokens(vid, HashedId, counter);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {Tokens}
-   */
-  async getTokens() {
+  async getTokens() { 
     return await this.db.getTokensAll();
   }
-  /**
-   *
-   *
-   * @async
-   * @param {string[]} tokens
-   * @returns {*}
-   */
   async storeEncryptedTokens(tokens: any[]) {
     await this.db.storeEncryptedTokens(tokens);
   }
+
+  async getHashedIDs(){
+    
+    try {
+      const voters = await register.getHashedIDs();
+      return voters;
+    } catch (error: any) {
+      console.error('Error:', error);
+      return error;
+    }
+    
+  }
+
+  async getLRSGroup(){
+    
+    try {
+      const voters = await register.getLRSGroup();
+      return voters;
+    } catch (error: any) {
+      console.error('Error:', error);
+      return error;
+    }
+    
+  }
+
+  async getVotes(voteID: string) {
+    const message = 'Wrong vote id';
+    try {
+        const voteAddr = await factory.get_voting(voteID);
+        //console.log('address', voteAddr);
+        const STATE = ['IN_PREPARATION', 'LIVE', 'COMPLETED', 'CANCELLED'];
+        const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+        if (voteAddr != ZERO_ADDRESS) {
+            const voting = new Contract(voteAddr, EVOTING_ABI, l2Provider);
+            const state = STATE[await voting.get_state()];
+            if (state === STATE[2]) { // The voting phase is completed
+                const votes = await voting.get_votes()
+                return votes;
+            } else {
+                return { message: 'No votes' };
+            }
+        }
+        else {
+            return { message };
+        }
+    } catch (error: any) {
+        console.log('Error:', error);
+        const code = error.code;
+        const reason = error.reason;
+        const status = 'Wrong vote id'
+        return { message, reason, code };
+    }
+    
+}
+
 }

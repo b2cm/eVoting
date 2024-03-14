@@ -129,7 +129,7 @@ export default function GeneratePage() {
 
 
   const fetchHashedIDs = async () => {
-    const {data } = await axios.get('http://bccm-s7.hs-mittweida.de:3100/getHashedIDs');
+    const {data } = await axios.get('http://localhost:3100/getHashedIDs');//'http://bccm-s7.hs-mittweida.de:3100/getHashedIDs'
     console.log("data " , data)
     console.log("ids", data["hashedIDs"])
     setHashedIds(data["hashedIDs"])

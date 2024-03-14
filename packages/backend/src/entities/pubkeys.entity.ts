@@ -22,6 +22,7 @@ export class pubkeys {
     type: 'varbinary',
     length: 1024,
     nullable: false,
+
   })
   sessionId!: Buffer;
 }

@@ -22,3 +22,5 @@ export const VOTE_CONFIG_LABELS = [
 export const BALLOT_TYPE1_ANSWERS = ['JA', 'NEIN', 'ENTHALTUNG'];
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+export const BACKEND_URL = 'http://localhost:3100';

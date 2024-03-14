@@ -21,7 +21,7 @@ export default function KeyGen() {
 
 
   const fetchHashedIDs = async () => {
-    const {data } = await axios.get('http://bccm-s7.hs-mittweida.de:3100/getHashedIDs');
+    const {data } = await axios.get('http://localhost:3100/getHashedIDs');
     console.log("pls lev me alon " , data)
     console.log("ids", data["hashedIDs"])
     setHashedIds(data["hashedIDs"])

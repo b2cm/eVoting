@@ -4,28 +4,10 @@ import { AppService } from './app.service';
 import { TALLY_SERVER_KEY } from './constants';
 import { TALLY_SERVER_KEY_PRIV } from './constants';
 
-/**
- *
- * @description App Controller
- * @export
- * @class AppController
- * @typedef {AppController}
- */
 @Controller()
 export class AppController {
-  /**
-   * Creates an instance of AppController.
-   *
-   * @constructor
-   * @param {AppService} appService
-   */
   constructor(private readonly appService: AppService) {}
 
-  /**
-   * @description Create a new session
-   *
-   * @returns {{ sessionId: string; }}
-   */
   @Post('CreateSession')
   createSession() {
     const id = this.appService.createSession();
@@ -35,13 +17,6 @@ export class AppController {
     };
   }
 
-  /**
-   * @description Get the public key and candidates for a session
-   *
-   * @async
-   * @param {string} sessionId
-   * @returns {unknown}
-   */
   @Get('SessionData/:sessionId')
   async getSessionData(@Param('sessionId') sessionId: string) {
     const { pubKey, candidates } = await this.appService.getSessionDetails(
@@ -57,13 +32,6 @@ export class AppController {
     };
   }
 
-  /**
-   * @description insert session details
-   *
-   * @async
-   * @param {{ sessionId: string; N: string }} body
-   * @returns {*}
-   */
   @Put('SessionData')
   async putSessionData(@Body() body: { sessionId: string; N: string }) {
     await this.appService.addSessionDetails(
@@ -72,28 +40,16 @@ export class AppController {
     );
   }
 
-  /**
-   * @description Get the Tally server public key
-   *
-   * @returns {{ TallyKey: string; }}
-   */
   @Get('TallyServerPubKey')
   GetTallyServerPubKey() {
     return { TallyKey: TALLY_SERVER_KEY.toString(16) };
   }
 
-  /**
-   * @description 
-   *  
-   * @async
-   * @param {{
-        //userID is the partyId
-        userId: string;
-        pubKey: string;
-        sessionId: string;
-      }} body
-   * @returns {*}
-   */
+  @Get('TallyServerPrivKey')
+  GetTallyServerPrivKey() {
+    return { TallyPrivKey: TALLY_SERVER_KEY_PRIV };
+  }
+
   @Post('Submitkey')
   async submitKey(
     @Body()
@@ -108,27 +64,12 @@ export class AppController {
     await this.appService.submitKey(body.userId, body.pubKey, body.sessionId);
   }
 
-  /**
-   * @description Theres a party for generating the tokens and a party for counting the tokens
-   * This is the function to set the counter limit against the hashedIDs
-   *
-   *
-   * @async
-   * @param {{ limit: number; HashedId: string }} body
-   * @returns {*}
-   */
   @Post('counterlimit')
   async setcounterlimit(@Body() body: { limit: number; HashedId: string }) {
     //console.log('body', body.limit, body.HashedId);
     await this.appService.counterlimit(body.limit, body.HashedId);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   @Get('getCounterlimit')
   async getcounterlimit() {
     const res = await this.appService.getcounterlimit();
@@ -137,67 +78,29 @@ export class AppController {
     return { limits: limits, HashIds: HashIds };
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {{ flag: number }} body
-   * @returns {*}
-   */
   @Post('SetTriggerVal')
   async setTriggerVal(@Body() body: { flag: number }) {
     console.log('body', body.flag);
     await this.appService.setTriggerVal(body.flag);
   }
 
-  /**
-   * @description This trigger value represents
-   * when the party has generated the tokens and is ready to send them to the tally server
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   @Get('TriggerVal')
   async getTriggerVal() {
     const result = await this.appService.getTriggerVal();
     return { result: result };
   }
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
   @Get('TokenTriggerVal')
   async getTokenTriggerVal() {
     const result = await this.appService.getTokenTriggerVal();
     return { result: result };
   }
 
-  /**
-   * @description
-   * {
-   * token refers to counter and vid
-   * }
-   *
-   * @async
-   * @param {{ flag: number }} body
-   * @returns {*}
-   */
   @Post('SetTokenTriggerVal')
   async setTokenTriggerVal(@Body() body: { flag: number }) {
     console.log('body', body.flag);
     await this.appService.setTokenTriggerVal(body.flag);
   }
 
-  /**
-   *
-   *
-   * @async
-   * @param {{ vid: string; HashedId: string; counter: string }} body
-   * @returns {*}
-   */
   @Post('StoreTokens')
   async storeTokens(
     @Body() body: { vid: string; HashedId: string; counter: string },
@@ -206,31 +109,54 @@ export class AppController {
     await this.appService.storeTokens(body.vid, body.HashedId, body.counter);
   }
 
-  /**
-   * { use cases for where tokens are encrypted }
-   *
-   * @async
-   * @param {{ encryptedTokens: any[] }} body
-   * @returns {*}
-   */
+
   @Post('StoreEncryptedTokens')
-  async storeEncryptedTokens(@Body() body: { encryptedTokens: any[] }) {
+  async storeEncryptedTokens(
+    @Body() body: { encryptedTokens: any[] },
+  ) {
     //console.log('body', body.vid, body.HashedId, body.counter);
-    // console.log('received encrypted tokens', body.encryptedTokens);
+   // console.log('received encrypted tokens', body.encryptedTokens);
+
 
     await this.appService.storeEncryptedTokens(body.encryptedTokens);
   }
 
-  // get all the tokens
-  /**
-   *
-   *
-   * @async
-   * @returns {unknown}
-   */
+
+ // get all the tokens 
   @Get('getTokensAll')
   async getTokens() {
+  
     const res = await this.appService.getTokens();
-    return { tokens: res };
+    return { tokens : res };
   }
+
+  // Inform the election parties that the registration period ended, so they can start generate the countera  and limmits for voters
+  @Post('RegistrationEnded')
+  async registrationEnded() {
+
+  }
+
+  @Get('getHashedIDs')
+  async getHashedIDs() {
+    const hashedIDs = await this.appService.getHashedIDs();
+    return { hashedIDs };
+  }
+
+  @Get('getLRSGroup')
+  async getLRSGroup() {
+    const group = await this.appService.getLRSGroup();
+    return { group };
+  }
+
+  @Get('getVotes')
+  async getVotes(
+    @Body() body: { voteID: string}
+  ) {
+    const votes = await this.appService.getVotes(body.voteID);
+    return { votes };
+  }
+
+  
+
 }
+

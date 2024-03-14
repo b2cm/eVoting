@@ -2,14 +2,17 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class encryptedTokens {
+  
   @PrimaryGeneratedColumn('increment')
   id!: number;
 
+  
   @Column({
     type: 'varbinary',
     length: 1024,
     nullable: false,
-    default: () => '0x' + Buffer.alloc(1024).toString('hex'),
+    default: () => '0x' + Buffer.alloc(1024).toString('hex')
+   
   })
   encryptedCounter!: Buffer;
 
@@ -17,7 +20,8 @@ export class encryptedTokens {
     type: 'varbinary',
     length: 1024,
     nullable: false,
-    default: () => '0x' + Buffer.alloc(1024).toString('hex'),
+    default: () => '0x' + Buffer.alloc(1024).toString('hex')
+
   })
   encryptedVid!: Buffer;
 
@@ -25,7 +29,7 @@ export class encryptedTokens {
     type: 'varbinary',
     length: 1024,
     nullable: false,
-    default: () => '0x' + Buffer.alloc(1024).toString('hex'),
+    default: () => '0x' + Buffer.alloc(1024).toString('hex')
   })
   HashedId!: Buffer;
 
@@ -34,7 +38,7 @@ export class encryptedTokens {
     length: 1024,
     nullable: false,
     unique: true,
-    default: () => '0x' + Buffer.alloc(1024).toString('hex'),
+    default: () => '0x' + Buffer.alloc(1024).toString('hex')
   })
   signature!: Buffer;
 
@@ -48,7 +52,8 @@ export class encryptedTokens {
   @Column({
     type: 'varchar',
     length: 1024,
-    default: '',
-  })
+    default : ""
+  
+  }) 
   pubkey!: string;
 }

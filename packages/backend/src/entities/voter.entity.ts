@@ -20,7 +20,7 @@ export class Voter {
     unique: true,
   })
   voterID!: Buffer;
-
+  
   @Column({
     type: 'varbinary',
     length: 1024,

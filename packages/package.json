@@ -3,7 +3,12 @@
   "packageManager": "yarn@3.6.4",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "backend",
+    "frontend",
+    "DB",
+    "elgammal",
+    "lrs",
+    "pallier"
   ],
   "devDependencies": {
     "@types/react": "latest",

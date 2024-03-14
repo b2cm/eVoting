@@ -188,6 +188,7 @@ export default function NewVote(props) {
             setVoteDescription={setVoteDescription}
         />
         <VotingTabs
+            showActionButtons={true}
             tabValue={tabValue}
             setTabValue={setTabValue}
             ballots={ballots} 

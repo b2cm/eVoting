@@ -46,8 +46,8 @@ import { encryptedTokens } from './entities/encryptedTokens.entity';
         Token,
         Trigger,
         FilteredVotes,
-        TokenTrigger,
-        encryptedTokens,
+        TokenTrigger, 
+        encryptedTokens
       ],
     }),
     TypeOrmModule.forFeature([
@@ -65,7 +65,7 @@ import { encryptedTokens } from './entities/encryptedTokens.entity';
       Trigger,
       FilteredVotes,
       TokenTrigger,
-      encryptedTokens,
+      encryptedTokens
     ]),
   ],
   controllers: [AppController, VoteController, LookUpController],

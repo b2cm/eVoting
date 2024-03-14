@@ -21,39 +21,12 @@ import { Socket as IOSocket } from 'socket.io';
 import { AppService } from './app.service';
 import { updateBehaviorSubject } from './utils';
 
-/**
- *
- *
- * @typedef {Socket}
- */
 type Socket = IOSocket & { data: { userId: string } };
-
-/**
- * This class acts as the websocket server for the live session.
- *
- * We need this server for two main things:
- * 1. To allow the client to negotiate webrtc connections, over which they will
- *    communicate with each other (p2p).
- * 2. To allow the server to relay messages between clients. This is done by maintaining
- *    a record of all parties that are associated to each session
- */
 
 @WebSocketGateway({ cors: true })
 export class LiveGateway implements OnGatewayDisconnect {
-  /**
-   * Creates an instance of LiveGateway.
-   *
-   * @constructor
-   * @param {AppService} appService
-   */
   constructor(private appService: AppService) {}
 
-  /**
-   *
-   *
-   * @readonly
-   * @type {*}
-   */
   readonly messages$ = new Subject<{
     from: Socket;
     sessionId: string;
@@ -61,10 +34,6 @@ export class LiveGateway implements OnGatewayDisconnect {
     message: any;
   }>();
 
-  /**
-   * Cleanup data when a client disconnects. If it was the last party in the session,
-   * we also delete the session.
-   */
   handleDisconnect(client: Socket) {
     updateBehaviorSubject(this.appService.sessions, (sessions) => {
       const sesId = client.data.sessionId;
@@ -83,13 +52,6 @@ export class LiveGateway implements OnGatewayDisconnect {
     });
   }
 
-  /**
-   * When a client joins a session, we add them to the session and return the id
-   *
-   * We also subscribe this client to the following:
-   * 1. The list of parties in the session
-   * 2. The messages that are sent to this client from another client
-   */
   @SubscribeMessage('joinSession')
   joinSession(
     @MessageBody() data: { sessionId: string; userId?: string },
@@ -119,11 +81,6 @@ export class LiveGateway implements OnGatewayDisconnect {
     }
   }
 
-  /**
-   * Handle sending message to a single client
-   * @param data
-   * @param sock
-   */
   @SubscribeMessage('sendMessage')
   sendMessage(
     @MessageBody() data: { sessionId: string; message: any; toId: string },
@@ -132,13 +89,6 @@ export class LiveGateway implements OnGatewayDisconnect {
     this.messages$.next({ ...data, from: sock });
   }
 
-  /**
-   * Utility function for subscribing a client to stream of messages are
-   * directed towards that client
-   *
-   * @param sessionId Session ID
-   * @param uId User Id of the client
-   */
   incominMessages(sessionId: string, uId: string) {
     return this.messages$.pipe(
       filter((m) => m.sessionId === sessionId && m.toId === uId),
@@ -152,11 +102,6 @@ export class LiveGateway implements OnGatewayDisconnect {
     );
   }
 
-  /**
-   * Get the live list of parties in a session
-   *
-   * @param id Session ID
-   */
   partiesInSession(id: string) {
     return this.appService.sessions.pipe(
       startWith(this.appService.sessions.getValue()),

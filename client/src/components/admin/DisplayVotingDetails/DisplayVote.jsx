@@ -34,8 +34,8 @@ export default function DisplayVote(props) {
     const [voteName, setVoteName] = useState(voteDetails.voteName);
     const [voteDescription, setVoteDescription] = useState(voteDetails.voteDescription);
     const [voteID, setVoteID] = useState(voteDetails.voteID);
-    const [voteStart, setVoteStart] = useState(voteDetails.voteStartTime);
-    const [voteEnd, setVoteEnd] = useState(voteDetails.voteEndTime);
+    const [voteStart, setVoteStart] = useState(dayjs(voteDetails.voteStartTime*1000));
+    const [voteEnd, setVoteEnd] = useState(dayjs(voteDetails.voteEndTime*1000));
     const [ballots, setBallots] = useState(voteDetails.ballotPapers);
     const [voteState, setVoteState] = useState(voteDetails.voteState);
     const [ballots_to_add, setBallots_to_add] = useState([]);

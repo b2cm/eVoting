@@ -99,6 +99,7 @@ export default function Vote() {
       currentCounters.push(token.counter);
       currentVids.push(token.vid);
     });
+    console.log('counter', currentToken);
     setVoterData({
       counter: currentCounters,
       vid: currentVids,

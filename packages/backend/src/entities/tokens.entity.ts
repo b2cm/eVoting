@@ -24,4 +24,6 @@ export class Token {
     nullable: false,
   })
   HashedId!: Buffer;
+
+ 
 }

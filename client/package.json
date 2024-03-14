@@ -36,6 +36,7 @@
     "lrs": "^0.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dotenv": "^0.1.3",
     "react-jazzicon": "^1.0.4",
     "react-router-dom": "^6.6.2",
     "react-scripts": "^4.0.3",
@@ -48,9 +49,9 @@
     "zokrates-js": "^1.1.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "react-dotenv && react-app-rewired start",
+    "build": "react-dotenv && react-app-rewired build",
+    "test": "react-dotenv && react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -76,5 +77,8 @@
     "react-app-rewired": "^2.2.1",
     "react-error-overlay": "6.0.9",
     "wasm-loader": "^1.3.0"
+  },
+  "react-dotenv": {
+    "whitelist": ["API_URL"]
   }
 }

@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 import { Candidate } from './candidate.entity';
 
 @Entity({
-  name: 'VoteSession',
+  name: 'VoteSession'
 })
 export class Session {
   @PrimaryColumn({ type: 'char', length: 36 })
