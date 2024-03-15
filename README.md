@@ -1,5 +1,6 @@
 # Evoting
-
+The aim of this project is to design and implement an electronic voting system based on blockchain.
+We use the zksync blockchain to achieve scalability and L1 (Goerli) to verify the zero knowledge proofs. We use zksync's account abstraction feature to abstract the payment of transaction fees from voters. On the L1 side we use the gas station network to achieve this effect.
 
 
 ## The Protocol
