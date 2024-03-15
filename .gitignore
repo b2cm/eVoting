@@ -1,4 +1,3 @@
 .pnp.cjs
 .pnp.loader.mjs
-
-videos
+.DS_Store
